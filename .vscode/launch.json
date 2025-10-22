@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "find-job-mobile",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/app/main.dart"
+        },
+        {
+            "name": "find-job-mobile (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "program": "lib/app/main.dart"
+        },
+        {
+            "name": "find-job-mobile (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "program": "lib/app/main.dart"
+        }
+    ]
+}
