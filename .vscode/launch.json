@@ -12,14 +12,14 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
-            "program": "lib/main.dart"
+            "program": "lib/app/main.dart"
         },
         {
             "name": "find-job-mobile (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",
-            "program": "lib/main.dart"
+            "program": "lib/app/main.dart"
         }
     ]
 }
