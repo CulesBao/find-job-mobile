@@ -176,7 +176,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      text: "You don't have an account yet? ",
+                      text: "You already have an account? ",
                       style: AppTextStyles.body.copyWith(
                         color: AppColors.textSecondary,
                       ),

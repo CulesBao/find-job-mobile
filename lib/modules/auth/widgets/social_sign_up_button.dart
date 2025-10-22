@@ -28,7 +28,7 @@ class SocialSignUpButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(FontAwesomeIcons.google),
+            Icon(FontAwesomeIcons.google, semanticLabel: 'Google'),
             const SizedBox(width: 10),
             Text(
               text,
