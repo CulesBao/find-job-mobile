@@ -5,6 +5,7 @@ import 'package:find_job_mobile/shared/data/models/account_dto.dart';
 import 'package:find_job_mobile/shared/data/models/auth_response.dart';
 import 'package:find_job_mobile/shared/data/dto/login_request.dart';
 import 'package:find_job_mobile/shared/data/dto/register_request.dart';
+import 'package:find_job_mobile/shared/data/dto/verify_code_request.dart';
 
 part 'auth_api_service.g.dart';
 
@@ -21,7 +22,7 @@ abstract class AuthApiService {
   @PUT('/auth/verify/{accountId}')
   Future<BaseResponse<void>> verifyCode(
     @Path('accountId') String accountId,
-    @Body() Map<String, dynamic> data,
+    @Body() VerifyCodeRequest request,
   );
 
   @POST('/auth/logout')

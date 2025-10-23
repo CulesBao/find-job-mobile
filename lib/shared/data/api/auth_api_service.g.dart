@@ -80,13 +80,12 @@ class _AuthApiService implements AuthApiService {
   @override
   Future<BaseResponse<void>> verifyCode(
     String accountId,
-    Map<String, dynamic> data,
+    VerifyCodeRequest request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(data);
+    final _data = request;
     final _options = _setStreamType<BaseResponse<void>>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(

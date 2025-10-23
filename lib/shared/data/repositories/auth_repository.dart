@@ -3,6 +3,7 @@ import 'package:find_job_mobile/shared/constants/api_constants.dart';
 import 'package:find_job_mobile/shared/data/api/auth_api_service.dart';
 import 'package:find_job_mobile/shared/data/dto/login_request.dart';
 import 'package:find_job_mobile/shared/data/dto/register_request.dart';
+import 'package:find_job_mobile/shared/data/dto/verify_code_request.dart';
 import 'package:find_job_mobile/shared/data/models/account_dto.dart';
 import 'package:find_job_mobile/shared/data/models/auth_response.dart';
 import 'package:find_job_mobile/shared/data/models/base_response.dart';
@@ -31,6 +32,16 @@ class AuthRepository {
         await _saveAuthData(response.data!);
       }
 
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<BaseResponse<void>> verifyCode(String accountId, String code) async {
+    try {
+      final request = VerifyCodeRequest(code: code);
+      final response = await _authApiService.verifyCode(accountId, request);
       return response;
     } catch (e) {
       rethrow;
