@@ -5,6 +5,10 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/social_sign_up_button.dart';
 import '../../../shared/styles/colors.dart';
 import '../../../shared/styles/text_styles.dart';
+import '../../../shared/data/models/account_dto.dart';
+import '../../../shared/data/dto/register_request.dart';
+import '../../../shared/data/repositories/auth_repository.dart';
+import '../../../app/config/service_locator.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -15,24 +19,72 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
+  Role _selectedRole = Role.candidate;
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  void _handleSignUp() {
-    if (_formKey.currentState!.validate()) {}
+  Future<void> _handleSignUp() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      try {
+        final request = RegisterRequest(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          provider: Provider.local,
+          role: _selectedRole,
+        );
+
+        // Call real API
+        final authRepository = getIt<AuthRepository>();
+        final response = await authRepository.register(request);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate to login or verification screen
+          await Future.delayed(const Duration(seconds: 1));
+          if (mounted) {
+            context.goNamed('sign-in');
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Registration failed: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    }
   }
 
-  void _handleGoogleSignUp() {}
+  void _handleGoogleSignUp() {
+    // TODO: Implement Google Sign Up with provider = GOOGLE
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Google Sign Up - Coming soon!')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: Text(
-                    'Giới thiệu về ứng dụng',
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -66,19 +118,54 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                CustomTextField(
-                  controller: _fullNameController,
-                  label: 'Full name',
-                  hintText: 'Dương Văn Tèo',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your full name';
-                    }
-                    if (value.length < 3) {
-                      return 'Name must be at least 3 characters';
-                    }
-                    return null;
-                  },
+                // Role Selection Dropdown
+                Text(
+                  'I am a',
+                  style: AppTextStyles.label.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: AppColors.textTertiary.withOpacity(0.3),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<Role>(
+                      value: _selectedRole,
+                      isExpanded: true,
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: AppColors.textTertiary,
+                      ),
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
+                      dropdownColor: AppColors.white,
+                      onChanged: (Role? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            _selectedRole = newValue;
+                          });
+                        }
+                      },
+                      items: const [
+                        DropdownMenuItem(
+                          value: Role.candidate,
+                          child: Text('Candidate (Job Seeker)'),
+                        ),
+                        DropdownMenuItem(
+                          value: Role.employer,
+                          child: Text('Employer (Recruiter)'),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 CustomTextField(
@@ -89,12 +176,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
-                    }
-                    final emailRegex = RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    );
-                    if (!emailRegex.hasMatch(value)) {
-                      return 'Please enter a valid email';
                     }
                     return null;
                   },
@@ -156,18 +237,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: _handleSignUp,
+                    onPressed: _isLoading ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
+                      disabledBackgroundColor: AppColors.primary.withOpacity(
+                        0.6,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
                       elevation: 0,
                     ),
-                    child: Text(
-                      'SIGN UP',
-                      style: AppTextStyles.button.copyWith(color: Colors.white),
-                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            'SIGN UP',
+                            style: AppTextStyles.button.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 15),
