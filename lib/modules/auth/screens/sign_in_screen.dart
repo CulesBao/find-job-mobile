@@ -1,3 +1,6 @@
+import 'package:find_job_mobile/app/config/service_locator.dart';
+import 'package:find_job_mobile/shared/data/dto/login_request.dart';
+import 'package:find_job_mobile/shared/data/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +21,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _rememberMe = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -26,11 +30,51 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  void _handleSignIn() {
-    if (_formKey.currentState!.validate()) {}
+  void _handleSignIn() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      try {
+        final request = LoginRequest(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+
+        // Call real API
+        final authRepository = getIt<AuthRepository>();
+        final response = await authRepository.login(request);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Sign in failed: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    }
   }
 
-  void _handleGoogleSignIn() {}
+  void _handleGoogleSignIn() {
+    // TODO: Implement Google Sign Up with provider = GOOGLE
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Google Sign Up - Coming soon!')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,18 +183,32 @@ class _SignInScreenState extends State<SignInScreen> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: _handleSignIn,
+                    onPressed: _isLoading ? null : _handleSignIn,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
+                      disabledBackgroundColor: AppColors.primary.withOpacity(
+                        0.6,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
                       elevation: 0,
                     ),
-                    child: Text(
-                      'LOGIN',
-                      style: AppTextStyles.button.copyWith(color: Colors.white),
-                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            'SIGN IN',
+                            style: AppTextStyles.button.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 15),
