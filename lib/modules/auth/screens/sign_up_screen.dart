@@ -56,10 +56,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           );
 
-          // Navigate to login or verification screen
+          // Navigate to verify screen with account info
           await Future.delayed(const Duration(seconds: 1));
-          if (mounted) {
-            context.goNamed('sign-in');
+          if (mounted && response.data != null) {
+            context.goNamed(
+              'verify',
+              extra: {
+                'accountId': response.data!.id,
+                'email': _emailController.text.trim(),
+              },
+            );
           }
         }
       } catch (e) {
