@@ -132,7 +132,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
               
               // Description
               Text(
-                'We have sent the reset password to the email address\n${widget.email}',
+                'We have sent the verification code\n to your email address\n${widget.email}',
                 style: AppTextStyles.body.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 14,
@@ -147,20 +147,20 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 height: 180,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    height: 180,
+                    height: 120,
                     decoration: BoxDecoration(
                       color: AppColors.secondary.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
                       Icons.email_outlined,
-                      size: 80,
+                      size: 120,
                       color: AppColors.primary,
                     ),
                   );
                 },
               ),
-              const SizedBox(height: 60),
+              const SizedBox(height: 80),
               
               // Verification code input boxes
               Row(
@@ -175,11 +175,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 120),
               
               // Verify button
               SizedBox(
                 width: double.infinity,
+                
                 height: 50,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _handleVerify,
@@ -247,25 +248,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     color: AppColors.textSecondary,
                     fontSize: 14,
                   ),
-                  children: [
-                    const TextSpan(
-                      text: 'You have not received the email?  ',
-                    ),
-                    WidgetSpan(
-                      child: GestureDetector(
-                        onTap: _isLoading ? null : _handleResend,
-                        child: Text(
-                          'Resend',
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColors.accent,
-                            fontSize: 14,
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppColors.accent,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
               const SizedBox(height: 40),
