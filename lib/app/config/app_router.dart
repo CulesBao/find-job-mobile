@@ -1,5 +1,6 @@
 import 'package:find_job_mobile/modules/auth/screens/sign_in_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/sign_up_screen.dart';
+import 'package:find_job_mobile/modules/setup/screens/setup_screen.dart';
 
 import 'package:go_router/go_router.dart';
 import 'route_path.dart';
@@ -16,6 +17,11 @@ final GoRouter appRouter = GoRouter(
       name: 'sign-up',
       path: RoutePath.signUp,
       builder: (context, state) => const SignUpScreen(),
+    ),
+    GoRoute(
+      name: 'set-up',
+      path: RoutePath.setUp,
+      builder: (context, state) => const SetupScreen(),
     ),
   ],
 );
