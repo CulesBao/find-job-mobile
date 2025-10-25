@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:find_job_mobile/shared/constants/api_constants.dart';
 import 'package:find_job_mobile/shared/data/api/auth_api_service.dart';
@@ -59,26 +60,49 @@ class AuthRepository {
   }
 
   Future<void> _saveAuthData(AuthResponse authResponse) async {
-    await _prefs.setString(ApiConstants.tokenKey, authResponse.token);
+    // Save accessToken (matching web localStorage key)
+    await _prefs.setString(ApiConstants.accessTokenKey, authResponse.token);
+
+    // Save user as JSON string (matching web localStorage key)
+    final userJson = jsonEncode(authResponse.accountDto.toJson());
+    await _prefs.setString(ApiConstants.userKey, userJson);
+
+    // Save is_new_account flag
     await _prefs.setBool(
       ApiConstants.isNewAccountKey,
       authResponse.isNewAccount,
     );
-    // TODO: Save account data as JSON if needed
   }
 
   Future<void> _clearAuthData() async {
-    await _prefs.remove(ApiConstants.tokenKey);
-    await _prefs.remove(ApiConstants.accountDataKey);
+    await _prefs.remove(ApiConstants.accessTokenKey);
+    await _prefs.remove(ApiConstants.userKey);
     await _prefs.remove(ApiConstants.isNewAccountKey);
   }
 
   String? getToken() {
-    return _prefs.getString(ApiConstants.tokenKey);
+    return _prefs.getString(ApiConstants.accessTokenKey);
+  }
+
+  AccountDto? getUser() {
+    final userJson = _prefs.getString(ApiConstants.userKey);
+    if (userJson != null) {
+      try {
+        final userMap = jsonDecode(userJson) as Map<String, dynamic>;
+        return AccountDto.fromJson(userMap);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   }
 
   bool isLoggedIn() {
     final token = getToken();
     return token != null && token.isNotEmpty;
+  }
+
+  bool isNewAccount() {
+    return _prefs.getBool(ApiConstants.isNewAccountKey) ?? false;
   }
 }
