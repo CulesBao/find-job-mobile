@@ -40,7 +40,6 @@ class _SignInScreenState extends State<SignInScreen> {
           password: _passwordController.text,
         );
 
-        // Call real API
         final authRepository = getIt<AuthRepository>();
         final response = await authRepository.login(request);
 
@@ -51,8 +50,20 @@ class _SignInScreenState extends State<SignInScreen> {
               backgroundColor: Colors.green,
             ),
           );
+
+          await Future.delayed(const Duration(seconds: 1));
+          if (mounted) {
+            // TODO: Navigate to home or profile setup screen
+            // For now, just show success
+            if (response.data?.isNewAccount ?? false) {
+              debugPrint('New account - navigate to profile setup');
+            } else {
+              debugPrint('Existing account - navigate to home');
+            }
+          }
         }
       } catch (e) {
+        debugPrint('Login error: $e');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -116,6 +127,12 @@ class _SignInScreenState extends State<SignInScreen> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
+                    }
+                    final emailRegex = RegExp(
+                      r'^[\w-\.+]+@([\w-]+\.)+[\w-]{2,4}$',
+                    );
+                    if (!emailRegex.hasMatch(value)) {
+                      return 'Please enter a valid email';
                     }
                     return null;
                   },
