@@ -28,8 +28,8 @@ class ApiConstants {
   static const String provinces = '/provinces';
   static const String districts = '/districts';
 
-  // Storage keys
-  static const String tokenKey = 'token';
-  static const String accountDataKey = 'account_data';
+  // Storage keys (matching web localStorage keys)
+  static const String accessTokenKey = 'accessToken';
+  static const String userKey = 'user';
   static const String isNewAccountKey = 'is_new_account';
 }

@@ -12,8 +12,8 @@ class AuthInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    // Add token to headers
-    final token = prefs.getString(ApiConstants.tokenKey);
+    // Add token to headers (matching web localStorage key)
+    final token = prefs.getString(ApiConstants.accessTokenKey);
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -23,11 +23,9 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    // Handle 401 Unauthorized
     if (err.response?.statusCode == 401) {
-      // TODO: Implement auto logout or token refresh logic
-      await prefs.remove(ApiConstants.tokenKey);
-      await prefs.remove(ApiConstants.accountDataKey);
+      await prefs.remove(ApiConstants.accessTokenKey);
+      await prefs.remove(ApiConstants.userKey);
     }
 
     return handler.next(err);
