@@ -1,6 +1,7 @@
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/dto/login_request.dart';
 import 'package:find_job_mobile/shared/data/repositories/auth_repository.dart';
+import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
@@ -53,12 +54,29 @@ class _SignInScreenState extends State<SignInScreen> {
 
           await Future.delayed(const Duration(seconds: 1));
           if (mounted) {
-            // TODO: Navigate to home or profile setup screen
-            // For now, just show success
-            if (response.data?.isNewAccount ?? false) {
-              debugPrint('New account - navigate to profile setup');
+            if (AuthHelper.isNewAccount) {
+              if (AuthHelper.isCandidate) {
+                context.goNamed('set-up');
+              } else if (AuthHelper.isEmployer) {
+                debugPrint('New Employer - setup not implemented yet');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Employer profile setup coming soon!'),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
+                // TODO: Navigate to employer setup screen when implemented
+              }
             } else {
+              // Existing account - navigate to home
               debugPrint('Existing account - navigate to home');
+              // TODO: Navigate to home screen
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Welcome back! Home screen coming soon.'),
+                  backgroundColor: Colors.blue,
+                ),
+              );
             }
           }
         }

@@ -10,11 +10,7 @@ class VerifyScreen extends StatefulWidget {
   final String accountId;
   final String email;
 
-  const VerifyScreen({
-    super.key,
-    required this.accountId,
-    required this.email,
-  });
+  const VerifyScreen({super.key, required this.accountId, required this.email});
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -25,10 +21,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
     5,
     (_) => TextEditingController(),
   );
-  final List<FocusNode> _focusNodes = List.generate(
-    5,
-    (_) => FocusNode(),
-  );
+  final List<FocusNode> _focusNodes = List.generate(5, (_) => FocusNode());
   bool _isLoading = false;
 
   @override
@@ -76,10 +69,20 @@ class _VerifyScreenState extends State<VerifyScreen> {
           ),
         );
 
-        // Navigate to sign-in or home screen after successful verification
+        // Navigate to sign-in after successful verification
         await Future.delayed(const Duration(seconds: 1));
         if (mounted) {
-          context.goNamed('sign-in');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Account verified! Please login to continue.'),
+              backgroundColor: Colors.blue,
+              duration: Duration(seconds: 2),
+            ),
+          );
+          await Future.delayed(const Duration(seconds: 1));
+          if (mounted) {
+            context.goNamed('sign-in');
+          }
         }
       }
     } catch (e) {
@@ -119,7 +122,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 80),
-              
+
               // Title
               Text(
                 'Check Your Email',
@@ -129,7 +132,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
-              
+
               // Description
               Text(
                 'We have sent the verification code\n to your email address\n${widget.email}',
@@ -140,7 +143,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 60),
-              
+
               // Email illustration
               Image.asset(
                 'assets/images/email_sent.png',
@@ -161,26 +164,24 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 },
               ),
               const SizedBox(height: 80),
-              
+
               // Verification code input boxes
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   5,
                   (index) => Padding(
-                    padding: EdgeInsets.only(
-                      right: index < 4 ? 10 : 0,
-                    ),
+                    padding: EdgeInsets.only(right: index < 4 ? 10 : 0),
                     child: _buildCodeBox(index),
                   ),
                 ),
               ),
               const SizedBox(height: 120),
-              
+
               // Verify button
               SizedBox(
                 width: double.infinity,
-                
+
                 height: 50,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _handleVerify,
@@ -210,7 +211,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Back to login button
               SizedBox(
                 width: double.infinity,
@@ -239,7 +240,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // Resend link
               RichText(
                 textAlign: TextAlign.center,
@@ -285,16 +286,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
         maxLength: 1,
-        style: AppTextStyles.heading2.copyWith(
-          color: AppColors.textPrimary,
-        ),
+        style: AppTextStyles.heading2.copyWith(color: AppColors.textPrimary),
         decoration: const InputDecoration(
           border: InputBorder.none,
           counterText: '',
         ),
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-        ],
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: (value) {
           if (value.isNotEmpty) {
             // Move to next field

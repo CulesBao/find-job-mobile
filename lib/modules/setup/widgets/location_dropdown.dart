@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../shared/styles/colors.dart';
 import '../../../shared/styles/text_styles.dart';
+import '../../../shared/data/repositories/location_repository.dart';
+import '../../../shared/data/models/province_dto.dart';
+import '../../../shared/data/models/district_dto.dart';
+import '../../../app/config/service_locator.dart';
 
 class ProvinceDistrictSelector extends StatefulWidget {
   final String? initialProvince;
@@ -27,93 +31,81 @@ class _ProvinceDistrictSelectorState extends State<ProvinceDistrictSelector> {
   bool _isProvinceFocused = false;
   bool _isDistrictFocused = false;
 
-  final List<String> _provinces = [
-    'Hà Nội',
-    'Hồ Chí Minh',
-    'Đà Nẵng',
-    'Cần Thơ',
-    'Huế',
-  ];
+  List<ProvinceDto> _provinces = [];
+  List<DistrictDto> _districts = [];
+  bool _isLoadingProvinces = false;
+  bool _isLoadingDistricts = false;
 
-  final Map<String, List<String>> _districts = {
-    'Hà Nội': ['Ba Đình', 'Hoàn Kiếm', 'Đống Đa', 'Cầu Giấy'],
-    'Hồ Chí Minh': ['Quận 1', 'Quận 3', 'Bình Thạnh', 'Thủ Đức'],
-    'Đà Nẵng': ['Hải Châu', 'Thanh Khê', 'Sơn Trà', 'Ngũ Hành Sơn'],
-    'Cần Thơ': ['Ninh Kiều', 'Bình Thủy', 'Cái Răng'],
-    'Huế': ['Hương Trà', 'Hương Thủy', 'Phú Vang'],
-  };
+  final LocationRepository _locationRepository = getIt<LocationRepository>();
 
   @override
   void initState() {
     super.initState();
     _selectedProvince = widget.initialProvince;
     _selectedDistrict = widget.initialDistrict;
+    _loadProvinces();
+  }
+
+  Future<void> _loadProvinces() async {
+    setState(() => _isLoadingProvinces = true);
+    try {
+      final response = await _locationRepository.getProvinces();
+
+      if (response.data != null) {
+        setState(() {
+          _provinces = response.data!.provinces;
+          _isLoadingProvinces = false;
+        });
+      }
+    } catch (e, stackTrace) {
+      setState(() => _isLoadingProvinces = false);
+    }
+  }
+
+  Future<void> _loadDistricts(String provinceCode) async {
+    setState(() => _isLoadingDistricts = true);
+    try {
+      final response = await _locationRepository.getDistricts(provinceCode);
+      if (response.data != null) {
+        setState(() {
+          _districts = response.data!;
+          _isLoadingDistricts = false;
+        });
+      }
+    } catch (e) {
+      setState(() => _isLoadingDistricts = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final availableDistricts = _districts[_selectedProvince] ?? <String>[];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDropdownSection(
-          label: 'Province',
-          hint: 'Select your province',
-          value: _selectedProvince,
-          isFocused: _isProvinceFocused,
-          items: _provinces,
-          onFocusChanged: (focus) => setState(() => _isProvinceFocused = focus),
-          onChanged: (value) {
-            setState(() {
-              _selectedProvince = value;
-              _selectedDistrict = null;
-            });
-            widget.onProvinceChanged?.call(value);
-          },
-        ),
+        _buildProvinceDropdown(),
         const SizedBox(height: 20),
-        _buildDropdownSection(
-          label: 'District',
-          hint: 'Select your district',
-          value: _selectedDistrict,
-          isFocused: _isDistrictFocused,
-          items: availableDistricts,
-          onFocusChanged: (focus) => setState(() => _isDistrictFocused = focus),
-          onChanged: (value) {
-            setState(() => _selectedDistrict = value);
-            widget.onDistrictChanged?.call(value);
-          },
-        ),
+        _buildDistrictDropdown(),
       ],
     );
   }
 
-  Widget _buildDropdownSection({
-    required String label,
-    required String hint,
-    required List<String> items,
-    required String? value,
-    required bool isFocused,
-    required Function(bool) onFocusChanged,
-    required Function(String) onChanged,
-  }) {
+  Widget _buildProvinceDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.label),
+        Text('Province', style: AppTextStyles.label),
         const SizedBox(height: 8),
         Focus(
-          onFocusChange: onFocusChanged,
+          onFocusChange: (focus) => setState(() => _isProvinceFocused = focus),
           child: GestureDetector(
-            onTap: () => onFocusChanged(true),
+            onTap: () => setState(() => _isProvinceFocused = true),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                  color: isFocused
+                  color: _isProvinceFocused
                       ? AppColors.primary
                       : AppColors.textTertiary.withOpacity(0.3),
                   width: 1,
@@ -126,34 +118,127 @@ class _ProvinceDistrictSelectorState extends State<ProvinceDistrictSelector> {
                   ),
                 ],
               ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: value,
-                  hint: Text(
-                    hint,
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  isExpanded: true,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  items: items.map((item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(
-                        item,
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.textPrimary,
+              child: _isLoadingProvinces
+                  ? const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         ),
                       ),
-                    );
-                  }).toList(),
-                  onChanged: (v) {
-                    onChanged(v!);
-                    onFocusChanged(false); // bỏ focus khi chọn xong
-                  },
+                    )
+                  : DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedProvince,
+                        hint: Text(
+                          'Select your province',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        isExpanded: true,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        items: _provinces.map((province) {
+                          return DropdownMenuItem(
+                            value: province.code,
+                            child: Text(
+                              province.name,
+                              style: AppTextStyles.body.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() {
+                              _selectedProvince = value;
+                              _selectedDistrict = null;
+                              _districts = [];
+                            });
+                            widget.onProvinceChanged?.call(value);
+                            _loadDistricts(value);
+                          }
+                        },
+                      ),
+                    ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDistrictDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('District', style: AppTextStyles.label),
+        const SizedBox(height: 8),
+        Focus(
+          onFocusChange: (focus) => setState(() => _isDistrictFocused = focus),
+          child: GestureDetector(
+            onTap: () => setState(() => _isDistrictFocused = true),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: _isDistrictFocused
+                      ? AppColors.primary
+                      : AppColors.textTertiary.withOpacity(0.3),
+                  width: 1,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 62,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
+              child: _isLoadingDistricts
+                  ? const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    )
+                  : DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedDistrict,
+                        hint: Text(
+                          'Select your district',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        isExpanded: true,
+                        icon: const Icon(Icons.arrow_drop_down),
+                        items: _districts.map((district) {
+                          return DropdownMenuItem(
+                            value: district.code,
+                            child: Text(
+                              district.name,
+                              style: AppTextStyles.body.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() => _selectedDistrict = value);
+                          widget.onDistrictChanged?.call(value!);
+                        },
+                      ),
+                    ),
             ),
           ),
         ),

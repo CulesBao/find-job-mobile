@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'package:find_job_mobile/app/config/service_locator.dart';
+import 'package:find_job_mobile/shared/constants/api_constants.dart';
 import 'package:find_job_mobile/shared/data/models/account_dto.dart';
+import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/auth_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Helper class for accessing authentication data from anywhere in the app
 class AuthHelper {
@@ -34,4 +38,21 @@ class AuthHelper {
   static Future<void> logout() async {
     await _authRepo.logout();
   }
+
+  /// Save candidate profile to storage and update user data
+  static Future<void> saveCandidateProfile(CandidateProfileDto profile) async {
+    final prefs = getIt<SharedPreferences>();
+    final user = currentUser;
+
+    if (user != null) {
+      // Update user with candidate profile
+      final updatedUser = user.copyWith(candidateProfileDto: profile);
+      final userJson = jsonEncode(updatedUser.toJson());
+      await prefs.setString(ApiConstants.userKey, userJson);
+    }
+  }
+
+  /// Get candidate profile from current user
+  static CandidateProfileDto? get candidateProfile =>
+      currentUser?.candidateProfileDto;
 }

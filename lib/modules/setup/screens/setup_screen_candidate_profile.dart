@@ -5,30 +5,192 @@ import 'package:find_job_mobile/modules/setup/widgets/education_dropdown.dart';
 import 'package:find_job_mobile/modules/setup/widgets/header_section.dart';
 import 'package:find_job_mobile/modules/setup/widgets/location_dropdown.dart';
 import 'package:find_job_mobile/modules/setup/widgets/social_link_section.dart';
+import 'package:find_job_mobile/shared/data/dto/create_candidate_profile_request.dart';
+import 'package:find_job_mobile/shared/data/dto/update_social_links_request.dart';
+import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/models/social_link_dto.dart';
+import 'package:find_job_mobile/shared/data/repositories/candidate_profile_repository.dart';
+import 'package:find_job_mobile/shared/utils/auth_helper.dart';
+import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/styles/colors.dart';
 import '../../../shared/styles/text_styles.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/gender_select.dart';
 
-class SetupScreen extends StatefulWidget {
-  const SetupScreen({super.key});
+class SetupScreenCandidateProfile extends StatefulWidget {
+  const SetupScreenCandidateProfile({super.key});
 
   @override
-  State<SetupScreen> createState() => _SetupScreenState();
+  State<SetupScreenCandidateProfile> createState() =>
+      _SetupScreenCandidateProfileState();
 }
 
-class _SetupScreenState extends State<SetupScreen> {
+class _SetupScreenCandidateProfileState
+    extends State<SetupScreenCandidateProfile> {
   final _formKey = GlobalKey<FormState>();
   String _selectedGender = 'male';
   final _birthdayController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _locationController = TextEditingController();
   final _biographyController = TextEditingController();
 
   bool _isLoading = false;
+  String? _selectedProvinceCode;
+  String? _selectedDistrictCode;
+  String? _selectedEducation;
+  List<Map<String, String>> _socialLinks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    final user = AuthHelper.currentUser;
+    if (user != null) {}
+  }
+
+  String _convertDateFormat(String dateStr) {
+    // Convert "DD MMM YYYY" to "YYYY-MM-DD"
+    try {
+      final parts = dateStr.split(' ');
+      if (parts.length != 3) return dateStr;
+
+      final day = parts[0].padLeft(2, '0');
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
+      final monthIndex = months.indexOf(parts[1]) + 1;
+      final month = monthIndex.toString().padLeft(2, '0');
+      final year = parts[2];
+
+      return '$year-$month-$day';
+    } catch (e) {
+      return dateStr;
+    }
+  }
+
+  Future<void> _handleSubmit() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    // Validate required fields
+    if (_selectedProvinceCode == null || _selectedDistrictCode == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select province and district'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final repository = getIt<CandidateProfileRepository>();
+
+      // Step 1: Create profile
+      final profileRequest = CreateCandidateProfileRequest(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        provinceCode: _selectedProvinceCode!,
+        districtCode: _selectedDistrictCode!,
+        bio: _biographyController.text.isNotEmpty
+            ? _biographyController.text.trim()
+            : null,
+        dateOfBirth: _birthdayController.text.isNotEmpty
+            ? _convertDateFormat(_birthdayController.text)
+            : null,
+        education: _selectedEducation != null
+            ? Education.values.firstWhere(
+                (e) =>
+                    e.name.toUpperCase() == _selectedEducation!.toUpperCase(),
+                orElse: () => Education.highSchool,
+              )
+            : null,
+        gender: _selectedGender == 'male',
+        phoneNumber: _phoneController.text.isNotEmpty
+            ? _phoneController.text.trim()
+            : null,
+      );
+
+      final createResponse = await repository.createProfile(profileRequest);
+
+      // Step 2: Update social links if any
+      if (_socialLinks.isNotEmpty && createResponse.data != null) {
+        final socialLinksRequest = UpdateSocialLinksRequest(
+          socialLinks: _socialLinks
+              .map(
+                (link) => SocialLinkInput(
+                  type: SocialLinkType.values.firstWhere(
+                    (e) =>
+                        e.name.toUpperCase() == link['platform']!.toUpperCase(),
+                  ),
+                  url: link['url']!,
+                ),
+              )
+              .toList(),
+        );
+
+        await repository.updateSocialLinks(socialLinksRequest);
+      }
+
+      // Step 3: Get updated profile
+      if (createResponse.data != null) {
+        final profileResponse = await repository.getProfile(
+          createResponse.data!.id,
+        );
+
+        if (profileResponse.data != null) {
+          // Save to AuthHelper
+          await AuthHelper.saveCandidateProfile(profileResponse.data!);
+          debugPrint('Profile saved to storage');
+        }
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(createResponse.message),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // TODO: Navigate to home screen
+        await Future.delayed(const Duration(seconds: 1));
+      }
+    } catch (e) {
+      debugPrint('Profile creation error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create profile: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   void _showAddBiographySheet(BuildContext context) {
     BiographySheet.show(context, _biographyController).then((_) {
@@ -53,10 +215,9 @@ class _SetupScreenState extends State<SetupScreen> {
   @override
   void dispose() {
     _birthdayController.dispose();
-    _nameController.dispose();
-    _emailController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _phoneController.dispose();
-    _locationController.dispose();
     _biographyController.dispose();
     super.dispose();
   }
@@ -69,8 +230,8 @@ class _SetupScreenState extends State<SetupScreen> {
         child: Column(
           children: [
             HeaderSection(
-              name: 'Dương Văn Tèo Con',
-              location: 'Đập hải ly, Rừng rú',
+              name: AuthHelper.currentUser?.email ?? 'New User',
+              location: 'Setup your profile',
               biography: _biographyController.text,
               onAvatarTap: () => _showChangeAvatarSheet(context),
               onBiographyTap: () => _showAddBiographySheet(context),
@@ -101,7 +262,7 @@ class _SetupScreenState extends State<SetupScreen> {
                     Text('First name', style: AppTextStyles.label),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: _nameController,
+                      controller: _firstNameController,
                       hint: 'Enter your first name',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -116,7 +277,7 @@ class _SetupScreenState extends State<SetupScreen> {
                     Text('Last name', style: AppTextStyles.label),
                     const SizedBox(height: 8),
                     CustomTextField(
-                      controller: _nameController,
+                      controller: _lastNameController,
                       hint: 'Enter your last name',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -200,7 +361,11 @@ class _SetupScreenState extends State<SetupScreen> {
                     const SizedBox(height: 16),
 
                     // Education select
-                    EducationDropdown(onChanged: (value) {}),
+                    EducationDropdown(
+                      onChanged: (value) {
+                        setState(() => _selectedEducation = value);
+                      },
+                    ),
                     const SizedBox(height: 16),
 
                     // Phone number
@@ -229,17 +394,23 @@ class _SetupScreenState extends State<SetupScreen> {
 
                     // Location select
                     ProvinceDistrictSelector(
-                      onProvinceChanged: (province) {},
-                      onDistrictChanged: (district) {},
+                      onProvinceChanged: (provinceCode) {
+                        setState(() => _selectedProvinceCode = provinceCode);
+                      },
+                      onDistrictChanged: (districtCode) {
+                        setState(() => _selectedDistrictCode = districtCode);
+                      },
                     ),
                     const SizedBox(height: 16),
                     SocialLinksSection(
                       onChanged: (links) {
-                        print(
-                          links.map(
-                            (e) => {'platform': e.platform, 'url': e.url},
-                          ),
-                        );
+                        setState(() {
+                          _socialLinks = links
+                              .map(
+                                (e) => {'platform': e.platform, 'url': e.url},
+                              )
+                              .toList();
+                        });
                       },
                     ),
                     const SizedBox(height: 24),
@@ -267,50 +438,7 @@ class _SetupScreenState extends State<SetupScreen> {
                             elevation: 0,
                             minimumSize: const Size(213, 50),
                           ),
-                          onPressed: _isLoading
-                              ? null
-                              : () async {
-                                  if (_formKey.currentState?.validate() ??
-                                      false) {
-                                    setState(() => _isLoading = true);
-                                    try {
-                                      // TODO: Call API to save profile
-                                      await Future.delayed(
-                                        const Duration(seconds: 1),
-                                      ); // Simulate API call
-
-                                      if (mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Profile updated successfully',
-                                            ),
-                                            backgroundColor: Colors.green,
-                                          ),
-                                        );
-                                      }
-                                    } catch (e) {
-                                      if (mounted) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Failed to update profile: $e',
-                                            ),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                      }
-                                    } finally {
-                                      if (mounted) {
-                                        setState(() => _isLoading = false);
-                                      }
-                                    }
-                                  }
-                                },
+                          onPressed: _isLoading ? null : _handleSubmit,
                           child: _isLoading
                               ? const SizedBox(
                                   width: 24,
