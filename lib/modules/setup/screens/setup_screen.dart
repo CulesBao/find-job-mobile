@@ -97,18 +97,30 @@ class _SetupScreenState extends State<SetupScreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Fullname
-                    Text('Fullname', style: AppTextStyles.label),
+                    // First name
+                    Text('First name', style: AppTextStyles.label),
                     const SizedBox(height: 8),
                     CustomTextField(
                       controller: _nameController,
-                      hint: 'Enter your full name',
+                      hint: 'Enter your first name',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your full name';
+                          return 'Please enter your first name';
                         }
-                        if (value.trim().split(' ').length < 2) {
-                          return 'Please enter both first and last name';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Last name
+                    Text('Last name', style: AppTextStyles.label),
+                    const SizedBox(height: 8),
+                    CustomTextField(
+                      controller: _nameController,
+                      hint: 'Enter your last name',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your last name';
                         }
                         return null;
                       },
@@ -160,9 +172,8 @@ class _SetupScreenState extends State<SetupScreen> {
                       },
                     ),
 
+                    // Gender select
                     const SizedBox(height: 16),
-
-                    // Gender select (simple)
                     Text('Gender', style: AppTextStyles.label),
                     const SizedBox(height: 8),
                     Row(
@@ -188,36 +199,11 @@ class _SetupScreenState extends State<SetupScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    EducationDropdown(
-                      onChanged: (value) {
-                        print('Selected education: $value');
-                      },
-                    ),
+                    // Education select
+                    EducationDropdown(onChanged: (value) {}),
                     const SizedBox(height: 16),
 
-                    // Email
-                    Text('Email address', style: AppTextStyles.label),
-                    const SizedBox(height: 8),
-                    CustomTextField(
-                      controller: _emailController,
-                      hint: 'Enter your email address',
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email address';
-                        }
-                        final emailRegex = RegExp(
-                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                        );
-                        if (!emailRegex.hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Phone
+                    // Phone number
                     Text('Phone number', style: AppTextStyles.label),
                     const SizedBox(height: 8),
                     CustomTextField(
@@ -241,25 +227,10 @@ class _SetupScreenState extends State<SetupScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Location
-
-                    // CustomTextField(
-                    //   controller: _locationController,
-                    //   hint: 'Enter your location',
-                    //   validator: (value) {
-                    //     if (value == null || value.isEmpty) {
-                    //       return 'Please enter your location';
-                    //     }
-                    //     return null;
-                    //   },
-                    // ),
+                    // Location select
                     ProvinceDistrictSelector(
-                      onProvinceChanged: (province) {
-                        print('Province: $province');
-                      },
-                      onDistrictChanged: (district) {
-                        print('District: $district');
-                      },
+                      onProvinceChanged: (province) {},
+                      onDistrictChanged: (district) {},
                     ),
                     const SizedBox(height: 16),
                     SocialLinksSection(
