@@ -53,6 +53,7 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   shared_preferences: ^2.3.3
   intl: ^0.20.2
+  table_calendar: ^3.2.0
 
 dev_dependencies:
   flutter_test:

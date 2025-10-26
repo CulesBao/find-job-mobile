@@ -3,6 +3,7 @@ import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/constants/api_constants.dart';
 import 'package:find_job_mobile/shared/data/models/account_dto.dart';
 import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/auth_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -55,4 +56,21 @@ class AuthHelper {
   /// Get candidate profile from current user
   static CandidateProfileDto? get candidateProfile =>
       currentUser?.candidateProfileDto;
+
+  /// Save employer profile to storage and update user data
+  static Future<void> saveEmployerProfile(EmployerProfileDto profile) async {
+    final prefs = getIt<SharedPreferences>();
+    final user = currentUser;
+
+    if (user != null) {
+      // Update user with employer profile
+      final updatedUser = user.copyWith(employerProfileDto: profile);
+      final userJson = jsonEncode(updatedUser.toJson());
+      await prefs.setString(ApiConstants.userKey, userJson);
+    }
+  }
+
+  /// Get employer profile from current user
+  static EmployerProfileDto? get employerProfile =>
+      currentUser?.employerProfileDto;
 }

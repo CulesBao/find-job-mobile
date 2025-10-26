@@ -52,6 +52,6 @@ const _$EducationEnumMap = {
   Education.highSchool: 'HIGH_SCHOOL',
   Education.intermediate: 'INTERMEDIATE',
   Education.graduation: 'GRADUATION',
-  Education.masterDegree: 'MASTER_GEGREE',
+  Education.masterDegree: 'MASTER_DEGREE',
   Education.bachelorDegree: 'BACHELOR_DEGREE',
 };

@@ -16,13 +16,12 @@ class _EducationDropdownState extends State<EducationDropdown> {
   late String? _selectedValue;
   bool _isFocused = false;
 
-  final List<String> _educationLevels = [
-    'High school',
-    'Intermediate',
-    'Graduation',
-    "Bachelor's degree",
-    "Master's degree",
-    "Doctorate (PhD)",
+  final List<Map<String, String>> _educationLevels = [
+    {'display': 'Graduation', 'value': 'GRADUATION'},
+    {'display': "Bachelor's Degree", 'value': 'BACHELOR_DEGREE'},
+    {'display': "Master's Degree", 'value': 'MASTER_DEGREE'},
+    {'display': 'High School', 'value': 'HIGH_SCHOOL'},
+    {'display': 'Intermediate', 'value': 'INTERMEDIATE'},
   ];
 
   @override
@@ -76,9 +75,9 @@ class _EducationDropdownState extends State<EducationDropdown> {
                   icon: const Icon(Icons.arrow_drop_down),
                   items: _educationLevels.map((level) {
                     return DropdownMenuItem(
-                      value: level,
+                      value: level['value'],
                       child: Text(
-                        level,
+                        level['display']!,
                         style: AppTextStyles.body.copyWith(
                           color: AppColors.textPrimary,
                         ),

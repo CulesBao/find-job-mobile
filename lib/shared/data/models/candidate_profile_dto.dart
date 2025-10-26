@@ -13,7 +13,7 @@ enum Education {
   intermediate,
   @JsonValue('GRADUATION')
   graduation,
-  @JsonValue('MASTER_GEGREE')
+  @JsonValue('MASTER_DEGREE')
   masterDegree,
   @JsonValue('BACHELOR_DEGREE')
   bachelorDegree,
