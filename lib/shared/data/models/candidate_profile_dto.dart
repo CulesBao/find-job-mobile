@@ -13,7 +13,7 @@ enum Education {
   intermediate,
   @JsonValue('GRADUATION')
   graduation,
-  @JsonValue('MASTER_GEGREE')
+  @JsonValue('MASTER_DEGREE')
   masterDegree,
   @JsonValue('BACHELOR_DEGREE')
   bachelorDegree,
@@ -23,7 +23,7 @@ enum Education {
 class CandidateProfileDto with _$CandidateProfileDto {
   const factory CandidateProfileDto({
     required String id,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
     @JsonKey(name: 'avatar_url') String? avatarUrl,
     String? bio,

@@ -15,6 +15,12 @@ class AppTextStyles {
     fontWeight: FontWeight.bold,
   );
 
+  static const TextStyle heading3 = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
+
   static const TextStyle button = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,

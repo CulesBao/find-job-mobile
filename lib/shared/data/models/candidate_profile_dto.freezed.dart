@@ -23,7 +23,7 @@ CandidateProfileDto _$CandidateProfileDtoFromJson(Map<String, dynamic> json) {
 mixin _$CandidateProfileDto {
   String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
-  DateTime get createdAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'avatar_url')
@@ -63,7 +63,7 @@ abstract class $CandidateProfileDtoCopyWith<$Res> {
   @useResult
   $Res call({
     String id,
-    @JsonKey(name: 'created_at') DateTime createdAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
     @JsonKey(name: 'avatar_url') String? avatarUrl,
     String? bio,
@@ -98,7 +98,7 @@ class _$CandidateProfileDtoCopyWithImpl<$Res, $Val extends CandidateProfileDto>
   @override
   $Res call({
     Object? id = null,
-    Object? createdAt = null,
+    Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? avatarUrl = freezed,
     Object? bio = freezed,
@@ -118,10 +118,10 @@ class _$CandidateProfileDtoCopyWithImpl<$Res, $Val extends CandidateProfileDto>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as String,
-            createdAt: null == createdAt
+            createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
+                      as DateTime?,
             updatedAt: freezed == updatedAt
                 ? _value.updatedAt
                 : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -207,7 +207,7 @@ abstract class _$$CandidateProfileDtoImplCopyWith<$Res>
   @useResult
   $Res call({
     String id,
-    @JsonKey(name: 'created_at') DateTime createdAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
     @JsonKey(name: 'avatar_url') String? avatarUrl,
     String? bio,
@@ -243,7 +243,7 @@ class __$$CandidateProfileDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? createdAt = null,
+    Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? avatarUrl = freezed,
     Object? bio = freezed,
@@ -263,10 +263,10 @@ class __$$CandidateProfileDtoImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as String,
-        createdAt: null == createdAt
+        createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
+                  as DateTime?,
         updatedAt: freezed == updatedAt
             ? _value.updatedAt
             : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -325,7 +325,7 @@ class __$$CandidateProfileDtoImplCopyWithImpl<$Res>
 class _$CandidateProfileDtoImpl implements _CandidateProfileDto {
   const _$CandidateProfileDtoImpl({
     required this.id,
-    @JsonKey(name: 'created_at') required this.createdAt,
+    @JsonKey(name: 'created_at') this.createdAt,
     @JsonKey(name: 'updated_at') this.updatedAt,
     @JsonKey(name: 'avatar_url') this.avatarUrl,
     this.bio,
@@ -348,7 +348,7 @@ class _$CandidateProfileDtoImpl implements _CandidateProfileDto {
   final String id;
   @override
   @JsonKey(name: 'created_at')
-  final DateTime createdAt;
+  final DateTime? createdAt;
   @override
   @JsonKey(name: 'updated_at')
   final DateTime? updatedAt;
@@ -465,7 +465,7 @@ class _$CandidateProfileDtoImpl implements _CandidateProfileDto {
 abstract class _CandidateProfileDto implements CandidateProfileDto {
   const factory _CandidateProfileDto({
     required final String id,
-    @JsonKey(name: 'created_at') required final DateTime createdAt,
+    @JsonKey(name: 'created_at') final DateTime? createdAt,
     @JsonKey(name: 'updated_at') final DateTime? updatedAt,
     @JsonKey(name: 'avatar_url') final String? avatarUrl,
     final String? bio,
@@ -488,7 +488,7 @@ abstract class _CandidateProfileDto implements CandidateProfileDto {
   String get id;
   @override
   @JsonKey(name: 'created_at')
-  DateTime get createdAt;
+  DateTime? get createdAt;
   @override
   @JsonKey(name: 'updated_at')
   DateTime? get updatedAt;
