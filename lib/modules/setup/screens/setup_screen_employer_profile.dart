@@ -24,6 +24,7 @@ class _SetupScreenEmployerProfileState
   final _companyNameController = TextEditingController();
   final _establishedInController = TextEditingController();
   final _websiteController = TextEditingController();
+  final _locationController = TextEditingController();
   final _aboutController = TextEditingController();
   final _visionController = TextEditingController();
 
@@ -64,30 +65,16 @@ class _SetupScreenEmployerProfileState
   }
 
   Future<void> _handleSubmit() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    // Validate required fields
-    if (_selectedProvinceCode == null || _selectedDistrictCode == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select province and district'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
     setState(() => _isLoading = true);
 
     try {
       final response = await _employerProfileService.createProfile(
-        companyName: _companyNameController.text,
-        establishedDate: _establishedInController.text,
+        name: _companyNameController.text,
+        establishedIn: _establishedInController.text,
         websiteUrl: _websiteController.text,
         provinceCode: _selectedProvinceCode!,
         districtCode: _selectedDistrictCode!,
+        location: _locationController.text,
         about: _aboutController.text.isNotEmpty ? _aboutController.text : null,
         vision: _visionController.text.isNotEmpty
             ? _visionController.text
@@ -130,6 +117,7 @@ class _SetupScreenEmployerProfileState
     _companyNameController.dispose();
     _establishedInController.dispose();
     _websiteController.dispose();
+    _locationController.dispose();
     _aboutController.dispose();
     _visionController.dispose();
     super.dispose();
@@ -173,6 +161,7 @@ class _SetupScreenEmployerProfileState
                     ContactInfoSection(
                       phoneController:
                           TextEditingController(), // Dummy controller
+                      locationController: _locationController,
                       onProvinceChanged: (provinceCode) {
                         setState(() => _selectedProvinceCode = provinceCode);
                       },
@@ -180,6 +169,7 @@ class _SetupScreenEmployerProfileState
                         setState(() => _selectedDistrictCode = districtCode);
                       },
                       hidePhoneField: true,
+                      showLocationField: true,
                     ),
                     const SizedBox(height: 16),
 

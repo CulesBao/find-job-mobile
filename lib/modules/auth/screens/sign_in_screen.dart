@@ -56,16 +56,9 @@ class _SignInScreenState extends State<SignInScreen> {
           if (mounted) {
             if (AuthHelper.isNewAccount) {
               if (AuthHelper.isCandidate) {
-                context.goNamed('set-up');
+                context.goNamed('candidate-profile');
               } else if (AuthHelper.isEmployer) {
-                debugPrint('New Employer - setup not implemented yet');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Employer profile setup coming soon!'),
-                    backgroundColor: Colors.orange,
-                  ),
-                );
-                // TODO: Navigate to employer setup screen when implemented
+                context.goNamed('employer-profile');
               }
             } else {
               // Existing account - navigate to home

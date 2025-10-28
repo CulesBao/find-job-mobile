@@ -10,7 +10,9 @@ _$CandidateProfileDtoImpl _$$CandidateProfileDtoImplFromJson(
   Map<String, dynamic> json,
 ) => _$CandidateProfileDtoImpl(
   id: json['id'] as String,
-  createdAt: DateTime.parse(json['created_at'] as String),
+  createdAt: json['created_at'] == null
+      ? null
+      : DateTime.parse(json['created_at'] as String),
   updatedAt: json['updated_at'] == null
       ? null
       : DateTime.parse(json['updated_at'] as String),
@@ -33,7 +35,7 @@ Map<String, dynamic> _$$CandidateProfileDtoImplToJson(
   _$CandidateProfileDtoImpl instance,
 ) => <String, dynamic>{
   'id': instance.id,
-  'created_at': instance.createdAt.toIso8601String(),
+  'created_at': instance.createdAt?.toIso8601String(),
   'updated_at': instance.updatedAt?.toIso8601String(),
   'avatar_url': instance.avatarUrl,
   'bio': instance.bio,

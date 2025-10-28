@@ -6,16 +6,20 @@ import 'location_dropdown.dart';
 
 class ContactInfoSection extends StatelessWidget {
   final TextEditingController phoneController;
+  final TextEditingController? locationController;
   final Function(String) onProvinceChanged;
   final Function(String) onDistrictChanged;
   final bool hidePhoneField;
+  final bool showLocationField;
 
   const ContactInfoSection({
     super.key,
     required this.phoneController,
+    this.locationController,
     required this.onProvinceChanged,
     required this.onDistrictChanged,
     this.hidePhoneField = false,
+    this.showLocationField = false,
   });
 
   @override
@@ -42,6 +46,25 @@ class ContactInfoSection extends StatelessWidget {
           onProvinceChanged: onProvinceChanged,
           onDistrictChanged: onDistrictChanged,
         ),
+
+        // Location address field
+        if (showLocationField && locationController != null) ...[
+          const SizedBox(height: 16),
+          Text('Address', style: AppTextStyles.label),
+          const SizedBox(height: 8),
+          CustomTextField(
+            controller: locationController!,
+            hint: 'Enter your company address',
+            maxLines: 2,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter address';
+              }
+              return null;
+            },
+            prefixIcon: Icon(Icons.location_on, color: AppColors.textSecondary),
+          ),
+        ],
       ],
     );
   }

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/dto/create_employer_profile_request.dart';
+import 'package:find_job_mobile/shared/data/dto/update_social_links_request.dart';
 import 'package:find_job_mobile/shared/data/models/base_response.dart';
 import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/employer_profile_repository.dart';
@@ -56,30 +59,62 @@ class EmployerProfileService {
   }
 
   Future<BaseResponse<EmployerProfileDto>> createProfile({
-    required String companyName,
-    required String establishedDate,
+    required String name,
+    required String establishedIn,
     required String websiteUrl,
     required String provinceCode,
     required String districtCode,
+    required String location,
     String? about,
     String? vision,
+    File? logo,
+    List<SocialLinkInput>? socialLinks,
   }) async {
-    final request = CreateEmployerProfileRequest(
-      companyName: companyName.trim(),
-      establishedDate: convertDateFormat(establishedDate.trim()),
-      websiteUrl: websiteUrl.trim(),
-      provinceCode: provinceCode,
-      districtCode: districtCode,
-      about: about?.trim(),
-      vision: vision?.trim(),
-    );
+    try {
+      // Step 1: Create profile
+      final request = CreateEmployerProfileRequest(
+        name: name.trim(),
+        establishedIn: convertDateFormat(establishedIn.trim()),
+        websiteUrl: websiteUrl.trim(),
+        provinceCode: provinceCode,
+        districtCode: districtCode,
+        location: location.trim(),
+        about: about?.trim(),
+        vision: vision?.trim(),
+      );
 
-    final response = await _repository.createProfile(request);
+      final createResponse = await _repository.createProfile(request);
 
-    if (response.data != null) {
-      await AuthHelper.saveEmployerProfile(response.data!);
+      if (createResponse.data == null) {
+        throw Exception('Failed to create profile: ${createResponse.message}');
+      }
+
+      final profileId = createResponse.data!.id;
+
+      // Step 2: Update logo if provided
+      if (logo != null) {
+        await _repository.updateLogo(logo);
+      }
+
+      // Step 3: Update social links if provided
+      if (socialLinks != null && socialLinks.isNotEmpty) {
+        final socialLinksRequest = UpdateSocialLinksRequest(
+          socialLinks: socialLinks,
+        );
+        await _repository.updateSocialLinks(socialLinksRequest);
+      }
+
+      // Step 4: Get complete profile with all data
+      final completeProfile = await _repository.getProfile(profileId);
+
+      if (completeProfile.data != null) {
+        // Step 5: Save to AuthHelper
+        await AuthHelper.saveEmployerProfile(completeProfile.data!);
+      }
+
+      return completeProfile;
+    } catch (e) {
+      rethrow;
     }
-
-    return response;
   }
 }
