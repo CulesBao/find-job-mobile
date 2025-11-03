@@ -10,6 +10,7 @@ import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/modules/setup/services/candidate_profile_service.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../shared/styles/colors.dart';
 import '../../../shared/styles/text_styles.dart';
 import '../widgets/gender_select.dart';
@@ -82,8 +83,11 @@ class _SetupScreenCandidateProfileState
           ),
         );
 
-        // TODO: Navigate to home screen
+        // Navigate to splash screen after profile setup
         await Future.delayed(const Duration(seconds: 1));
+        if (mounted) {
+          context.go('/splash');
+        }
       }
     } catch (e) {
       if (mounted) {

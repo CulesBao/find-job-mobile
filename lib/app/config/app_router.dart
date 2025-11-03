@@ -1,15 +1,44 @@
 import 'package:find_job_mobile/modules/auth/screens/sign_in_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/sign_up_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/verify_screen.dart';
+import 'package:find_job_mobile/modules/find/pages/find_job_page.dart';
+import 'package:find_job_mobile/modules/main/screens/main_screen.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_candidate_profile.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_employer_profile.dart';
+import 'package:find_job_mobile/modules/splash/screens/splash_screen.dart';
 
 import 'package:go_router/go_router.dart';
 import 'route_path.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: RoutePath.employerProfile,
+  initialLocation: RoutePath.splash,
   routes: <GoRoute>[
+    GoRoute(
+      name: 'splash',
+      path: RoutePath.splash,
+      builder: (context, state) => const SplashScreen(),
+    ),
+    GoRoute(
+      name: 'main',
+      path: RoutePath.main,
+      builder: (context, state) {
+        // Parse query parameter to set initial tab
+        final tabParam = state.uri.queryParameters['tab'];
+        int? initialTab;
+
+        if (tabParam == 'dashboard') {
+          initialTab = 0;
+        } else if (tabParam == 'find') {
+          initialTab = 1;
+        } else if (tabParam == 'notification') {
+          initialTab = 2;
+        } else if (tabParam == 'setting') {
+          initialTab = 3;
+        }
+
+        return MainScreen(initialTab: initialTab);
+      },
+    ),
     GoRoute(
       name: 'sign-in',
       path: RoutePath.signIn,
@@ -40,6 +69,11 @@ final GoRouter appRouter = GoRouter(
       name: 'employer-profile',
       path: RoutePath.employerProfile,
       builder: (context, state) => const SetupScreenEmployerProfile(),
+    ),
+    GoRoute(
+      name: 'find-job',
+      path: RoutePath.findJob,
+      builder: (context, state) => const FindJobPage(),
     ),
   ],
 );

@@ -8,6 +8,7 @@ import 'package:find_job_mobile/modules/setup/widgets/save_button.dart';
 import 'package:find_job_mobile/modules/setup/widgets/vision_field.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../shared/styles/colors.dart';
 
 class SetupScreenEmployerProfile extends StatefulWidget {
@@ -90,8 +91,11 @@ class _SetupScreenEmployerProfileState
             ),
           );
 
-          // TODO: Navigate to home screen
+          // Navigate to splash screen after profile setup
           await Future.delayed(const Duration(seconds: 1));
+          if (mounted) {
+            context.go('/splash');
+          }
         } else {
           throw Exception(response.message);
         }
