@@ -61,15 +61,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 context.goNamed('employer-profile');
               }
             } else {
-              // Existing account - navigate to home
-              debugPrint('Existing account - navigate to home');
-              // TODO: Navigate to home screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Welcome back! Home screen coming soon.'),
-                  backgroundColor: Colors.blue,
-                ),
-              );
+              // Existing account - navigate to splash screen
+              context.go('/splash');
             }
           }
         }
