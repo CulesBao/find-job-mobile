@@ -9,13 +9,10 @@ class ErrorInterceptor extends Interceptor {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        errorMessage = 'Connection timeout. Please try again.';
+        errorMessage = 'Connection timeout';
         break;
       case DioExceptionType.badResponse:
-        errorMessage = _handleStatusCode(err.response?.statusCode);
-        break;
-      case DioExceptionType.cancel:
-        errorMessage = 'Request was cancelled';
+        errorMessage = _extractErrorMessage(err.response);
         break;
       case DioExceptionType.connectionError:
         errorMessage = 'No internet connection';
@@ -27,24 +24,17 @@ class ErrorInterceptor extends Interceptor {
     return handler.next(err.copyWith(error: errorMessage));
   }
 
-  String _handleStatusCode(int? statusCode) {
-    switch (statusCode) {
-      case 400:
-        return 'Bad request';
-      case 401:
-        return 'Unauthorized';
-      case 403:
-        return 'Forbidden';
-      case 404:
-        return 'Not found';
-      case 500:
-        return 'Internal server error';
-      case 502:
-        return 'Bad gateway';
-      case 503:
-        return 'Service unavailable';
-      default:
-        return 'Something went wrong';
+  String _extractErrorMessage(Response? response) {
+    if (response?.data != null) {
+      try {
+        if (response!.data is Map<String, dynamic>) {
+          final message = response.data['message'];
+          if (message != null && message.toString().isNotEmpty) {
+            return message.toString();
+          }
+        }
+      } catch (_) {}
     }
+    return 'Something went wrong';
   }
 }
