@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/utils/message_helper.dart';
 import '../../../shared/styles/colors.dart';
 import '../../../shared/styles/text_styles.dart';
 import '../../../shared/data/repositories/auth_repository.dart';
@@ -87,11 +88,10 @@ class _VerifyScreenState extends State<VerifyScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Verification failed: ${e.toString()}'),
-            backgroundColor: AppColors.error,
-          ),
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage: 'Verification failed',
         );
       }
     } finally {

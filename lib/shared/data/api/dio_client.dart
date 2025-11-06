@@ -23,7 +23,6 @@ class DioClient {
       ),
     );
 
-    // Add interceptors
     if (prefs != null) {
       _dio.interceptors.add(AuthInterceptor(prefs!));
     }
@@ -34,10 +33,7 @@ class DioClient {
     if (AppConstants.isDevelopment) {
       _dio.interceptors.add(
         PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
           responseBody: true,
-          responseHeader: false,
           error: true,
           compact: true,
           maxWidth: 90,

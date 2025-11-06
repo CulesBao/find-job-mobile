@@ -2,6 +2,7 @@ import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/dto/login_request.dart';
 import 'package:find_job_mobile/shared/data/repositories/auth_repository.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
+import 'package:find_job_mobile/shared/utils/message_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
@@ -67,13 +68,11 @@ class _SignInScreenState extends State<SignInScreen> {
           }
         }
       } catch (e) {
-        debugPrint('Login error: $e');
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Sign in failed: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
+          MessageHelper.showError(
+            context,
+            e,
+            fallbackMessage: 'Sign in failed',
           );
         }
       } finally {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/utils/message_helper.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/social_sign_up_button.dart';
 import '../../../shared/styles/colors.dart';
@@ -70,11 +71,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Registration failed: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
+          MessageHelper.showError(
+            context,
+            e,
+            fallbackMessage: 'Registration failed',
           );
         }
       } finally {
