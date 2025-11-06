@@ -106,19 +106,29 @@ class _SetupScreenCandidateProfileState
   }
 
   Future<void> _pickImageFromCamera() async {
+    // Close bottom sheet FIRST (always, even if user cancels)
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+
     try {
       final File? image = await ImagePickerHelper.pickFromCamera(
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
+        maxWidth: 300,
+        maxHeight: 300,
+        imageQuality: 60,
       );
 
-      if (image != null) {
-        setState(() {
-          _avatarFile = image;
-        });
+      print('📸 Camera image picked: ${image?.path}'); // Debug log
+
+      if (image != null && mounted) {
+        // Wait a frame before setState
+        await Future.delayed(const Duration(milliseconds: 50));
+
         if (mounted) {
-          Navigator.pop(context); // Close bottom sheet
+          setState(() {
+            _avatarFile = image;
+            print('✅ Avatar file set: ${_avatarFile?.path}'); // Debug log
+          });
         }
       }
     } on PermissionDeniedException catch (e) {
@@ -131,6 +141,7 @@ class _SetupScreenCandidateProfileState
         );
       }
     } catch (e) {
+      print('❌ Error picking from camera: $e'); // Debug log
       if (mounted) {
         MessageHelper.showError(
           context,
@@ -142,19 +153,29 @@ class _SetupScreenCandidateProfileState
   }
 
   Future<void> _pickImageFromGallery() async {
+    // Close bottom sheet FIRST (always, even if user cancels)
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+
     try {
       final File? image = await ImagePickerHelper.pickFromGallery(
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 85,
+        maxWidth: 300,
+        maxHeight: 300,
+        imageQuality: 60,
       );
 
-      if (image != null) {
-        setState(() {
-          _avatarFile = image;
-        });
+      print('🖼️ Gallery image picked: ${image?.path}'); // Debug log
+
+      if (image != null && mounted) {
+        // Wait a frame before setState
+        await Future.delayed(const Duration(milliseconds: 50));
+
         if (mounted) {
-          Navigator.pop(context); // Close bottom sheet
+          setState(() {
+            _avatarFile = image;
+            print('✅ Avatar file set: ${_avatarFile?.path}'); // Debug log
+          });
         }
       }
     } on PermissionDeniedException catch (e) {
@@ -167,6 +188,7 @@ class _SetupScreenCandidateProfileState
         );
       }
     } catch (e) {
+      print('❌ Error picking from gallery: $e'); // Debug log
       if (mounted) {
         MessageHelper.showError(
           context,
@@ -214,6 +236,7 @@ class _SetupScreenCandidateProfileState
               name: AuthHelper.currentUser?.email ?? 'New User',
               location: 'Setup your profile',
               biography: _biographyController.text,
+              avatarFile: _avatarFile,
               onAvatarTap: () => _showChangeAvatarSheet(context),
               onBiographyTap: () => _showAddBiographySheet(context),
               onSettingsTap: () {},

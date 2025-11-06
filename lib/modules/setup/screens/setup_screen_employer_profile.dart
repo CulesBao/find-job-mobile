@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:find_job_mobile/modules/setup/services/employer_profile_service.dart';
 import 'package:find_job_mobile/modules/setup/widgets/avatar_sheet.dart';
 import 'package:find_job_mobile/modules/setup/widgets/biography_sheet.dart';
@@ -7,6 +9,8 @@ import 'package:find_job_mobile/modules/setup/widgets/header_section.dart';
 import 'package:find_job_mobile/modules/setup/widgets/save_button.dart';
 import 'package:find_job_mobile/modules/setup/widgets/vision_field.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
+import 'package:find_job_mobile/shared/utils/image_picker_helper.dart';
+import 'package:find_job_mobile/shared/utils/message_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/styles/colors.dart';
@@ -32,6 +36,7 @@ class _SetupScreenEmployerProfileState
   bool _isLoading = false;
   String? _selectedProvinceCode;
   String? _selectedDistrictCode;
+  File? _logoFile;
   final _employerProfileService = EmployerProfileService();
 
   @override
@@ -56,13 +61,95 @@ class _SetupScreenEmployerProfileState
   void _showChangeLogoSheet(BuildContext context) {
     AvatarSheet.show(
       context,
-      onCameraTap: () {
-        // TODO: Implement camera capture
-      },
-      onGalleryTap: () {
-        // TODO: Implement gallery picker
-      },
+      onCameraTap: _pickImageFromCamera,
+      onGalleryTap: _pickImageFromGallery,
     );
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    // Close bottom sheet FIRST (always, even if user cancels)
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+
+    try {
+      final File? image = await ImagePickerHelper.pickFromCamera(
+        maxWidth: 300,
+        maxHeight: 300,
+        imageQuality: 60,
+      );
+
+      if (image != null && mounted) {
+        // Wait a frame before setState
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        if (mounted) {
+          setState(() {
+            _logoFile = image;
+          });
+        }
+      }
+    } on PermissionDeniedException catch (e) {
+      if (mounted) {
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage:
+              'Camera permission denied. Please enable it in settings.',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage: 'Failed to capture image',
+        );
+      }
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    // Close bottom sheet FIRST (always, even if user cancels)
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+
+    try {
+      final File? image = await ImagePickerHelper.pickFromGallery(
+        maxWidth: 300,
+        maxHeight: 300,
+        imageQuality: 60,
+      );
+
+      if (image != null && mounted) {
+        // Wait a frame before setState
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        if (mounted) {
+          setState(() {
+            _logoFile = image;
+          });
+        }
+      }
+    } on PermissionDeniedException catch (e) {
+      if (mounted) {
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage:
+              'Gallery permission denied. Please enable it in settings.',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage: 'Failed to pick image',
+        );
+      }
+    }
   }
 
   Future<void> _handleSubmit() async {
@@ -138,6 +225,7 @@ class _SetupScreenEmployerProfileState
               name: AuthHelper.currentUser?.email ?? 'New Company',
               location: 'Setup your company profile',
               biography: _aboutController.text,
+              avatarFile: _logoFile,
               onAvatarTap: () => _showChangeLogoSheet(context),
               onBiographyTap: () => _showAddAboutSheet(context),
               onSettingsTap: () {},
