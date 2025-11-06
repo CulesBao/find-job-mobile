@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Navigate to main screen with Find tab selected after animation
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        context.go('/auth/sign-in');
+        context.go('/main?tab=find');
       }
     });
   }
