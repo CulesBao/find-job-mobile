@@ -63,7 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
               }
             } else {
               // Existing account - navigate to splash screen
-              context.go('/splash');
+              context.go('/');
             }
           }
         }

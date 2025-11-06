@@ -1,5 +1,6 @@
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
+import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,12 +42,25 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to main screen with Find tab selected after animation
+    // Navigate after animation based on login status
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        context.go('/main?tab=find');
+        _navigateToNextScreen();
       }
     });
+  }
+
+  void _navigateToNextScreen() {
+    // Check if user is logged in
+    final isLoggedIn = AuthHelper.isLoggedIn;
+    
+    if (isLoggedIn) {
+      // User is logged in, navigate to main screen
+      context.go('/main?tab=dashboard');
+    } else {
+      // User is not logged in, navigate to sign-in screen
+      context.go('/auth/sign-in');
+    }
   }
 
   @override

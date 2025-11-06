@@ -87,7 +87,7 @@ class _SetupScreenCandidateProfileState
         // Navigate to splash screen after profile setup
         await Future.delayed(const Duration(seconds: 1));
         if (mounted) {
-          context.go('/splash');
+          context.go('/');
         }
       }
     } catch (e) {
