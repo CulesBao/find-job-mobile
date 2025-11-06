@@ -7,57 +7,19 @@ import 'package:find_job_mobile/shared/data/models/base_response.dart';
 import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/employer_profile_repository.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
+import 'package:find_job_mobile/shared/utils/format_helper.dart';
 
 class EmployerProfileService {
   final _repository = getIt<EmployerProfileRepository>();
 
-  String convertDateFormat(String dateStr) {
-    // Convert "DD MMM YYYY" to "YYYY-MM-DD"
-    try {
-      final parts = dateStr.split(' ');
-      if (parts.length != 3) return dateStr;
-
-      final day = parts[0].padLeft(2, '0');
-      const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
-      final monthIndex = months.indexOf(parts[1]) + 1;
-      if (monthIndex == 0) return dateStr; // Invalid month
-      final month = monthIndex.toString().padLeft(2, '0');
-      final year = parts[2];
-
-      // Validate date components
-      final dayInt = int.tryParse(day);
-      final yearInt = int.tryParse(year);
-      if (dayInt == null ||
-          yearInt == null ||
-          dayInt < 1 ||
-          dayInt > 31 ||
-          yearInt < 1900) {
-        return dateStr;
-      }
-
-      // Create DateTime object to validate date
-      final date = DateTime.tryParse('$year-$month-$day');
-      if (date == null) return dateStr;
-
-      return '$year-$month-$day';
-    } catch (e) {
-      return dateStr;
-    }
-  }
-
+  /// Create complete employer profile with sequential API calls
+  ///
+  /// Flow:
+  /// 1. POST /employer-profile/ → Get profile ID
+  /// 2. PUT /employer-profile/update-logo (if logo provided)
+  /// 3. PUT /employer-profile/social-links (if social links provided)
+  /// 4. GET /employer-profile/{id} → Get complete profile
+  /// 5. Save to AuthHelper
   Future<BaseResponse<EmployerProfileDto>> createProfile({
     required String name,
     required String establishedIn,
@@ -67,54 +29,62 @@ class EmployerProfileService {
     required String location,
     String? about,
     String? vision,
-    File? logo,
+    File? logoFile,
     List<SocialLinkInput>? socialLinks,
   }) async {
-    try {
-      // Step 1: Create profile
-      final request = CreateEmployerProfileRequest(
-        name: name.trim(),
-        establishedIn: convertDateFormat(establishedIn.trim()),
-        websiteUrl: websiteUrl.trim(),
-        provinceCode: provinceCode,
-        districtCode: districtCode,
-        location: location.trim(),
-        about: about?.trim(),
-        vision: vision?.trim(),
-      );
+    // Step 1: Create basic profile - MUST succeed to get ID
+    final request = CreateEmployerProfileRequest(
+      name: name.trim(),
+      establishedIn: FormatHelper.convertDateFormat(establishedIn.trim()),
+      websiteUrl: websiteUrl.trim(),
+      provinceCode: provinceCode,
+      districtCode: districtCode,
+      location: location.trim(),
+      about: about?.trim(),
+      vision: vision?.trim(),
+    );
 
-      final createResponse = await _repository.createProfile(request);
+    final createResponse = await _repository.createProfile(request);
 
-      if (createResponse.data == null) {
-        throw Exception('Failed to create profile: ${createResponse.message}');
+    if (createResponse.data == null) {
+      throw Exception('Failed to create profile');
+    }
+
+    final profileId = createResponse.data!.id;
+
+    // Step 2: Update logo if provided
+    if (logoFile != null) {
+      try {
+        await _repository.updateLogo(logoFile);
+      } catch (e) {
+        // Continue even if logo upload fails
+        print('Failed to upload logo: $e');
       }
+    }
 
-      final profileId = createResponse.data!.id;
-
-      // Step 2: Update logo if provided
-      if (logo != null) {
-        await _repository.updateLogo(logo);
-      }
-
-      // Step 3: Update social links if provided
-      if (socialLinks != null && socialLinks.isNotEmpty) {
+    // Step 3: Update social links if provided
+    if (socialLinks != null && socialLinks.isNotEmpty) {
+      try {
         final socialLinksRequest = UpdateSocialLinksRequest(
           socialLinks: socialLinks,
         );
         await _repository.updateSocialLinks(socialLinksRequest);
+      } catch (e) {
+        // Continue even if social links update fails
+        print('Failed to update social links: $e');
       }
-
-      // Step 4: Get complete profile with all data
-      final completeProfile = await _repository.getProfile(profileId);
-
-      if (completeProfile.data != null) {
-        // Step 5: Save to AuthHelper
-        await AuthHelper.saveEmployerProfile(completeProfile.data!);
-      }
-
-      return completeProfile;
-    } catch (e) {
-      rethrow;
     }
+
+    // Step 4: Get complete profile with all updates
+    final profileResponse = await _repository.getProfile(profileId);
+
+    if (profileResponse.data == null) {
+      throw Exception('Failed to fetch complete profile');
+    }
+
+    // Step 5: Save to AuthHelper for app-wide access
+    await AuthHelper.saveEmployerProfile(profileResponse.data!);
+
+    return profileResponse;
   }
 }

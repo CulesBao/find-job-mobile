@@ -118,8 +118,6 @@ class _SetupScreenCandidateProfileState
         imageQuality: 60,
       );
 
-      print('📸 Camera image picked: ${image?.path}'); // Debug log
-
       if (image != null && mounted) {
         // Wait a frame before setState
         await Future.delayed(const Duration(milliseconds: 50));
@@ -127,7 +125,6 @@ class _SetupScreenCandidateProfileState
         if (mounted) {
           setState(() {
             _avatarFile = image;
-            print('✅ Avatar file set: ${_avatarFile?.path}'); // Debug log
           });
         }
       }
@@ -141,7 +138,6 @@ class _SetupScreenCandidateProfileState
         );
       }
     } catch (e) {
-      print('❌ Error picking from camera: $e'); // Debug log
       if (mounted) {
         MessageHelper.showError(
           context,
@@ -153,7 +149,6 @@ class _SetupScreenCandidateProfileState
   }
 
   Future<void> _pickImageFromGallery() async {
-    // Close bottom sheet FIRST (always, even if user cancels)
     if (mounted) {
       Navigator.of(context, rootNavigator: true).pop();
     }
@@ -165,8 +160,6 @@ class _SetupScreenCandidateProfileState
         imageQuality: 60,
       );
 
-      print('🖼️ Gallery image picked: ${image?.path}'); // Debug log
-
       if (image != null && mounted) {
         // Wait a frame before setState
         await Future.delayed(const Duration(milliseconds: 50));
@@ -174,7 +167,6 @@ class _SetupScreenCandidateProfileState
         if (mounted) {
           setState(() {
             _avatarFile = image;
-            print('✅ Avatar file set: ${_avatarFile?.path}'); // Debug log
           });
         }
       }
@@ -188,7 +180,6 @@ class _SetupScreenCandidateProfileState
         );
       }
     } catch (e) {
-      print('❌ Error picking from gallery: $e'); // Debug log
       if (mounted) {
         MessageHelper.showError(
           context,
