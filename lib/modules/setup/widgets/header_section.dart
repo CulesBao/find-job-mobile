@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../../shared/styles/colors.dart';
 import '../../../shared/styles/text_styles.dart';
@@ -10,6 +12,7 @@ class HeaderSection extends StatelessWidget {
   final VoidCallback onBiographyTap;
   final VoidCallback onSettingsTap;
   final VoidCallback onShareTap;
+  final File? avatarFile;
 
   const HeaderSection({
     super.key,
@@ -20,6 +23,7 @@ class HeaderSection extends StatelessWidget {
     required this.onBiographyTap,
     required this.onSettingsTap,
     required this.onShareTap,
+    this.avatarFile,
   });
 
   @override
@@ -66,11 +70,20 @@ class HeaderSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: Stack(
                     children: [
-                      Icon(
-                        Icons.account_circle_rounded,
-                        size: 60,
-                        color: AppColors.primary,
-                      ),
+                      // Display image
+                      if (avatarFile != null)
+                        Image.file(
+                          avatarFile!,
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                        )
+                      else
+                        Icon(
+                          Icons.account_circle_rounded,
+                          size: 60,
+                          color: AppColors.primary,
+                        ),
                       Positioned.fill(
                         child: Material(
                           color: Colors.transparent,

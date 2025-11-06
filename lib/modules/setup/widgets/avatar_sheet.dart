@@ -84,10 +84,7 @@ class AvatarSheet extends StatelessWidget {
                 child: _ImageSourceButton(
                   icon: Icons.photo_camera_rounded,
                   label: 'Camera',
-                  onTap: () {
-                    Navigator.pop(context);
-                    onCameraTap();
-                  },
+                  onTap: onCameraTap, // Không pop ở đây, để callback tự xử lý
                 ),
               ),
               const SizedBox(width: 12),
@@ -95,10 +92,7 @@ class AvatarSheet extends StatelessWidget {
                 child: _ImageSourceButton(
                   icon: Icons.photo_library_rounded,
                   label: 'Gallery',
-                  onTap: () {
-                    Navigator.pop(context);
-                    onGalleryTap();
-                  },
+                  onTap: onGalleryTap, // Không pop ở đây, để callback tự xử lý
                 ),
               ),
             ],

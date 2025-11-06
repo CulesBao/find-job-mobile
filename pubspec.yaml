@@ -54,6 +54,9 @@ dependencies:
   shared_preferences: ^2.3.3
   intl: ^0.20.2
   table_calendar: ^3.2.0
+  image_picker: ^1.0.7
+  permission_handler: ^11.3.0
+  device_info_plus: ^12.2.0
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:find_job_mobile/modules/setup/widgets/avatar_sheet.dart';
 import 'package:find_job_mobile/modules/setup/widgets/biography_sheet.dart';
 import 'package:find_job_mobile/modules/setup/widgets/contact_info_section.dart';
@@ -7,6 +9,8 @@ import 'package:find_job_mobile/modules/setup/widgets/personal_info_section.dart
 import 'package:find_job_mobile/modules/setup/widgets/save_button.dart';
 import 'package:find_job_mobile/modules/setup/widgets/social_link_section.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
+import 'package:find_job_mobile/shared/utils/message_helper.dart';
+import 'package:find_job_mobile/shared/utils/image_picker_helper.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/modules/setup/services/candidate_profile_service.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +42,7 @@ class _SetupScreenCandidateProfileState
   String? _selectedDistrictCode;
   String? _selectedEducation;
   List<Map<String, String>> _socialLinks = [];
+  File? _avatarFile;
 
   @override
   void initState() {
@@ -72,16 +77,12 @@ class _SetupScreenCandidateProfileState
         phoneNumber: _phoneController.text.isNotEmpty
             ? _phoneController.text
             : null,
+        avatarFile: _avatarFile,
         socialLinks: _socialLinks,
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message),
-            backgroundColor: Colors.green,
-          ),
-        );
+        MessageHelper.showSuccess(context, response.message);
 
         // Navigate to splash screen after profile setup
         await Future.delayed(const Duration(seconds: 1));
@@ -91,16 +92,100 @@ class _SetupScreenCandidateProfileState
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create profile: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage: 'Failed to create profile',
         );
       }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    // Close bottom sheet FIRST (always, even if user cancels)
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+
+    try {
+      final File? image = await ImagePickerHelper.pickFromCamera(
+        maxWidth: 300,
+        maxHeight: 300,
+        imageQuality: 60,
+      );
+
+      if (image != null && mounted) {
+        // Wait a frame before setState
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        if (mounted) {
+          setState(() {
+            _avatarFile = image;
+          });
+        }
+      }
+    } on PermissionDeniedException catch (e) {
+      if (mounted) {
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage:
+              'Camera permission denied. Please enable it in settings.',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage: 'Failed to capture image',
+        );
+      }
+    }
+  }
+
+  Future<void> _pickImageFromGallery() async {
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+
+    try {
+      final File? image = await ImagePickerHelper.pickFromGallery(
+        maxWidth: 300,
+        maxHeight: 300,
+        imageQuality: 60,
+      );
+
+      if (image != null && mounted) {
+        // Wait a frame before setState
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        if (mounted) {
+          setState(() {
+            _avatarFile = image;
+          });
+        }
+      }
+    } on PermissionDeniedException catch (e) {
+      if (mounted) {
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage:
+              'Gallery permission denied. Please enable it in settings.',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage: 'Failed to pick image',
+        );
       }
     }
   }
@@ -116,12 +201,8 @@ class _SetupScreenCandidateProfileState
   void _showChangeAvatarSheet(BuildContext context) {
     AvatarSheet.show(
       context,
-      onCameraTap: () {
-        // TODO: Implement camera capture
-      },
-      onGalleryTap: () {
-        // TODO: Implement gallery picker
-      },
+      onCameraTap: _pickImageFromCamera,
+      onGalleryTap: _pickImageFromGallery,
     );
   }
 
@@ -146,6 +227,7 @@ class _SetupScreenCandidateProfileState
               name: AuthHelper.currentUser?.email ?? 'New User',
               location: 'Setup your profile',
               biography: _biographyController.text,
+              avatarFile: _avatarFile,
               onAvatarTap: () => _showChangeAvatarSheet(context),
               onBiographyTap: () => _showAddBiographySheet(context),
               onSettingsTap: () {},
