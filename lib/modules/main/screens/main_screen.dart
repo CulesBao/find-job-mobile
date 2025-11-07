@@ -1,6 +1,7 @@
 import 'package:find_job_mobile/modules/find/pages/find_main_page.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/dashboard_main_page.dart';
 import 'package:find_job_mobile/modules/setting/pages/setting_page.dart';
+import 'package:find_job_mobile/modules/chat/pages/chat_with_ai_page.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
@@ -28,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const DashboardScreen(),
     const FindMainPage(),
-    const FindMainPage(),
+    const ChatWithAiPage(),
     const SettingScreen(),
   ];
 
@@ -37,7 +38,10 @@ class _MainScreenState extends State<MainScreen> {
     final isEmployer = AuthHelper.isEmployer;
 
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,

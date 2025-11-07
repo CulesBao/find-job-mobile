@@ -10,12 +10,16 @@ class ChatWithAiPage extends StatefulWidget {
   State<ChatWithAiPage> createState() => _ChatWithAiPageState();
 }
 
-class _ChatWithAiPageState extends State<ChatWithAiPage> {
+class _ChatWithAiPageState extends State<ChatWithAiPage>
+    with AutomaticKeepAliveClientMixin {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
   final ChatService _chatService = ChatService();
   bool _isLoading = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -54,10 +58,8 @@ class _ChatWithAiPageState extends State<ChatWithAiPage> {
     _scrollToBottom();
 
     try {
-      // Call API
       final response = await _chatService.sendMessage(message);
       
-      // Add AI response
       if (mounted) {
         setState(() {
           _messages.add(ChatMessage(
@@ -87,15 +89,13 @@ class _ChatWithAiPageState extends State<ChatWithAiPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primary,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Container(
