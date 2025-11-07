@@ -1,5 +1,6 @@
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
+import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,12 +42,21 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to main screen with Find tab selected after animation
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
-        context.go('/main?tab=find');
+        _navigateToNextScreen();
       }
     });
+  }
+
+  void _navigateToNextScreen() {
+    final isLoggedIn = AuthHelper.isLoggedIn;
+    
+    if (isLoggedIn) {
+      context.go('/main?tab=dashboard');
+    } else {
+      context.go('/auth/sign-in');
+    }
   }
 
   @override
@@ -92,7 +102,6 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                     const SizedBox(height: 32),
-                    // App Name
                     Text(
                       'Find Job',
                       style: AppTextStyles.heading1.copyWith(
@@ -111,7 +120,6 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                     const SizedBox(height: 60),
-                    // Loading indicator
                     SizedBox(
                       width: 40,
                       height: 40,
