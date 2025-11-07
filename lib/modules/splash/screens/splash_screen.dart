@@ -42,7 +42,6 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate after animation based on login status
     Future.delayed(const Duration(milliseconds: 2500), () {
       if (mounted) {
         _navigateToNextScreen();
@@ -51,14 +50,11 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _navigateToNextScreen() {
-    // Check if user is logged in
     final isLoggedIn = AuthHelper.isLoggedIn;
     
     if (isLoggedIn) {
-      // User is logged in, navigate to main screen
       context.go('/main?tab=dashboard');
     } else {
-      // User is not logged in, navigate to sign-in screen
       context.go('/auth/sign-in');
     }
   }
@@ -106,7 +102,6 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                     const SizedBox(height: 32),
-                    // App Name
                     Text(
                       'Find Job',
                       style: AppTextStyles.heading1.copyWith(
@@ -125,7 +120,6 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                     const SizedBox(height: 60),
-                    // Loading indicator
                     SizedBox(
                       width: 40,
                       height: 40,

@@ -38,27 +38,6 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       body: _screens[_currentIndex],
-      floatingActionButton: isEmployer
-          ? FloatingActionButton(
-              onPressed: () {
-                // TODO: Handle add action (e.g., create new job post)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Create new job post'),
-                    duration: Duration(seconds: 1),
-                  ),
-                );
-              },
-              backgroundColor: AppColors.primary,
-              elevation: 8,
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 32,
-              ),
-            )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -88,8 +67,45 @@ class _MainScreenState extends State<MainScreen> {
                   activeIcon: Icons.work,
                   label: 'Find',
                 ),
-                // Spacer for floating action button (only for employer)
-                if (isEmployer) const SizedBox(width: 56),
+                if (isEmployer)
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        // TODO: Handle add action (e.g., create new job post)
+                        print('Add button tapped');
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 28,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Add',
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textTertiary,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 _buildNavItem(
                   index: 2,
                   icon: Icons.chat_outlined,
@@ -157,72 +173,3 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-
-// Placeholder Screens
-
-
-class NotificationScreen extends StatelessWidget {
-  const NotificationScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Notifications',
-                style: AppTextStyles.heading1.copyWith(
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Icon(
-                          Icons.notifications,
-                          size: 50,
-                          color: AppColors.accent,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'No Notifications',
-                        style: AppTextStyles.heading2.copyWith(
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'You\'re all caught up!',
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-

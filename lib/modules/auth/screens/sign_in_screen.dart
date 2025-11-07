@@ -62,8 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 context.goNamed('employer-profile');
               }
             } else {
-              // Existing account - navigate to splash screen
-              context.go('/');
+              context.go('/main?tab=dashboard');
             }
           }
         }
