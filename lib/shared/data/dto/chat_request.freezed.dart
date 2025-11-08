@@ -21,7 +21,6 @@ ChatRequest _$ChatRequestFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ChatRequest {
-  @JsonKey(name: 'message')
   String get message => throw _privateConstructorUsedError;
 
   /// Serializes this ChatRequest to a JSON map.
@@ -41,7 +40,7 @@ abstract class $ChatRequestCopyWith<$Res> {
     $Res Function(ChatRequest) then,
   ) = _$ChatRequestCopyWithImpl<$Res, ChatRequest>;
   @useResult
-  $Res call({@JsonKey(name: 'message') String message});
+  $Res call({String message});
 }
 
 /// @nodoc
@@ -80,7 +79,7 @@ abstract class _$$ChatRequestImplCopyWith<$Res>
   ) = __$$ChatRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@JsonKey(name: 'message') String message});
+  $Res call({String message});
 }
 
 /// @nodoc
@@ -111,13 +110,12 @@ class __$$ChatRequestImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ChatRequestImpl implements _ChatRequest {
-  const _$ChatRequestImpl({@JsonKey(name: 'message') required this.message});
+  const _$ChatRequestImpl({required this.message});
 
   factory _$ChatRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatRequestImplFromJson(json);
 
   @override
-  @JsonKey(name: 'message')
   final String message;
 
   @override
@@ -152,15 +150,13 @@ class _$ChatRequestImpl implements _ChatRequest {
 }
 
 abstract class _ChatRequest implements ChatRequest {
-  const factory _ChatRequest({
-    @JsonKey(name: 'message') required final String message,
-  }) = _$ChatRequestImpl;
+  const factory _ChatRequest({required final String message}) =
+      _$ChatRequestImpl;
 
   factory _ChatRequest.fromJson(Map<String, dynamic> json) =
       _$ChatRequestImpl.fromJson;
 
   @override
-  @JsonKey(name: 'message')
   String get message;
 
   /// Create a copy of ChatRequest

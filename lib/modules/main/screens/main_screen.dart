@@ -2,6 +2,7 @@ import 'package:find_job_mobile/modules/find/pages/find_main_page.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/dashboard_main_page.dart';
 import 'package:find_job_mobile/modules/setting/pages/setting_page.dart';
 import 'package:find_job_mobile/modules/chat/pages/chat_with_ai_page.dart';
+import 'package:find_job_mobile/modules/post/pages/post_job_page.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
@@ -74,9 +75,17 @@ class _MainScreenState extends State<MainScreen> {
                 if (isEmployer)
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        // TODO: Handle add action (e.g., create new job post)
-                        print('Add button tapped');
+                      onTap: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PostJobPage(),
+                          ),
+                        );
+                        // Refresh job list if job was posted successfully
+                        if (result == true) {
+                          // TODO: Refresh employer's job list
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8),
