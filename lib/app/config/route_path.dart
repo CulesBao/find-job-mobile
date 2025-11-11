@@ -14,4 +14,5 @@ class RoutePath {
 
   // Find screens routes
   static const String findJob = '/find/job';
+  static const String jobDetails = '/find/job/:jobId';
 }
