@@ -2,6 +2,7 @@ import 'package:find_job_mobile/modules/find/models/job_card_data.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class JobCard extends StatelessWidget {
   const JobCard({super.key, required this.data});
@@ -10,28 +11,34 @@ class JobCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(),
-          const SizedBox(height: 16),
-          _buildTags(),
-          const SizedBox(height: 20),
-          _buildFooter(),
-        ],
+    return GestureDetector(
+      onTap: () {
+        // Navigate to job details page
+        context.pushNamed('job-details', pathParameters: {'jobId': '1'});
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 16),
+            _buildTags(),
+            const SizedBox(height: 20),
+            _buildFooter(context),
+          ],
+        ),
       ),
     );
   }
@@ -116,7 +123,7 @@ class JobCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(BuildContext context) {
     return Row(
       children: [
         Text(
@@ -132,7 +139,10 @@ class JobCard extends StatelessWidget {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           ),
-          onPressed: () {},
+          onPressed: () {
+            // Navigate to job details page
+            context.pushNamed('job-details', pathParameters: {'jobId': '1'});
+          },
           child: Text(
             'Apply now',
             style: AppTextStyles.button.copyWith(color: Colors.white),

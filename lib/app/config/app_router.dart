@@ -2,6 +2,7 @@ import 'package:find_job_mobile/modules/auth/screens/sign_in_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/sign_up_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/verify_screen.dart';
 import 'package:find_job_mobile/modules/find/pages/find_job_page.dart';
+import 'package:find_job_mobile/modules/job_details/pages/job_details_page.dart';
 import 'package:find_job_mobile/modules/main/screens/main_screen.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_candidate_profile.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_employer_profile.dart';
@@ -74,6 +75,15 @@ final GoRouter appRouter = GoRouter(
       name: 'find-job',
       path: RoutePath.findJob,
       builder: (context, state) => const FindJobPage(),
+    ),
+    GoRoute(
+      name: 'job-details',
+      path: RoutePath.jobDetails,
+      builder: (context, state) {
+        final jobId = state.pathParameters['jobId'];
+        final extra = state.extra as Map<String, dynamic>?;
+        return JobDetailsPage(jobId: jobId, job: extra?['job']);
+      },
     ),
   ],
 );
