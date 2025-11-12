@@ -122,9 +122,9 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: Text(
-                    'Giới thiệu về ứng dụng',
+                    'Pick up where you left off. Your next internship or career step awaits.',
                     style: AppTextStyles.body.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.primary,
                     ),
                     textAlign: TextAlign.center,
                   ),
