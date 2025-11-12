@@ -88,7 +88,7 @@ enum Currency {
 class JobDto with _$JobDto {
   const factory JobDto({
     required String id,
-    @JsonKey(name: 'created_at') required String createdAt,
+    @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
     String? description,
     String? education,
@@ -101,8 +101,9 @@ class JobDto with _$JobDto {
     required String title,
     @JsonKey(name: 'employer_id') String? employerId,
     Currency? currency,
-    @JsonKey(name: 'employer_name') required String employerName,
-    @JsonKey(name: 'employer_logo_url') required String employerLogoUrl,
+    @JsonKey(name: 'employer_name') String? employerName,
+    @JsonKey(name: 'employer_logo_url') String? employerLogoUrl,
+    @JsonKey(name: 'applied_count') int? appliedCount,
     String? e,
   }) = _JobDto;
 

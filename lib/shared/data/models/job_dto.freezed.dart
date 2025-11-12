@@ -23,7 +23,7 @@ JobDto _$JobDtoFromJson(Map<String, dynamic> json) {
 mixin _$JobDto {
   String get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
-  String get createdAt => throw _privateConstructorUsedError;
+  String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
@@ -44,9 +44,11 @@ mixin _$JobDto {
   String? get employerId => throw _privateConstructorUsedError;
   Currency? get currency => throw _privateConstructorUsedError;
   @JsonKey(name: 'employer_name')
-  String get employerName => throw _privateConstructorUsedError;
+  String? get employerName => throw _privateConstructorUsedError;
   @JsonKey(name: 'employer_logo_url')
-  String get employerLogoUrl => throw _privateConstructorUsedError;
+  String? get employerLogoUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'applied_count')
+  int? get appliedCount => throw _privateConstructorUsedError;
   String? get e => throw _privateConstructorUsedError;
 
   /// Serializes this JobDto to a JSON map.
@@ -65,7 +67,7 @@ abstract class $JobDtoCopyWith<$Res> {
   @useResult
   $Res call({
     String id,
-    @JsonKey(name: 'created_at') String createdAt,
+    @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
     String? description,
     String? education,
@@ -78,8 +80,9 @@ abstract class $JobDtoCopyWith<$Res> {
     String title,
     @JsonKey(name: 'employer_id') String? employerId,
     Currency? currency,
-    @JsonKey(name: 'employer_name') String employerName,
-    @JsonKey(name: 'employer_logo_url') String employerLogoUrl,
+    @JsonKey(name: 'employer_name') String? employerName,
+    @JsonKey(name: 'employer_logo_url') String? employerLogoUrl,
+    @JsonKey(name: 'applied_count') int? appliedCount,
     String? e,
   });
 }
@@ -100,7 +103,7 @@ class _$JobDtoCopyWithImpl<$Res, $Val extends JobDto>
   @override
   $Res call({
     Object? id = null,
-    Object? createdAt = null,
+    Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? description = freezed,
     Object? education = freezed,
@@ -113,8 +116,9 @@ class _$JobDtoCopyWithImpl<$Res, $Val extends JobDto>
     Object? title = null,
     Object? employerId = freezed,
     Object? currency = freezed,
-    Object? employerName = null,
-    Object? employerLogoUrl = null,
+    Object? employerName = freezed,
+    Object? employerLogoUrl = freezed,
+    Object? appliedCount = freezed,
     Object? e = freezed,
   }) {
     return _then(
@@ -123,10 +127,10 @@ class _$JobDtoCopyWithImpl<$Res, $Val extends JobDto>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as String,
-            createdAt: null == createdAt
+            createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             updatedAt: freezed == updatedAt
                 ? _value.updatedAt
                 : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -175,14 +179,18 @@ class _$JobDtoCopyWithImpl<$Res, $Val extends JobDto>
                 ? _value.currency
                 : currency // ignore: cast_nullable_to_non_nullable
                       as Currency?,
-            employerName: null == employerName
+            employerName: freezed == employerName
                 ? _value.employerName
                 : employerName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            employerLogoUrl: null == employerLogoUrl
+                      as String?,
+            employerLogoUrl: freezed == employerLogoUrl
                 ? _value.employerLogoUrl
                 : employerLogoUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
+            appliedCount: freezed == appliedCount
+                ? _value.appliedCount
+                : appliedCount // ignore: cast_nullable_to_non_nullable
+                      as int?,
             e: freezed == e
                 ? _value.e
                 : e // ignore: cast_nullable_to_non_nullable
@@ -203,7 +211,7 @@ abstract class _$$JobDtoImplCopyWith<$Res> implements $JobDtoCopyWith<$Res> {
   @useResult
   $Res call({
     String id,
-    @JsonKey(name: 'created_at') String createdAt,
+    @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
     String? description,
     String? education,
@@ -216,8 +224,9 @@ abstract class _$$JobDtoImplCopyWith<$Res> implements $JobDtoCopyWith<$Res> {
     String title,
     @JsonKey(name: 'employer_id') String? employerId,
     Currency? currency,
-    @JsonKey(name: 'employer_name') String employerName,
-    @JsonKey(name: 'employer_logo_url') String employerLogoUrl,
+    @JsonKey(name: 'employer_name') String? employerName,
+    @JsonKey(name: 'employer_logo_url') String? employerLogoUrl,
+    @JsonKey(name: 'applied_count') int? appliedCount,
     String? e,
   });
 }
@@ -237,7 +246,7 @@ class __$$JobDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? createdAt = null,
+    Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? description = freezed,
     Object? education = freezed,
@@ -250,8 +259,9 @@ class __$$JobDtoImplCopyWithImpl<$Res>
     Object? title = null,
     Object? employerId = freezed,
     Object? currency = freezed,
-    Object? employerName = null,
-    Object? employerLogoUrl = null,
+    Object? employerName = freezed,
+    Object? employerLogoUrl = freezed,
+    Object? appliedCount = freezed,
     Object? e = freezed,
   }) {
     return _then(
@@ -260,10 +270,10 @@ class __$$JobDtoImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as String,
-        createdAt: null == createdAt
+        createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         updatedAt: freezed == updatedAt
             ? _value.updatedAt
             : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -312,14 +322,18 @@ class __$$JobDtoImplCopyWithImpl<$Res>
             ? _value.currency
             : currency // ignore: cast_nullable_to_non_nullable
                   as Currency?,
-        employerName: null == employerName
+        employerName: freezed == employerName
             ? _value.employerName
             : employerName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        employerLogoUrl: null == employerLogoUrl
+                  as String?,
+        employerLogoUrl: freezed == employerLogoUrl
             ? _value.employerLogoUrl
             : employerLogoUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
+        appliedCount: freezed == appliedCount
+            ? _value.appliedCount
+            : appliedCount // ignore: cast_nullable_to_non_nullable
+                  as int?,
         e: freezed == e
             ? _value.e
             : e // ignore: cast_nullable_to_non_nullable
@@ -334,7 +348,7 @@ class __$$JobDtoImplCopyWithImpl<$Res>
 class _$JobDtoImpl implements _JobDto {
   const _$JobDtoImpl({
     required this.id,
-    @JsonKey(name: 'created_at') required this.createdAt,
+    @JsonKey(name: 'created_at') this.createdAt,
     @JsonKey(name: 'updated_at') this.updatedAt,
     this.description,
     this.education,
@@ -347,8 +361,9 @@ class _$JobDtoImpl implements _JobDto {
     required this.title,
     @JsonKey(name: 'employer_id') this.employerId,
     this.currency,
-    @JsonKey(name: 'employer_name') required this.employerName,
-    @JsonKey(name: 'employer_logo_url') required this.employerLogoUrl,
+    @JsonKey(name: 'employer_name') this.employerName,
+    @JsonKey(name: 'employer_logo_url') this.employerLogoUrl,
+    @JsonKey(name: 'applied_count') this.appliedCount,
     this.e,
   });
 
@@ -359,7 +374,7 @@ class _$JobDtoImpl implements _JobDto {
   final String id;
   @override
   @JsonKey(name: 'created_at')
-  final String createdAt;
+  final String? createdAt;
   @override
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
@@ -393,16 +408,19 @@ class _$JobDtoImpl implements _JobDto {
   final Currency? currency;
   @override
   @JsonKey(name: 'employer_name')
-  final String employerName;
+  final String? employerName;
   @override
   @JsonKey(name: 'employer_logo_url')
-  final String employerLogoUrl;
+  final String? employerLogoUrl;
+  @override
+  @JsonKey(name: 'applied_count')
+  final int? appliedCount;
   @override
   final String? e;
 
   @override
   String toString() {
-    return 'JobDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, education: $education, expiredAt: $expiredAt, jobType: $jobType, maxSalary: $maxSalary, minSalary: $minSalary, responsibility: $responsibility, salaryType: $salaryType, title: $title, employerId: $employerId, currency: $currency, employerName: $employerName, employerLogoUrl: $employerLogoUrl, e: $e)';
+    return 'JobDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, education: $education, expiredAt: $expiredAt, jobType: $jobType, maxSalary: $maxSalary, minSalary: $minSalary, responsibility: $responsibility, salaryType: $salaryType, title: $title, employerId: $employerId, currency: $currency, employerName: $employerName, employerLogoUrl: $employerLogoUrl, appliedCount: $appliedCount, e: $e)';
   }
 
   @override
@@ -439,6 +457,8 @@ class _$JobDtoImpl implements _JobDto {
                 other.employerName == employerName) &&
             (identical(other.employerLogoUrl, employerLogoUrl) ||
                 other.employerLogoUrl == employerLogoUrl) &&
+            (identical(other.appliedCount, appliedCount) ||
+                other.appliedCount == appliedCount) &&
             (identical(other.e, e) || other.e == e));
   }
 
@@ -462,6 +482,7 @@ class _$JobDtoImpl implements _JobDto {
     currency,
     employerName,
     employerLogoUrl,
+    appliedCount,
     e,
   );
 
@@ -482,7 +503,7 @@ class _$JobDtoImpl implements _JobDto {
 abstract class _JobDto implements JobDto {
   const factory _JobDto({
     required final String id,
-    @JsonKey(name: 'created_at') required final String createdAt,
+    @JsonKey(name: 'created_at') final String? createdAt,
     @JsonKey(name: 'updated_at') final String? updatedAt,
     final String? description,
     final String? education,
@@ -495,8 +516,9 @@ abstract class _JobDto implements JobDto {
     required final String title,
     @JsonKey(name: 'employer_id') final String? employerId,
     final Currency? currency,
-    @JsonKey(name: 'employer_name') required final String employerName,
-    @JsonKey(name: 'employer_logo_url') required final String employerLogoUrl,
+    @JsonKey(name: 'employer_name') final String? employerName,
+    @JsonKey(name: 'employer_logo_url') final String? employerLogoUrl,
+    @JsonKey(name: 'applied_count') final int? appliedCount,
     final String? e,
   }) = _$JobDtoImpl;
 
@@ -506,7 +528,7 @@ abstract class _JobDto implements JobDto {
   String get id;
   @override
   @JsonKey(name: 'created_at')
-  String get createdAt;
+  String? get createdAt;
   @override
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
@@ -540,10 +562,13 @@ abstract class _JobDto implements JobDto {
   Currency? get currency;
   @override
   @JsonKey(name: 'employer_name')
-  String get employerName;
+  String? get employerName;
   @override
   @JsonKey(name: 'employer_logo_url')
-  String get employerLogoUrl;
+  String? get employerLogoUrl;
+  @override
+  @JsonKey(name: 'applied_count')
+  int? get appliedCount;
   @override
   String? get e;
 

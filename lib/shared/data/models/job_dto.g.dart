@@ -8,7 +8,7 @@ part of 'job_dto.dart';
 
 _$JobDtoImpl _$$JobDtoImplFromJson(Map<String, dynamic> json) => _$JobDtoImpl(
   id: json['id'] as String,
-  createdAt: json['created_at'] as String,
+  createdAt: json['created_at'] as String?,
   updatedAt: json['updated_at'] as String?,
   description: json['description'] as String?,
   education: json['education'] as String?,
@@ -21,8 +21,9 @@ _$JobDtoImpl _$$JobDtoImplFromJson(Map<String, dynamic> json) => _$JobDtoImpl(
   title: json['title'] as String,
   employerId: json['employer_id'] as String?,
   currency: $enumDecodeNullable(_$CurrencyEnumMap, json['currency']),
-  employerName: json['employer_name'] as String,
-  employerLogoUrl: json['employer_logo_url'] as String,
+  employerName: json['employer_name'] as String?,
+  employerLogoUrl: json['employer_logo_url'] as String?,
+  appliedCount: (json['applied_count'] as num?)?.toInt(),
   e: json['e'] as String?,
 );
 
@@ -44,6 +45,7 @@ Map<String, dynamic> _$$JobDtoImplToJson(_$JobDtoImpl instance) =>
       'currency': _$CurrencyEnumMap[instance.currency],
       'employer_name': instance.employerName,
       'employer_logo_url': instance.employerLogoUrl,
+      'applied_count': instance.appliedCount,
       'e': instance.e,
     };
 
