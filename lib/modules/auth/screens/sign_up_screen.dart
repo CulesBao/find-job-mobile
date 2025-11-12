@@ -116,9 +116,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                    'Sign up to get started',
                     style: AppTextStyles.body.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.primary,
                     ),
                     textAlign: TextAlign.center,
                   ),
