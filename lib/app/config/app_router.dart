@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'route_path.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: RoutePath.splash,
+  initialLocation: RoutePath.signIn,
   routes: <GoRoute>[
     GoRoute(
       name: 'splash',
