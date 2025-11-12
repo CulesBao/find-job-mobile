@@ -7,6 +7,8 @@ import 'package:find_job_mobile/shared/data/api/employer_profile_api_service.dar
 import 'package:find_job_mobile/shared/data/api/location_api_service.dart';
 import 'package:find_job_mobile/shared/data/api/chat_api_service.dart';
 import 'package:find_job_mobile/shared/data/api/job_api_service.dart';
+import 'package:find_job_mobile/shared/data/api/candidate_follower_api_service.dart';
+import 'package:find_job_mobile/shared/data/api/employer_follower_api_service.dart';
 import 'package:find_job_mobile/shared/data/repositories/auth_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/candidate_profile_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/employer_profile_repository.dart';
@@ -14,6 +16,8 @@ import 'package:find_job_mobile/shared/data/repositories/employer_profile_reposi
 import 'package:find_job_mobile/shared/data/repositories/location_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/chat_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/job_repository.dart';
+import 'package:find_job_mobile/shared/data/repositories/candidate_follower_repository.dart';
+import 'package:find_job_mobile/shared/data/repositories/employer_follower_repository.dart';
 import 'package:find_job_mobile/modules/setup/di/register_services.dart';
 
 final getIt = GetIt.instance;
@@ -56,6 +60,14 @@ Future<void> setupServiceLocator() async {
     () => JobApiService(getIt<DioClient>().dio),
   );
 
+  getIt.registerLazySingleton<CandidateFollowerApiService>(
+    () => CandidateFollowerApiService(getIt<DioClient>().dio),
+  );
+
+  getIt.registerLazySingleton<EmployerFollowerApiService>(
+    () => EmployerFollowerApiService(getIt<DioClient>().dio),
+  );
+
   // Repositories
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepository(getIt<AuthApiService>(), getIt<SharedPreferences>()),
@@ -79,5 +91,13 @@ Future<void> setupServiceLocator() async {
 
   getIt.registerLazySingleton<JobRepository>(
     () => JobRepository(getIt<JobApiService>()),
+  );
+
+  getIt.registerLazySingleton<CandidateFollowerRepository>(
+    () => CandidateFollowerRepository(getIt<CandidateFollowerApiService>()),
+  );
+
+  getIt.registerLazySingleton<EmployerFollowerRepository>(
+    () => EmployerFollowerRepository(getIt<EmployerFollowerApiService>()),
   );
 }
