@@ -42,14 +42,20 @@ mixin _$JobDto {
   String get title => throw _privateConstructorUsedError;
   @JsonKey(name: 'employer_id')
   String? get employerId => throw _privateConstructorUsedError;
-  Currency? get currency => throw _privateConstructorUsedError;
+  Currency? get currency =>
+      throw _privateConstructorUsedError; // Detail endpoint format
   @JsonKey(name: 'employer_name')
   String? get employerName => throw _privateConstructorUsedError;
   @JsonKey(name: 'employer_logo_url')
   String? get employerLogoUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'applied_count')
   int? get appliedCount => throw _privateConstructorUsedError;
-  String? get e => throw _privateConstructorUsedError;
+  String? get e =>
+      throw _privateConstructorUsedError; // List endpoint format (additional fields)
+  String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'logo_url')
+  String? get logoUrl => throw _privateConstructorUsedError;
+  String? get location => throw _privateConstructorUsedError;
 
   /// Serializes this JobDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -84,6 +90,9 @@ abstract class $JobDtoCopyWith<$Res> {
     @JsonKey(name: 'employer_logo_url') String? employerLogoUrl,
     @JsonKey(name: 'applied_count') int? appliedCount,
     String? e,
+    String? name,
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    String? location,
   });
 }
 
@@ -120,6 +129,9 @@ class _$JobDtoCopyWithImpl<$Res, $Val extends JobDto>
     Object? employerLogoUrl = freezed,
     Object? appliedCount = freezed,
     Object? e = freezed,
+    Object? name = freezed,
+    Object? logoUrl = freezed,
+    Object? location = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -195,6 +207,18 @@ class _$JobDtoCopyWithImpl<$Res, $Val extends JobDto>
                 ? _value.e
                 : e // ignore: cast_nullable_to_non_nullable
                       as String?,
+            name: freezed == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            logoUrl: freezed == logoUrl
+                ? _value.logoUrl
+                : logoUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            location: freezed == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -228,6 +252,9 @@ abstract class _$$JobDtoImplCopyWith<$Res> implements $JobDtoCopyWith<$Res> {
     @JsonKey(name: 'employer_logo_url') String? employerLogoUrl,
     @JsonKey(name: 'applied_count') int? appliedCount,
     String? e,
+    String? name,
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    String? location,
   });
 }
 
@@ -263,6 +290,9 @@ class __$$JobDtoImplCopyWithImpl<$Res>
     Object? employerLogoUrl = freezed,
     Object? appliedCount = freezed,
     Object? e = freezed,
+    Object? name = freezed,
+    Object? logoUrl = freezed,
+    Object? location = freezed,
   }) {
     return _then(
       _$JobDtoImpl(
@@ -338,6 +368,18 @@ class __$$JobDtoImplCopyWithImpl<$Res>
             ? _value.e
             : e // ignore: cast_nullable_to_non_nullable
                   as String?,
+        name: freezed == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        logoUrl: freezed == logoUrl
+            ? _value.logoUrl
+            : logoUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        location: freezed == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -345,7 +387,7 @@ class __$$JobDtoImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$JobDtoImpl implements _JobDto {
+class _$JobDtoImpl extends _JobDto {
   const _$JobDtoImpl({
     required this.id,
     @JsonKey(name: 'created_at') this.createdAt,
@@ -365,7 +407,10 @@ class _$JobDtoImpl implements _JobDto {
     @JsonKey(name: 'employer_logo_url') this.employerLogoUrl,
     @JsonKey(name: 'applied_count') this.appliedCount,
     this.e,
-  });
+    this.name,
+    @JsonKey(name: 'logo_url') this.logoUrl,
+    this.location,
+  }) : super._();
 
   factory _$JobDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$JobDtoImplFromJson(json);
@@ -406,6 +451,7 @@ class _$JobDtoImpl implements _JobDto {
   final String? employerId;
   @override
   final Currency? currency;
+  // Detail endpoint format
   @override
   @JsonKey(name: 'employer_name')
   final String? employerName;
@@ -417,10 +463,18 @@ class _$JobDtoImpl implements _JobDto {
   final int? appliedCount;
   @override
   final String? e;
+  // List endpoint format (additional fields)
+  @override
+  final String? name;
+  @override
+  @JsonKey(name: 'logo_url')
+  final String? logoUrl;
+  @override
+  final String? location;
 
   @override
   String toString() {
-    return 'JobDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, education: $education, expiredAt: $expiredAt, jobType: $jobType, maxSalary: $maxSalary, minSalary: $minSalary, responsibility: $responsibility, salaryType: $salaryType, title: $title, employerId: $employerId, currency: $currency, employerName: $employerName, employerLogoUrl: $employerLogoUrl, appliedCount: $appliedCount, e: $e)';
+    return 'JobDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, education: $education, expiredAt: $expiredAt, jobType: $jobType, maxSalary: $maxSalary, minSalary: $minSalary, responsibility: $responsibility, salaryType: $salaryType, title: $title, employerId: $employerId, currency: $currency, employerName: $employerName, employerLogoUrl: $employerLogoUrl, appliedCount: $appliedCount, e: $e, name: $name, logoUrl: $logoUrl, location: $location)';
   }
 
   @override
@@ -459,12 +513,16 @@ class _$JobDtoImpl implements _JobDto {
                 other.employerLogoUrl == employerLogoUrl) &&
             (identical(other.appliedCount, appliedCount) ||
                 other.appliedCount == appliedCount) &&
-            (identical(other.e, e) || other.e == e));
+            (identical(other.e, e) || other.e == e) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl) &&
+            (identical(other.location, location) ||
+                other.location == location));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     id,
     createdAt,
@@ -484,7 +542,10 @@ class _$JobDtoImpl implements _JobDto {
     employerLogoUrl,
     appliedCount,
     e,
-  );
+    name,
+    logoUrl,
+    location,
+  ]);
 
   /// Create a copy of JobDto
   /// with the given fields replaced by the non-null parameter values.
@@ -500,7 +561,7 @@ class _$JobDtoImpl implements _JobDto {
   }
 }
 
-abstract class _JobDto implements JobDto {
+abstract class _JobDto extends JobDto {
   const factory _JobDto({
     required final String id,
     @JsonKey(name: 'created_at') final String? createdAt,
@@ -520,7 +581,11 @@ abstract class _JobDto implements JobDto {
     @JsonKey(name: 'employer_logo_url') final String? employerLogoUrl,
     @JsonKey(name: 'applied_count') final int? appliedCount,
     final String? e,
+    final String? name,
+    @JsonKey(name: 'logo_url') final String? logoUrl,
+    final String? location,
   }) = _$JobDtoImpl;
+  const _JobDto._() : super._();
 
   factory _JobDto.fromJson(Map<String, dynamic> json) = _$JobDtoImpl.fromJson;
 
@@ -559,7 +624,7 @@ abstract class _JobDto implements JobDto {
   @JsonKey(name: 'employer_id')
   String? get employerId;
   @override
-  Currency? get currency;
+  Currency? get currency; // Detail endpoint format
   @override
   @JsonKey(name: 'employer_name')
   String? get employerName;
@@ -570,7 +635,14 @@ abstract class _JobDto implements JobDto {
   @JsonKey(name: 'applied_count')
   int? get appliedCount;
   @override
-  String? get e;
+  String? get e; // List endpoint format (additional fields)
+  @override
+  String? get name;
+  @override
+  @JsonKey(name: 'logo_url')
+  String? get logoUrl;
+  @override
+  String? get location;
 
   /// Create a copy of JobDto
   /// with the given fields replaced by the non-null parameter values.
