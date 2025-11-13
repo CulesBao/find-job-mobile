@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:find_job_mobile/shared/data/models/base_response.dart';
 import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/models/saved_employer_dto.dart';
 import 'package:find_job_mobile/shared/data/models/pageable_response.dart';
 
 part 'candidate_follower_api_service.g.dart';
@@ -31,7 +32,7 @@ abstract class CandidateFollowerApiService {
 
   /// Get list of followed employers with pagination
   @GET('/candidates/followers/')
-  Future<BaseResponse<PageableResponse<EmployerProfileDto>>>
+  Future<BaseResponse<PageableResponse<SavedEmployerDto>>>
       getFollowedEmployers(
     @Query('page') int page,
     @Query('size') int size,
