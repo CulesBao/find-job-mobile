@@ -4,7 +4,7 @@ import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/dto/filter_job_request.dart';
 import 'package:find_job_mobile/shared/data/models/job_dto.dart';
 import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
-import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/models/saved_employer_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/job_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/candidate_follower_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
@@ -26,7 +26,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
   bool _isLoadingJobs = false;
   bool _isLoadingEmployers = false;
   List<JobDto> _jobs = [];
-  List<EmployerProfileDto> _savedEmployers = [];
+  List<SavedEmployerDto> _savedEmployers = [];
   String? _errorMessage;
   CandidateProfileDto? _candidateProfile;
 
@@ -95,8 +95,10 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
         size: 3,
       );
       
-      if (response.data != null) {
-        final content = response.data!.content;
+      
+      if (response.success || response.data != null) {
+        final content = response.data?.content ?? [];
+
         setState(() {
           _savedEmployers = content;
         });
@@ -105,13 +107,11 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
           _savedEmployers = [];
         });
       }
-    } on TypeError {
-      // API response format issue - set empty list
+    } on TypeError catch (e, stackTrace) {
       setState(() {
         _savedEmployers = [];
       });
-    } catch (e) {
-      // Other errors - set empty list
+    } catch (e, stackTrace) {
       setState(() {
         _savedEmployers = [];
       });
@@ -586,7 +586,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
     );
   }
 
-  Widget _buildEmployerCard(EmployerProfileDto employer) {
+  Widget _buildEmployerCard(SavedEmployerDto employer) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -642,7 +642,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
                 ),
                 const SizedBox(height: 4),
                 
-                // Location
+                // Location (just string now, not object)
                 Row(
                   children: [
                     Icon(
@@ -653,7 +653,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        '${employer.district.name}, ${employer.province.name}',
+                        employer.location, // Just a string like "Lai Chau"
                         style: AppTextStyles.body.copyWith(
                           color: AppColors.textSecondary,
                         ),
