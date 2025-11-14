@@ -1,4 +1,4 @@
-import 'package:find_job_mobile/modules/find/pages/find_main_page.dart';
+import 'package:find_job_mobile/modules/community/pages/find_community.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/dashboard_main_page.dart';
 import 'package:find_job_mobile/modules/setting/pages/setting_page.dart';
 import 'package:find_job_mobile/modules/chat/pages/chat_with_ai_page.dart';
@@ -29,7 +29,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const DashboardScreen(),
-    const FindMainPage(),
+    const FindCommunityPage(),
     const ChatWithAiPage(),
     const SettingScreen(),
   ];
@@ -39,10 +39,7 @@ class _MainScreenState extends State<MainScreen> {
     final isEmployer = AuthHelper.isEmployer;
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -68,9 +65,9 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 _buildNavItem(
                   index: 1,
-                  icon: Icons.work_outline,
+                  icon: Icons.group,
                   activeIcon: Icons.work,
-                  label: 'Find',
+                  label: 'Community',
                 ),
                 if (isEmployer)
                   Expanded(
