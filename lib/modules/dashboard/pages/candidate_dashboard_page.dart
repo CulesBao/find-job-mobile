@@ -1,4 +1,4 @@
-import 'package:find_job_mobile/modules/find/pages/find_job_page.dart';
+import 'package:find_job_mobile/modules/community/pages/find_community.dart';
 import 'package:flutter/material.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/dto/filter_job_request.dart';
@@ -486,7 +486,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const FindJobPage(),
+                            builder: (context) => const FindCommunityPage(),
                           ),
                         );
                       },
