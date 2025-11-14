@@ -21,13 +21,17 @@ _$CandidateProfileDtoImpl _$$CandidateProfileDtoImplFromJson(
   dateOfBirth: json['date_of_birth'] as String?,
   education: $enumDecodeNullable(_$EducationEnumMap, json['education']),
   firstName: json['first_name'] as String,
-  gender: json['gender'] as bool?,
+  gender: json['is_male'] as bool?,
   lastName: json['last_name'] as String,
   phoneNumber: json['phone_number'] as String?,
-  province: ProvinceDto.fromJson(json['province'] as Map<String, dynamic>),
-  district: DistrictDto.fromJson(json['district'] as Map<String, dynamic>),
-  socialLinks: (json['social_links'] as List<dynamic>)
-      .map((e) => SocialLinkDto.fromJson(e as Map<String, dynamic>))
+  province: json['province'] == null
+      ? null
+      : ProvinceDto.fromJson(json['province'] as Map<String, dynamic>),
+  district: json['district'] == null
+      ? null
+      : DistrictDto.fromJson(json['district'] as Map<String, dynamic>),
+  socialLinks: (json['social_links'] as List<dynamic>?)
+      ?.map((e) => SocialLinkDto.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 
@@ -42,7 +46,7 @@ Map<String, dynamic> _$$CandidateProfileDtoImplToJson(
   'date_of_birth': instance.dateOfBirth,
   'education': _$EducationEnumMap[instance.education],
   'first_name': instance.firstName,
-  'gender': instance.gender,
+  'is_male': instance.gender,
   'last_name': instance.lastName,
   'phone_number': instance.phoneNumber,
   'province': instance.province,

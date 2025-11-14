@@ -35,10 +35,10 @@ mixin _$EmployerProfileDto {
   String? get vision => throw _privateConstructorUsedError;
   @JsonKey(name: 'website_url')
   String? get websiteUrl => throw _privateConstructorUsedError;
-  ProvinceDto get province => throw _privateConstructorUsedError;
-  DistrictDto get district => throw _privateConstructorUsedError;
+  ProvinceDto? get province => throw _privateConstructorUsedError;
+  DistrictDto? get district => throw _privateConstructorUsedError;
   @JsonKey(name: 'social_links')
-  List<SocialLinkDto> get socialLinks => throw _privateConstructorUsedError;
+  List<SocialLinkDto>? get socialLinks => throw _privateConstructorUsedError;
 
   /// Serializes this EmployerProfileDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -67,13 +67,13 @@ abstract class $EmployerProfileDtoCopyWith<$Res> {
     String name,
     String? vision,
     @JsonKey(name: 'website_url') String? websiteUrl,
-    ProvinceDto province,
-    DistrictDto district,
-    @JsonKey(name: 'social_links') List<SocialLinkDto> socialLinks,
+    ProvinceDto? province,
+    DistrictDto? district,
+    @JsonKey(name: 'social_links') List<SocialLinkDto>? socialLinks,
   });
 
-  $ProvinceDtoCopyWith<$Res> get province;
-  $DistrictDtoCopyWith<$Res> get district;
+  $ProvinceDtoCopyWith<$Res>? get province;
+  $DistrictDtoCopyWith<$Res>? get district;
 }
 
 /// @nodoc
@@ -100,9 +100,9 @@ class _$EmployerProfileDtoCopyWithImpl<$Res, $Val extends EmployerProfileDto>
     Object? name = null,
     Object? vision = freezed,
     Object? websiteUrl = freezed,
-    Object? province = null,
-    Object? district = null,
-    Object? socialLinks = null,
+    Object? province = freezed,
+    Object? district = freezed,
+    Object? socialLinks = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -142,18 +142,18 @@ class _$EmployerProfileDtoCopyWithImpl<$Res, $Val extends EmployerProfileDto>
                 ? _value.websiteUrl
                 : websiteUrl // ignore: cast_nullable_to_non_nullable
                       as String?,
-            province: null == province
+            province: freezed == province
                 ? _value.province
                 : province // ignore: cast_nullable_to_non_nullable
-                      as ProvinceDto,
-            district: null == district
+                      as ProvinceDto?,
+            district: freezed == district
                 ? _value.district
                 : district // ignore: cast_nullable_to_non_nullable
-                      as DistrictDto,
-            socialLinks: null == socialLinks
+                      as DistrictDto?,
+            socialLinks: freezed == socialLinks
                 ? _value.socialLinks
                 : socialLinks // ignore: cast_nullable_to_non_nullable
-                      as List<SocialLinkDto>,
+                      as List<SocialLinkDto>?,
           )
           as $Val,
     );
@@ -163,8 +163,12 @@ class _$EmployerProfileDtoCopyWithImpl<$Res, $Val extends EmployerProfileDto>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ProvinceDtoCopyWith<$Res> get province {
-    return $ProvinceDtoCopyWith<$Res>(_value.province, (value) {
+  $ProvinceDtoCopyWith<$Res>? get province {
+    if (_value.province == null) {
+      return null;
+    }
+
+    return $ProvinceDtoCopyWith<$Res>(_value.province!, (value) {
       return _then(_value.copyWith(province: value) as $Val);
     });
   }
@@ -173,8 +177,12 @@ class _$EmployerProfileDtoCopyWithImpl<$Res, $Val extends EmployerProfileDto>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $DistrictDtoCopyWith<$Res> get district {
-    return $DistrictDtoCopyWith<$Res>(_value.district, (value) {
+  $DistrictDtoCopyWith<$Res>? get district {
+    if (_value.district == null) {
+      return null;
+    }
+
+    return $DistrictDtoCopyWith<$Res>(_value.district!, (value) {
       return _then(_value.copyWith(district: value) as $Val);
     });
   }
@@ -199,15 +207,15 @@ abstract class _$$EmployerProfileDtoImplCopyWith<$Res>
     String name,
     String? vision,
     @JsonKey(name: 'website_url') String? websiteUrl,
-    ProvinceDto province,
-    DistrictDto district,
-    @JsonKey(name: 'social_links') List<SocialLinkDto> socialLinks,
+    ProvinceDto? province,
+    DistrictDto? district,
+    @JsonKey(name: 'social_links') List<SocialLinkDto>? socialLinks,
   });
 
   @override
-  $ProvinceDtoCopyWith<$Res> get province;
+  $ProvinceDtoCopyWith<$Res>? get province;
   @override
-  $DistrictDtoCopyWith<$Res> get district;
+  $DistrictDtoCopyWith<$Res>? get district;
 }
 
 /// @nodoc
@@ -233,9 +241,9 @@ class __$$EmployerProfileDtoImplCopyWithImpl<$Res>
     Object? name = null,
     Object? vision = freezed,
     Object? websiteUrl = freezed,
-    Object? province = null,
-    Object? district = null,
-    Object? socialLinks = null,
+    Object? province = freezed,
+    Object? district = freezed,
+    Object? socialLinks = freezed,
   }) {
     return _then(
       _$EmployerProfileDtoImpl(
@@ -275,18 +283,18 @@ class __$$EmployerProfileDtoImplCopyWithImpl<$Res>
             ? _value.websiteUrl
             : websiteUrl // ignore: cast_nullable_to_non_nullable
                   as String?,
-        province: null == province
+        province: freezed == province
             ? _value.province
             : province // ignore: cast_nullable_to_non_nullable
-                  as ProvinceDto,
-        district: null == district
+                  as ProvinceDto?,
+        district: freezed == district
             ? _value.district
             : district // ignore: cast_nullable_to_non_nullable
-                  as DistrictDto,
-        socialLinks: null == socialLinks
+                  as DistrictDto?,
+        socialLinks: freezed == socialLinks
             ? _value._socialLinks
             : socialLinks // ignore: cast_nullable_to_non_nullable
-                  as List<SocialLinkDto>,
+                  as List<SocialLinkDto>?,
       ),
     );
   }
@@ -305,10 +313,9 @@ class _$EmployerProfileDtoImpl implements _EmployerProfileDto {
     required this.name,
     this.vision,
     @JsonKey(name: 'website_url') this.websiteUrl,
-    required this.province,
-    required this.district,
-    @JsonKey(name: 'social_links')
-    required final List<SocialLinkDto> socialLinks,
+    this.province,
+    this.district,
+    @JsonKey(name: 'social_links') final List<SocialLinkDto>? socialLinks,
   }) : _socialLinks = socialLinks;
 
   factory _$EmployerProfileDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -338,16 +345,18 @@ class _$EmployerProfileDtoImpl implements _EmployerProfileDto {
   @JsonKey(name: 'website_url')
   final String? websiteUrl;
   @override
-  final ProvinceDto province;
+  final ProvinceDto? province;
   @override
-  final DistrictDto district;
-  final List<SocialLinkDto> _socialLinks;
+  final DistrictDto? district;
+  final List<SocialLinkDto>? _socialLinks;
   @override
   @JsonKey(name: 'social_links')
-  List<SocialLinkDto> get socialLinks {
+  List<SocialLinkDto>? get socialLinks {
+    final value = _socialLinks;
+    if (value == null) return null;
     if (_socialLinks is EqualUnmodifiableListView) return _socialLinks;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_socialLinks);
+    return EqualUnmodifiableListView(value);
   }
 
   @override
@@ -429,10 +438,9 @@ abstract class _EmployerProfileDto implements EmployerProfileDto {
     required final String name,
     final String? vision,
     @JsonKey(name: 'website_url') final String? websiteUrl,
-    required final ProvinceDto province,
-    required final DistrictDto district,
-    @JsonKey(name: 'social_links')
-    required final List<SocialLinkDto> socialLinks,
+    final ProvinceDto? province,
+    final DistrictDto? district,
+    @JsonKey(name: 'social_links') final List<SocialLinkDto>? socialLinks,
   }) = _$EmployerProfileDtoImpl;
 
   factory _EmployerProfileDto.fromJson(Map<String, dynamic> json) =
@@ -462,12 +470,12 @@ abstract class _EmployerProfileDto implements EmployerProfileDto {
   @JsonKey(name: 'website_url')
   String? get websiteUrl;
   @override
-  ProvinceDto get province;
+  ProvinceDto? get province;
   @override
-  DistrictDto get district;
+  DistrictDto? get district;
   @override
   @JsonKey(name: 'social_links')
-  List<SocialLinkDto> get socialLinks;
+  List<SocialLinkDto>? get socialLinks;
 
   /// Create a copy of EmployerProfileDto
   /// with the given fields replaced by the non-null parameter values.
