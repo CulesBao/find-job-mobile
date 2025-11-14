@@ -3,7 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:find_job_mobile/shared/data/models/base_response.dart';
 import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/models/candidate_filter_dto.dart';
+import 'package:find_job_mobile/shared/data/models/pageable_response.dart';
 import 'package:find_job_mobile/shared/data/dto/create_candidate_profile_request.dart';
+import 'package:find_job_mobile/shared/data/dto/filter_candidate_profile_request.dart';
 import 'package:find_job_mobile/shared/data/dto/update_social_links_request.dart';
 
 part 'candidate_profile_api_service.g.dart';
@@ -36,4 +39,11 @@ abstract class CandidateProfileApiService {
   @PUT('/candidate-profile/update-avatar')
   @MultiPart()
   Future<BaseResponse<void>> updateAvatar(@Part(name: 'avatar') File avatar);
+
+  @GET('/candidate-profile/filter')
+  Future<BaseResponse<PageableResponse<CandidateFilterDto>>> filterCandidateProfile(
+    @Queries() FilterCandidateProfileRequest filter,
+    @Query('page') int page,
+    @Query('size') int size,
+  );
 }

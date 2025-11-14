@@ -1,4 +1,4 @@
-import 'package:find_job_mobile/modules/community/models/employer_data.dart';
+import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +6,21 @@ import 'package:flutter/material.dart';
 class EmployerCard extends StatelessWidget {
   const EmployerCard({super.key, required this.employer});
 
-  final EmployerData employer;
+  final EmployerProfileDto employer;
 
   @override
   Widget build(BuildContext context) {
+    String location;
+    if (employer.province != null) {
+      if (employer.district != null) {
+        location = '${employer.district!.name}, ${employer.province!.name}';
+      } else {
+        location = employer.province!.name;
+      }
+    } else {
+      location = 'Not specified';
+    }
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -25,19 +36,27 @@ class EmployerCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Avatar
+          // Avatar/Logo
           Container(
             width: 64,
             height: 64,
             decoration: BoxDecoration(
               color: AppColors.secondary.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(16),
+              image: employer.logoUrl != null
+                  ? DecorationImage(
+                      image: NetworkImage(employer.logoUrl!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
-            child: const Icon(
-              Icons.business,
-              color: AppColors.primary,
-              size: 32,
-            ),
+            child: employer.logoUrl == null
+                ? const Icon(
+                    Icons.business,
+                    color: AppColors.primary,
+                    size: 32,
+                  )
+                : null,
           ),
           const SizedBox(width: 16),
           // Information
@@ -63,7 +82,7 @@ class EmployerCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        employer.location,
+                        location,
                         style: AppTextStyles.body.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: 12,
@@ -74,23 +93,28 @@ class EmployerCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.work_outline,
-                      size: 16,
-                      color: AppColors.textTertiary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${employer.jobsAvailable} jobs available',
-                      style: AppTextStyles.caption.copyWith(
+                if (employer.about != null)
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.info_outline,
+                        size: 16,
                         color: AppColors.textTertiary,
-                        fontSize: 12,
                       ),
-                    ),
-                  ],
-                ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          employer.about!,
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textTertiary,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
