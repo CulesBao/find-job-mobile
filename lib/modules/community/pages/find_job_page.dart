@@ -1,6 +1,6 @@
-import 'package:find_job_mobile/modules/find/models/job_card_data.dart';
-import 'package:find_job_mobile/modules/find/widgets/job_card.dart';
-import 'package:find_job_mobile/modules/find/widgets/search_bar_widget.dart';
+import 'package:find_job_mobile/modules/community/models/job_card_data.dart';
+import 'package:find_job_mobile/modules/community/widgets/job_card.dart';
+import 'package:find_job_mobile/modules/community/widgets/search_bar_widget.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:flutter/material.dart';

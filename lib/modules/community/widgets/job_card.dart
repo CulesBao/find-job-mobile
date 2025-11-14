@@ -1,4 +1,4 @@
-import 'package:find_job_mobile/modules/find/models/job_card_data.dart';
+import 'package:find_job_mobile/modules/community/models/job_card_data.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:flutter/material.dart';
