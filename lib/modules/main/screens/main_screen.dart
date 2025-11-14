@@ -66,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
                 _buildNavItem(
                   index: 1,
                   icon: Icons.group,
-                  activeIcon: Icons.work,
+                  activeIcon: Icons.group,
                   label: 'Community',
                 ),
                 if (isEmployer)

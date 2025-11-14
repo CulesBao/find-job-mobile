@@ -1,7 +1,7 @@
 import 'package:find_job_mobile/modules/auth/screens/sign_in_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/sign_up_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/verify_screen.dart';
-import 'package:find_job_mobile/modules/find/pages/find_job_page.dart';
+import 'package:find_job_mobile/modules/community/pages/find_community.dart';
 import 'package:find_job_mobile/modules/job_details/pages/job_details_page.dart';
 import 'package:find_job_mobile/modules/main/screens/main_screen.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_candidate_profile.dart';
@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'route_path.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: RoutePath.signIn,
+  initialLocation: RoutePath.splash,
   routes: <GoRoute>[
     GoRoute(
       name: 'splash',
@@ -74,7 +74,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       name: 'find-job',
       path: RoutePath.findJob,
-      builder: (context, state) => const FindJobPage(),
+      builder: (context, state) => const FindCommunityPage(),
     ),
     GoRoute(
       name: 'job-details',
