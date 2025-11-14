@@ -25,6 +25,7 @@ PageableResponse<T> _$PageableResponseFromJson<T>(
 /// @nodoc
 mixin _$PageableResponse<T> {
   List<T> get content => throw _privateConstructorUsedError;
+  @JsonKey(name: 'number')
   int get page => throw _privateConstructorUsedError;
   int get size => throw _privateConstructorUsedError;
   @JsonKey(name: 'total_elements')
@@ -53,7 +54,7 @@ abstract class $PageableResponseCopyWith<T, $Res> {
   @useResult
   $Res call({
     List<T> content,
-    int page,
+    @JsonKey(name: 'number') int page,
     int size,
     @JsonKey(name: 'total_elements') int totalElements,
     @JsonKey(name: 'total_pages') int totalPages,
@@ -126,7 +127,7 @@ abstract class _$$PageableResponseImplCopyWith<T, $Res>
   @useResult
   $Res call({
     List<T> content,
-    int page,
+    @JsonKey(name: 'number') int page,
     int size,
     @JsonKey(name: 'total_elements') int totalElements,
     @JsonKey(name: 'total_pages') int totalPages,
@@ -191,7 +192,7 @@ class __$$PageableResponseImplCopyWithImpl<T, $Res>
 class _$PageableResponseImpl<T> implements _PageableResponse<T> {
   const _$PageableResponseImpl({
     required final List<T> content,
-    required this.page,
+    @JsonKey(name: 'number') required this.page,
     required this.size,
     @JsonKey(name: 'total_elements') required this.totalElements,
     @JsonKey(name: 'total_pages') required this.totalPages,
@@ -212,6 +213,7 @@ class _$PageableResponseImpl<T> implements _PageableResponse<T> {
   }
 
   @override
+  @JsonKey(name: 'number')
   final int page;
   @override
   final int size;
@@ -276,7 +278,7 @@ class _$PageableResponseImpl<T> implements _PageableResponse<T> {
 abstract class _PageableResponse<T> implements PageableResponse<T> {
   const factory _PageableResponse({
     required final List<T> content,
-    required final int page,
+    @JsonKey(name: 'number') required final int page,
     required final int size,
     @JsonKey(name: 'total_elements') required final int totalElements,
     @JsonKey(name: 'total_pages') required final int totalPages,
@@ -291,6 +293,7 @@ abstract class _PageableResponse<T> implements PageableResponse<T> {
   @override
   List<T> get content;
   @override
+  @JsonKey(name: 'number')
   int get page;
   @override
   int get size;

@@ -7,7 +7,7 @@ part 'pageable_response.g.dart';
 class PageableResponse<T> with _$PageableResponse<T> {
   const factory PageableResponse({
     required List<T> content,
-    required int page,
+    @JsonKey(name: 'number') required int page,
     required int size,
     @JsonKey(name: 'total_elements') required int totalElements,
     @JsonKey(name: 'total_pages') required int totalPages,
