@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/modules/setup/services/employer_profile_service.dart';
 import 'package:find_job_mobile/modules/setup/widgets/avatar_sheet.dart';
 import 'package:find_job_mobile/modules/setup/widgets/biography_sheet.dart';
@@ -12,6 +13,9 @@ import 'package:find_job_mobile/modules/setup/widgets/vision_field.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:find_job_mobile/shared/utils/image_picker_helper.dart';
 import 'package:find_job_mobile/shared/utils/message_helper.dart';
+import 'package:find_job_mobile/shared/data/repositories/account_repository.dart';
+import 'package:find_job_mobile/shared/data/models/account_dto.dart';
+import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
 import 'package:find_job_mobile/shared/data/dto/update_social_links_request.dart';
 import 'package:find_job_mobile/shared/data/models/social_link_dto.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +33,7 @@ class SetupScreenEmployerProfile extends StatefulWidget {
 class _SetupScreenEmployerProfileState
     extends State<SetupScreenEmployerProfile> {
   final _formKey = GlobalKey<FormState>();
+  final _accountRepo = getIt<AccountRepository>();
   final _companyNameController = TextEditingController();
   final _establishedInController = TextEditingController();
   final _websiteController = TextEditingController();
@@ -37,10 +42,13 @@ class _SetupScreenEmployerProfileState
   final _visionController = TextEditingController();
 
   bool _isLoading = false;
+  bool _isLoadingAccount = true;
   String? _selectedProvinceCode;
   String? _selectedDistrictCode;
   File? _logoFile;
   List<Map<String, String>> _socialLinks = [];
+  AccountDto? _account;
+  bool _isUpdateMode = false;
   final _employerProfileService = EmployerProfileService();
 
   @override
@@ -49,9 +57,49 @@ class _SetupScreenEmployerProfileState
     _loadCompanyData();
   }
 
-  void _loadCompanyData() {
-    final user = AuthHelper.currentUser;
-    if (user != null) {}
+  Future<void> _loadCompanyData() async {
+    setState(() => _isLoadingAccount = true);
+    try {
+      // First check if profile exists in local storage
+      EmployerProfileDto? emp = AuthHelper.employerProfile;
+      
+      // If not in local storage, try to get from API
+      if (emp == null) {
+        final resp = await _accountRepo.getMyAccount();
+        final acc = resp.data;
+        emp = acc?.employerProfileDto;
+        _account = acc;
+      }
+      
+      // Debug logs
+      print('🔍 Employer profile exists: ${emp != null}');
+      if (emp != null) {
+        print('🔍 Profile loaded: ${emp.name}');
+      }
+      
+      setState(() {
+        _isUpdateMode = emp != null;
+        
+        if (emp != null) {
+          // Prefill existing data
+          _companyNameController.text = emp.name;
+          _websiteController.text = emp.websiteUrl ?? '';
+          _establishedInController.text = emp.establishedIn ?? '';
+          _aboutController.text = emp.about ?? '';
+          _visionController.text = emp.vision ?? '';
+          _locationController.text = '';
+          _selectedProvinceCode = emp.province?.code;
+          _selectedDistrictCode = emp.district?.code;
+          // TODO: Load social links if API provides them
+        }
+      });
+    } catch (e) {
+      if (mounted) {
+        MessageHelper.showError(context, e, fallbackMessage: 'Failed to load profile');
+      }
+    } finally {
+      setState(() => _isLoadingAccount = false);
+    }
   }
 
   void _showAddAboutSheet(BuildContext context) {
@@ -159,41 +207,78 @@ class _SetupScreenEmployerProfileState
     setState(() => _isLoading = true);
 
     try {
-      final response = await _employerProfileService.createProfile(
-        name: _companyNameController.text,
-        establishedIn: _establishedInController.text,
-        websiteUrl: _websiteController.text,
-        provinceCode: _selectedProvinceCode!,
-        districtCode: _selectedDistrictCode!,
-        location: _locationController.text,
-        about: _aboutController.text.isNotEmpty ? _aboutController.text : null,
-        vision: _visionController.text.isNotEmpty
-            ? _visionController.text
-            : null,
-        logoFile: _logoFile,
-        socialLinks: _socialLinks.isNotEmpty
-            ? _socialLinks
-                  .map(
-                    (link) => SocialLinkInput(
-                      type: SocialLinkType.values.firstWhere(
-                        (e) =>
-                            e.name.toUpperCase() ==
-                            link['platform']!.toUpperCase(),
+      if (_isUpdateMode) {
+        // Update existing profile
+        await _employerProfileService.updateProfile(
+          name: _companyNameController.text,
+          establishedIn: _establishedInController.text,
+          websiteUrl: _websiteController.text,
+          provinceCode: _selectedProvinceCode!,
+          districtCode: _selectedDistrictCode!,
+          location: _locationController.text,
+          about: _aboutController.text.isNotEmpty ? _aboutController.text : null,
+          vision: _visionController.text.isNotEmpty
+              ? _visionController.text
+              : null,
+          logoFile: _logoFile,
+          socialLinks: _socialLinks.isNotEmpty
+              ? _socialLinks
+                    .map(
+                      (link) => SocialLinkInput(
+                        type: SocialLinkType.values.firstWhere(
+                          (e) =>
+                              e.name.toUpperCase() ==
+                              link['platform']!.toUpperCase(),
+                        ),
+                        url: link['url']!,
                       ),
-                      url: link['url']!,
-                    ),
-                  )
-                  .toList()
-            : null,
-      );
+                    )
+                    .toList()
+              : null,
+        );
 
-      if (mounted) {
-        MessageHelper.showSuccess(context, response.message);
-
-        // Navigate to splash screen after profile setup
-        await Future.delayed(const Duration(seconds: 1));
         if (mounted) {
-          context.go('/');
+          MessageHelper.showSuccess(context, 'Profile updated successfully');
+          Navigator.of(context).pop(); // Go back to previous screen
+        }
+      } else {
+        // Create new profile
+        final response = await _employerProfileService.createProfile(
+          name: _companyNameController.text,
+          establishedIn: _establishedInController.text,
+          websiteUrl: _websiteController.text,
+          provinceCode: _selectedProvinceCode!,
+          districtCode: _selectedDistrictCode!,
+          location: _locationController.text,
+          about: _aboutController.text.isNotEmpty ? _aboutController.text : null,
+          vision: _visionController.text.isNotEmpty
+              ? _visionController.text
+              : null,
+          logoFile: _logoFile,
+          socialLinks: _socialLinks.isNotEmpty
+              ? _socialLinks
+                    .map(
+                      (link) => SocialLinkInput(
+                        type: SocialLinkType.values.firstWhere(
+                          (e) =>
+                              e.name.toUpperCase() ==
+                              link['platform']!.toUpperCase(),
+                        ),
+                        url: link['url']!,
+                      ),
+                    )
+                    .toList()
+              : null,
+        );
+
+        if (mounted) {
+          MessageHelper.showSuccess(context, response.message);
+
+          // Navigate to splash screen after profile setup
+          await Future.delayed(const Duration(seconds: 1));
+          if (mounted) {
+            context.go('/');
+          }
         }
       }
     } catch (e) {
@@ -201,7 +286,7 @@ class _SetupScreenEmployerProfileState
         MessageHelper.showError(
           context,
           e,
-          fallbackMessage: 'Failed to create profile',
+          fallbackMessage: _isUpdateMode ? 'Failed to update profile' : 'Failed to create profile',
         );
       }
     } finally {

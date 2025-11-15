@@ -13,6 +13,9 @@ import 'package:find_job_mobile/shared/utils/message_helper.dart';
 import 'package:find_job_mobile/shared/utils/image_picker_helper.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/modules/setup/services/candidate_profile_service.dart';
+import 'package:find_job_mobile/shared/data/repositories/account_repository.dart';
+import 'package:find_job_mobile/shared/data/models/account_dto.dart';
+import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/styles/colors.dart';
@@ -30,6 +33,8 @@ class SetupScreenCandidateProfile extends StatefulWidget {
 class _SetupScreenCandidateProfileState
     extends State<SetupScreenCandidateProfile> {
   final _formKey = GlobalKey<FormState>();
+  final _accountRepo = getIt<AccountRepository>();
+  
   String _selectedGender = 'male';
   final _birthdayController = TextEditingController();
   final _firstNameController = TextEditingController();
@@ -38,11 +43,14 @@ class _SetupScreenCandidateProfileState
   final _biographyController = TextEditingController();
 
   bool _isLoading = false;
+  bool _isLoadingAccount = true;
   String? _selectedProvinceCode;
   String? _selectedDistrictCode;
   String? _selectedEducation;
   List<Map<String, String>> _socialLinks = [];
   File? _avatarFile;
+  AccountDto? _account;
+  bool _isUpdateMode = false; // true if updating existing profile
 
   @override
   void initState() {
@@ -50,9 +58,50 @@ class _SetupScreenCandidateProfileState
     _loadUserData();
   }
 
-  void _loadUserData() {
-    final user = AuthHelper.currentUser;
-    if (user != null) {}
+  Future<void> _loadUserData() async {
+    setState(() => _isLoadingAccount = true);
+    try {
+      // First check if profile exists in local storage
+      CandidateProfileDto? cand = AuthHelper.candidateProfile;
+      
+      // If not in local storage, try to get from API
+      if (cand == null) {
+        final resp = await _accountRepo.getMyAccount();
+        final acc = resp.data;
+        cand = acc?.candidateProfileDto;
+        _account = acc;
+      }
+      
+      // Debug logs
+      print('🔍 Candidate profile exists: ${cand != null}');
+      if (cand != null) {
+        print('🔍 Profile loaded: ${cand.firstName} ${cand.lastName}');
+      }
+      
+      setState(() {
+        _isUpdateMode = cand != null;
+        
+        if (cand != null) {
+          // Prefill existing data
+          _firstNameController.text = cand.firstName;
+          _lastNameController.text = cand.lastName;
+          _phoneController.text = cand.phoneNumber ?? '';
+          _birthdayController.text = cand.dateOfBirth ?? '';
+          _biographyController.text = cand.bio ?? '';
+          _selectedGender = (cand.gender == true) ? 'male' : 'female';
+          _selectedEducation = cand.education?.name.toUpperCase();
+          _selectedProvinceCode = cand.province?.code;
+          _selectedDistrictCode = cand.district?.code;
+          // TODO: Load social links if API provides them
+        }
+      });
+    } catch (e) {
+      if (mounted) {
+        MessageHelper.showError(context, e, fallbackMessage: 'Failed to load profile');
+      }
+    } finally {
+      setState(() => _isLoadingAccount = false);
+    }
   }
 
   Future<void> _handleSubmit() async {
@@ -61,33 +110,62 @@ class _SetupScreenCandidateProfileState
     try {
       final service = getIt<ProfileSetupService>();
 
-      final response = await service.createProfile(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        provinceCode: _selectedProvinceCode!,
-        districtCode: _selectedDistrictCode!,
-        bio: _biographyController.text.isNotEmpty
-            ? _biographyController.text
-            : null,
-        dateOfBirth: _birthdayController.text.isNotEmpty
-            ? _birthdayController.text
-            : null,
-        education: _selectedEducation,
-        gender: _selectedGender == 'male',
-        phoneNumber: _phoneController.text.isNotEmpty
-            ? _phoneController.text
-            : null,
-        avatarFile: _avatarFile,
-        socialLinks: _socialLinks,
-      );
+      if (_isUpdateMode) {
+        // Update existing profile
+        await service.updateProfile(
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          provinceCode: _selectedProvinceCode!,
+          districtCode: _selectedDistrictCode!,
+          bio: _biographyController.text.isNotEmpty
+              ? _biographyController.text
+              : null,
+          dateOfBirth: _birthdayController.text.isNotEmpty
+              ? _birthdayController.text
+              : null,
+          education: _selectedEducation,
+          gender: _selectedGender == 'male',
+          phoneNumber: _phoneController.text.isNotEmpty
+              ? _phoneController.text
+              : null,
+          avatarFile: _avatarFile,
+          socialLinks: _socialLinks,
+        );
 
-      if (mounted) {
-        MessageHelper.showSuccess(context, response.message);
-
-        // Navigate to splash screen after profile setup
-        await Future.delayed(const Duration(seconds: 1));
         if (mounted) {
-          context.go('/');
+          MessageHelper.showSuccess(context, 'Profile updated successfully');
+          Navigator.of(context).pop(); // Go back to previous screen
+        }
+      } else {
+        // Create new profile
+        final response = await service.createProfile(
+          firstName: _firstNameController.text,
+          lastName: _lastNameController.text,
+          provinceCode: _selectedProvinceCode!,
+          districtCode: _selectedDistrictCode!,
+          bio: _biographyController.text.isNotEmpty
+              ? _biographyController.text
+              : null,
+          dateOfBirth: _birthdayController.text.isNotEmpty
+              ? _birthdayController.text
+              : null,
+          education: _selectedEducation,
+          gender: _selectedGender == 'male',
+          phoneNumber: _phoneController.text.isNotEmpty
+              ? _phoneController.text
+              : null,
+          avatarFile: _avatarFile,
+          socialLinks: _socialLinks,
+        );
+
+        if (mounted) {
+          MessageHelper.showSuccess(context, response.message);
+
+          // Navigate to splash screen after profile setup
+          await Future.delayed(const Duration(seconds: 1));
+          if (mounted) {
+            context.go('/');
+          }
         }
       }
     } catch (e) {
@@ -95,7 +173,7 @@ class _SetupScreenCandidateProfileState
         MessageHelper.showError(
           context,
           e,
-          fallbackMessage: 'Failed to create profile',
+          fallbackMessage: _isUpdateMode ? 'Failed to update profile' : 'Failed to create profile',
         );
       }
     } finally {
@@ -218,14 +296,23 @@ class _SetupScreenCandidateProfileState
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingAccount) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
             HeaderSection(
-              name: AuthHelper.currentUser?.email ?? 'New User',
-              location: 'Setup your profile',
+              name: _account?.candidateProfileDto != null
+                  ? '${_account!.candidateProfileDto!.firstName} ${_account!.candidateProfileDto!.lastName}'
+                  : (AuthHelper.currentUser?.email ?? 'New User'),
+              location: _isUpdateMode ? 'Update your profile' : 'Setup your profile',
               biography: _biographyController.text,
               avatarFile: _avatarFile,
               onAvatarTap: () => _showChangeAvatarSheet(context),

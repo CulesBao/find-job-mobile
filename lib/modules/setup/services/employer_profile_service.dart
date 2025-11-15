@@ -87,4 +87,55 @@ class EmployerProfileService {
 
     return profileResponse;
   }
+
+  /// Update existing employer profile
+  Future<BaseResponse<dynamic>> updateProfile({
+    required String name,
+    required String establishedIn,
+    required String websiteUrl,
+    required String provinceCode,
+    required String districtCode,
+    required String location,
+    String? about,
+    String? vision,
+    File? logoFile,
+    List<SocialLinkInput>? socialLinks,
+  }) async {
+    // Step 1: Update basic profile
+    final request = CreateEmployerProfileRequest(
+      name: name.trim(),
+      establishedIn: FormatHelper.convertDateFormat(establishedIn.trim()),
+      websiteUrl: websiteUrl.trim(),
+      provinceCode: provinceCode,
+      districtCode: districtCode,
+      location: location.trim(),
+      about: about?.trim(),
+      vision: vision?.trim(),
+    );
+
+    final updateResponse = await _repository.updateProfile(request);
+
+    // Step 2: Update logo if provided
+    if (logoFile != null) {
+      try {
+        await _repository.updateLogo(logoFile);
+      } catch (e) {
+        print('Failed to upload logo: $e');
+      }
+    }
+
+    // Step 3: Update social links if provided
+    if (socialLinks != null && socialLinks.isNotEmpty) {
+      try {
+        final socialLinksRequest = UpdateSocialLinksRequest(
+          socialLinks: socialLinks,
+        );
+        await _repository.updateSocialLinks(socialLinksRequest);
+      } catch (e) {
+        print('Failed to update social links: $e');
+      }
+    }
+
+    return updateResponse;
+  }
 }

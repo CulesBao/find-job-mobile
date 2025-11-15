@@ -103,4 +103,64 @@ class ProfileSetupService {
 
     return profileResponse;
   }
+
+  Future<BaseResponse<void>> updateProfile({
+    required String firstName,
+    required String lastName,
+    required String provinceCode,
+    required String districtCode,
+    String? bio,
+    String? dateOfBirth,
+    String? education,
+    required bool gender,
+    String? phoneNumber,
+    File? avatarFile,
+    List<Map<String, String>> socialLinks = const [],
+  }) async {
+    final profileRequest = CreateCandidateProfileRequest(
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      provinceCode: provinceCode,
+      districtCode: districtCode,
+      bio: bio?.trim(),
+      dateOfBirth: dateOfBirth != null
+          ? FormatHelper.convertDateFormat(dateOfBirth)
+          : null,
+      education: education != null ? _mapStringToEducation(education) : null,
+      gender: gender,
+      phoneNumber: phoneNumber != null
+          ? FormatHelper.formatPhoneNumber(phoneNumber.trim())
+          : null,
+    );
+
+    final updateResponse = await _repository.updateProfile(profileRequest);
+
+    if (avatarFile != null) {
+      try {
+        await _repository.updateAvatar(avatarFile);
+      } catch (e) {}
+    }
+
+    if (socialLinks.isNotEmpty) {
+      try {
+        final socialLinksRequest = UpdateSocialLinksRequest(
+          socialLinks: socialLinks
+              .map(
+                (link) => SocialLinkInput(
+                  type: SocialLinkType.values.firstWhere(
+                    (e) =>
+                        e.name.toUpperCase() == link['platform']!.toUpperCase(),
+                  ),
+                  url: link['url']!,
+                ),
+              )
+              .toList(),
+        );
+
+        await _repository.updateSocialLinks(socialLinksRequest);
+      } catch (e) {}
+    }
+
+    return updateResponse;
+  }
 }
