@@ -8,11 +8,13 @@ import 'package:find_job_mobile/modules/setup/widgets/company_profile_section.da
 import 'package:find_job_mobile/modules/setup/widgets/contact_info_section.dart';
 import 'package:find_job_mobile/modules/setup/widgets/header_section.dart';
 import 'package:find_job_mobile/modules/setup/widgets/save_button.dart';
-import 'package:find_job_mobile/modules/setup/widgets/social_link_section.dart';
+import 'package:find_job_mobile/modules/setup/widgets/social_link_section.dart'
+    show SocialLink, SocialLinksSection;
 import 'package:find_job_mobile/modules/setup/widgets/vision_field.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:find_job_mobile/shared/utils/image_picker_helper.dart';
 import 'package:find_job_mobile/shared/utils/message_helper.dart';
+import 'package:find_job_mobile/shared/utils/format_helper.dart';
 import 'package:find_job_mobile/shared/data/repositories/account_repository.dart';
 import 'package:find_job_mobile/shared/data/models/account_dto.dart';
 import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
@@ -62,7 +64,7 @@ class _SetupScreenEmployerProfileState
     try {
       // First check if profile exists in local storage
       EmployerProfileDto? emp = AuthHelper.employerProfile;
-      
+
       // If not in local storage, try to get from API
       if (emp == null) {
         final resp = await _accountRepo.getMyAccount();
@@ -70,36 +72,59 @@ class _SetupScreenEmployerProfileState
         emp = acc?.employerProfileDto;
         _account = acc;
       }
-      
+
       // Debug logs
       print('🔍 Employer profile exists: ${emp != null}');
       if (emp != null) {
         print('🔍 Profile loaded: ${emp.name}');
       }
-      
+
       setState(() {
         _isUpdateMode = emp != null;
-        
+
         if (emp != null) {
           // Prefill existing data
           _companyNameController.text = emp.name;
           _websiteController.text = emp.websiteUrl ?? '';
-          _establishedInController.text = emp.establishedIn ?? '';
+          // Format date from API format to display format
+          _establishedInController.text = FormatHelper.formatDateFromApi(
+            emp.establishedIn,
+          );
           _aboutController.text = emp.about ?? '';
           _visionController.text = emp.vision ?? '';
-          _locationController.text = '';
+          _locationController.text = ''; // Location not in DTO
           _selectedProvinceCode = emp.province?.code;
           _selectedDistrictCode = emp.district?.code;
-          // TODO: Load social links if API provides them
+
+          // Load social links if available
+          if (emp.socialLinks != null && emp.socialLinks!.isNotEmpty) {
+            _socialLinks = emp.socialLinks!
+                .map(
+                  (link) => {
+                    'platform': link.type.name.toUpperCase(),
+                    'url': link.url,
+                  },
+                )
+                .toList();
+          }
         }
       });
     } catch (e) {
       if (mounted) {
-        MessageHelper.showError(context, e, fallbackMessage: 'Failed to load profile');
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage: 'Failed to load profile',
+        );
       }
     } finally {
       setState(() => _isLoadingAccount = false);
     }
+  }
+
+  String _capitalizePlatform(String platform) {
+    if (platform.isEmpty) return 'Facebook';
+    return platform[0].toUpperCase() + platform.substring(1).toLowerCase();
   }
 
   void _showAddAboutSheet(BuildContext context) {
@@ -216,7 +241,9 @@ class _SetupScreenEmployerProfileState
           provinceCode: _selectedProvinceCode!,
           districtCode: _selectedDistrictCode!,
           location: _locationController.text,
-          about: _aboutController.text.isNotEmpty ? _aboutController.text : null,
+          about: _aboutController.text.isNotEmpty
+              ? _aboutController.text
+              : null,
           vision: _visionController.text.isNotEmpty
               ? _visionController.text
               : null,
@@ -250,7 +277,9 @@ class _SetupScreenEmployerProfileState
           provinceCode: _selectedProvinceCode!,
           districtCode: _selectedDistrictCode!,
           location: _locationController.text,
-          about: _aboutController.text.isNotEmpty ? _aboutController.text : null,
+          about: _aboutController.text.isNotEmpty
+              ? _aboutController.text
+              : null,
           vision: _visionController.text.isNotEmpty
               ? _visionController.text
               : null,
@@ -286,7 +315,9 @@ class _SetupScreenEmployerProfileState
         MessageHelper.showError(
           context,
           e,
-          fallbackMessage: _isUpdateMode ? 'Failed to update profile' : 'Failed to create profile',
+          fallbackMessage: _isUpdateMode
+              ? 'Failed to update profile'
+              : 'Failed to create profile',
         );
       }
     } finally {
@@ -309,14 +340,27 @@ class _SetupScreenEmployerProfileState
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingAccount) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
             HeaderSection(
-              name: AuthHelper.currentUser?.email ?? 'New Company',
-              location: 'Setup your company profile',
+              name:
+                  _account?.employerProfileDto?.name ??
+                  AuthHelper.employerProfile?.name ??
+                  AuthHelper.currentUser?.email ??
+                  'New Company',
+              location: _isUpdateMode
+                  ? 'Update your company profile'
+                  : 'Setup your company profile',
               biography: _aboutController.text,
               avatarFile: _logoFile,
               onAvatarTap: () => _showChangeLogoSheet(context),
@@ -347,6 +391,8 @@ class _SetupScreenEmployerProfileState
                       phoneController:
                           TextEditingController(), // Dummy controller
                       locationController: _locationController,
+                      initialProvinceCode: _selectedProvinceCode,
+                      initialDistrictCode: _selectedDistrictCode,
                       onProvinceChanged: (provinceCode) {
                         setState(() => _selectedProvinceCode = provinceCode);
                       },
@@ -364,6 +410,16 @@ class _SetupScreenEmployerProfileState
 
                     // Social Links Section
                     SocialLinksSection(
+                      initialLinks: _socialLinks
+                          .map(
+                            (link) => SocialLink(
+                              platform: _capitalizePlatform(
+                                link['platform'] ?? '',
+                              ),
+                              url: link['url'] ?? '',
+                            ),
+                          )
+                          .toList(),
                       onChanged: (links) {
                         setState(() {
                           _socialLinks = links

@@ -17,15 +17,15 @@ _$AccountDtoImpl _$$AccountDtoImplFromJson(Map<String, dynamic> json) =>
       isActive: json['is_active'] as bool,
       provider: $enumDecode(_$ProviderEnumMap, json['provider']),
       role: $enumDecode(_$RoleEnumMap, json['role']),
-      candidateProfileDto: json['candidate_profile_dto'] == null
+      candidateProfileDto: json['candidate_profile'] == null
           ? null
           : CandidateProfileDto.fromJson(
-              json['candidate_profile_dto'] as Map<String, dynamic>,
+              json['candidate_profile'] as Map<String, dynamic>,
             ),
-      employerProfileDto: json['employer_profile_dto'] == null
+      employerProfileDto: json['employer_profile'] == null
           ? null
           : EmployerProfileDto.fromJson(
-              json['employer_profile_dto'] as Map<String, dynamic>,
+              json['employer_profile'] as Map<String, dynamic>,
             ),
     );
 
@@ -38,8 +38,8 @@ Map<String, dynamic> _$$AccountDtoImplToJson(_$AccountDtoImpl instance) =>
       'is_active': instance.isActive,
       'provider': _$ProviderEnumMap[instance.provider]!,
       'role': _$RoleEnumMap[instance.role]!,
-      'candidate_profile_dto': instance.candidateProfileDto,
-      'employer_profile_dto': instance.employerProfileDto,
+      'candidate_profile': instance.candidateProfileDto,
+      'employer_profile': instance.employerProfileDto,
     };
 
 const _$ProviderEnumMap = {Provider.google: 'GOOGLE', Provider.local: 'LOCAL'};

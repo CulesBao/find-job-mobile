@@ -31,10 +31,9 @@ class AccountDto with _$AccountDto {
     @JsonKey(name: 'is_active') required bool isActive,
     required Provider provider,
     required Role role,
-    @JsonKey(name: 'candidate_profile_dto')
+    @JsonKey(name: 'candidate_profile')
     CandidateProfileDto? candidateProfileDto,
-    @JsonKey(name: 'employer_profile_dto')
-    EmployerProfileDto? employerProfileDto,
+    @JsonKey(name: 'employer_profile') EmployerProfileDto? employerProfileDto,
   }) = _AccountDto;
 
   factory AccountDto.fromJson(Map<String, dynamic> json) =>

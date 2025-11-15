@@ -52,27 +52,19 @@ class EmployerProfileService {
 
     final profileId = createResponse.data!.id;
 
-    // Step 2: Update logo if provided
     if (logoFile != null) {
       try {
         await _repository.updateLogo(logoFile);
-      } catch (e) {
-        // Continue even if logo upload fails
-        print('Failed to upload logo: $e');
-      }
+      } catch (e) {}
     }
 
-    // Step 3: Update social links if provided
     if (socialLinks != null && socialLinks.isNotEmpty) {
       try {
         final socialLinksRequest = UpdateSocialLinksRequest(
           socialLinks: socialLinks,
         );
         await _repository.updateSocialLinks(socialLinksRequest);
-      } catch (e) {
-        // Continue even if social links update fails
-        print('Failed to update social links: $e');
-      }
+      } catch (e) {}
     }
 
     // Step 4: Get complete profile with all updates

@@ -7,10 +7,12 @@ import 'package:find_job_mobile/modules/setup/widgets/education_dropdown.dart';
 import 'package:find_job_mobile/modules/setup/widgets/header_section.dart';
 import 'package:find_job_mobile/modules/setup/widgets/personal_info_section.dart';
 import 'package:find_job_mobile/modules/setup/widgets/save_button.dart';
-import 'package:find_job_mobile/modules/setup/widgets/social_link_section.dart';
+import 'package:find_job_mobile/modules/setup/widgets/social_link_section.dart'
+    show SocialLink, SocialLinksSection;
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:find_job_mobile/shared/utils/message_helper.dart';
 import 'package:find_job_mobile/shared/utils/image_picker_helper.dart';
+import 'package:find_job_mobile/shared/utils/format_helper.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/modules/setup/services/candidate_profile_service.dart';
 import 'package:find_job_mobile/shared/data/repositories/account_repository.dart';
@@ -34,7 +36,7 @@ class _SetupScreenCandidateProfileState
     extends State<SetupScreenCandidateProfile> {
   final _formKey = GlobalKey<FormState>();
   final _accountRepo = getIt<AccountRepository>();
-  
+
   String _selectedGender = 'male';
   final _birthdayController = TextEditingController();
   final _firstNameController = TextEditingController();
@@ -63,7 +65,7 @@ class _SetupScreenCandidateProfileState
     try {
       // First check if profile exists in local storage
       CandidateProfileDto? cand = AuthHelper.candidateProfile;
-      
+
       // If not in local storage, try to get from API
       if (cand == null) {
         final resp = await _accountRepo.getMyAccount();
@@ -71,37 +73,60 @@ class _SetupScreenCandidateProfileState
         cand = acc?.candidateProfileDto;
         _account = acc;
       }
-      
+
       // Debug logs
       print('🔍 Candidate profile exists: ${cand != null}');
       if (cand != null) {
         print('🔍 Profile loaded: ${cand.firstName} ${cand.lastName}');
       }
-      
+
       setState(() {
         _isUpdateMode = cand != null;
-        
+
         if (cand != null) {
           // Prefill existing data
           _firstNameController.text = cand.firstName;
           _lastNameController.text = cand.lastName;
           _phoneController.text = cand.phoneNumber ?? '';
-          _birthdayController.text = cand.dateOfBirth ?? '';
+          // Format date from API format to display format
+          _birthdayController.text = FormatHelper.formatDateFromApi(
+            cand.dateOfBirth,
+          );
           _biographyController.text = cand.bio ?? '';
           _selectedGender = (cand.gender == true) ? 'male' : 'female';
           _selectedEducation = cand.education?.name.toUpperCase();
           _selectedProvinceCode = cand.province?.code;
           _selectedDistrictCode = cand.district?.code;
-          // TODO: Load social links if API provides them
+
+          // Load social links if available
+          if (cand.socialLinks != null && cand.socialLinks!.isNotEmpty) {
+            _socialLinks = cand.socialLinks!
+                .map(
+                  (link) => {
+                    'platform': link.type.name.toUpperCase(),
+                    'url': link.url,
+                  },
+                )
+                .toList();
+          }
         }
       });
     } catch (e) {
       if (mounted) {
-        MessageHelper.showError(context, e, fallbackMessage: 'Failed to load profile');
+        MessageHelper.showError(
+          context,
+          e,
+          fallbackMessage: 'Failed to load profile',
+        );
       }
     } finally {
       setState(() => _isLoadingAccount = false);
     }
+  }
+
+  String _capitalizePlatform(String platform) {
+    if (platform.isEmpty) return 'Facebook';
+    return platform[0].toUpperCase() + platform.substring(1).toLowerCase();
   }
 
   Future<void> _handleSubmit() async {
@@ -173,7 +198,9 @@ class _SetupScreenCandidateProfileState
         MessageHelper.showError(
           context,
           e,
-          fallbackMessage: _isUpdateMode ? 'Failed to update profile' : 'Failed to create profile',
+          fallbackMessage: _isUpdateMode
+              ? 'Failed to update profile'
+              : 'Failed to create profile',
         );
       }
     } finally {
@@ -311,8 +338,12 @@ class _SetupScreenCandidateProfileState
             HeaderSection(
               name: _account?.candidateProfileDto != null
                   ? '${_account!.candidateProfileDto!.firstName} ${_account!.candidateProfileDto!.lastName}'
-                  : (AuthHelper.currentUser?.email ?? 'New User'),
-              location: _isUpdateMode ? 'Update your profile' : 'Setup your profile',
+                  : AuthHelper.candidateProfile != null
+                  ? '${AuthHelper.candidateProfile!.firstName} ${AuthHelper.candidateProfile!.lastName}'
+                  : AuthHelper.currentUser?.email ?? 'New User',
+              location: _isUpdateMode
+                  ? 'Update your profile'
+                  : 'Setup your profile',
               biography: _biographyController.text,
               avatarFile: _avatarFile,
               onAvatarTap: () => _showChangeAvatarSheet(context),
@@ -384,6 +415,8 @@ class _SetupScreenCandidateProfileState
                     // Contact Information Section
                     ContactInfoSection(
                       phoneController: _phoneController,
+                      initialProvinceCode: _selectedProvinceCode,
+                      initialDistrictCode: _selectedDistrictCode,
                       onProvinceChanged: (provinceCode) {
                         setState(() => _selectedProvinceCode = provinceCode);
                       },
@@ -395,6 +428,16 @@ class _SetupScreenCandidateProfileState
 
                     // Social Links Section
                     SocialLinksSection(
+                      initialLinks: _socialLinks
+                          .map(
+                            (link) => SocialLink(
+                              platform: _capitalizePlatform(
+                                link['platform'] ?? '',
+                              ),
+                              url: link['url'] ?? '',
+                            ),
+                          )
+                          .toList(),
                       onChanged: (links) {
                         setState(() {
                           _socialLinks = links

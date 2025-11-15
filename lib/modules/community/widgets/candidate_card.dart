@@ -29,21 +29,9 @@ class CandidateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fullName = '${candidate.firstName} ${candidate.lastName}';
-    
-    // Debug logs - detailed inspection
-    debugPrint('======================================');
-    debugPrint('👤 Candidate: $fullName');
-    debugPrint('   Gender value: ${candidate.gender}');
-    debugPrint('   Gender type: ${candidate.gender.runtimeType}');
-    debugPrint('   Gender == true: ${candidate.gender == true}');
-    debugPrint('   Gender == false: ${candidate.gender == false}');
-    debugPrint('   Gender == null: ${candidate.gender == null}');
-    debugPrint('   Location string: ${candidate.location}');
-    debugPrint('======================================');
-    
-    // Location is now a simple string from API
+
     final location = candidate.location ?? 'Not specified';
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -63,13 +51,15 @@ class CandidateCard extends StatelessWidget {
           CircleAvatar(
             radius: 32,
             backgroundColor: AppColors.secondary.withValues(alpha: 0.3),
-            backgroundImage: candidate.avatarUrl != null 
+            backgroundImage: candidate.avatarUrl != null
                 ? NetworkImage(candidate.avatarUrl!)
                 : null,
             child: candidate.avatarUrl == null
                 ? Text(
                     candidate.firstName[0].toUpperCase(),
-                    style: AppTextStyles.heading2.copyWith(color: AppColors.primary),
+                    style: AppTextStyles.heading2.copyWith(
+                      color: AppColors.primary,
+                    ),
                   )
                 : null,
           ),
@@ -98,21 +88,21 @@ class CandidateCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      candidate.gender == false 
-                          ? Icons.male 
-                          : candidate.gender == true 
-                              ? Icons.female 
-                              : Icons.help_outline,
+                      candidate.gender == false
+                          ? Icons.male
+                          : candidate.gender == true
+                          ? Icons.female
+                          : Icons.help_outline,
                       size: 16,
                       color: AppColors.textTertiary,
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      candidate.gender == false 
-                          ? 'Male' 
-                          : candidate.gender == true 
-                              ? 'Female' 
-                              : 'Not specified',
+                      candidate.gender == false
+                          ? 'Male'
+                          : candidate.gender == true
+                          ? 'Female'
+                          : 'Not specified',
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.textTertiary,
                         fontSize: 12,

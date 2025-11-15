@@ -11,6 +11,8 @@ class ContactInfoSection extends StatelessWidget {
   final Function(String) onDistrictChanged;
   final bool hidePhoneField;
   final bool showLocationField;
+  final String? initialProvinceCode;
+  final String? initialDistrictCode;
 
   const ContactInfoSection({
     super.key,
@@ -20,6 +22,8 @@ class ContactInfoSection extends StatelessWidget {
     required this.onDistrictChanged,
     this.hidePhoneField = false,
     this.showLocationField = false,
+    this.initialProvinceCode,
+    this.initialDistrictCode,
   });
 
   @override
@@ -43,6 +47,8 @@ class ContactInfoSection extends StatelessWidget {
 
         // Location select
         ProvinceDistrictSelector(
+          initialProvince: initialProvinceCode,
+          initialDistrict: initialDistrictCode,
           onProvinceChanged: onProvinceChanged,
           onDistrictChanged: onDistrictChanged,
         ),

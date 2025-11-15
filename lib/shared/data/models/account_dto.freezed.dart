@@ -31,10 +31,10 @@ mixin _$AccountDto {
   bool get isActive => throw _privateConstructorUsedError;
   Provider get provider => throw _privateConstructorUsedError;
   Role get role => throw _privateConstructorUsedError;
-  @JsonKey(name: 'candidate_profile_dto')
+  @JsonKey(name: 'candidate_profile')
   CandidateProfileDto? get candidateProfileDto =>
       throw _privateConstructorUsedError;
-  @JsonKey(name: 'employer_profile_dto')
+  @JsonKey(name: 'employer_profile')
   EmployerProfileDto? get employerProfileDto =>
       throw _privateConstructorUsedError;
 
@@ -63,10 +63,9 @@ abstract class $AccountDtoCopyWith<$Res> {
     @JsonKey(name: 'is_active') bool isActive,
     Provider provider,
     Role role,
-    @JsonKey(name: 'candidate_profile_dto')
+    @JsonKey(name: 'candidate_profile')
     CandidateProfileDto? candidateProfileDto,
-    @JsonKey(name: 'employer_profile_dto')
-    EmployerProfileDto? employerProfileDto,
+    @JsonKey(name: 'employer_profile') EmployerProfileDto? employerProfileDto,
   });
 
   $CandidateProfileDtoCopyWith<$Res>? get candidateProfileDto;
@@ -191,10 +190,9 @@ abstract class _$$AccountDtoImplCopyWith<$Res>
     @JsonKey(name: 'is_active') bool isActive,
     Provider provider,
     Role role,
-    @JsonKey(name: 'candidate_profile_dto')
+    @JsonKey(name: 'candidate_profile')
     CandidateProfileDto? candidateProfileDto,
-    @JsonKey(name: 'employer_profile_dto')
-    EmployerProfileDto? employerProfileDto,
+    @JsonKey(name: 'employer_profile') EmployerProfileDto? employerProfileDto,
   });
 
   @override
@@ -281,8 +279,8 @@ class _$AccountDtoImpl implements _AccountDto {
     @JsonKey(name: 'is_active') required this.isActive,
     required this.provider,
     required this.role,
-    @JsonKey(name: 'candidate_profile_dto') this.candidateProfileDto,
-    @JsonKey(name: 'employer_profile_dto') this.employerProfileDto,
+    @JsonKey(name: 'candidate_profile') this.candidateProfileDto,
+    @JsonKey(name: 'employer_profile') this.employerProfileDto,
   });
 
   factory _$AccountDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -306,10 +304,10 @@ class _$AccountDtoImpl implements _AccountDto {
   @override
   final Role role;
   @override
-  @JsonKey(name: 'candidate_profile_dto')
+  @JsonKey(name: 'candidate_profile')
   final CandidateProfileDto? candidateProfileDto;
   @override
-  @JsonKey(name: 'employer_profile_dto')
+  @JsonKey(name: 'employer_profile')
   final EmployerProfileDto? employerProfileDto;
 
   @override
@@ -377,9 +375,9 @@ abstract class _AccountDto implements AccountDto {
     @JsonKey(name: 'is_active') required final bool isActive,
     required final Provider provider,
     required final Role role,
-    @JsonKey(name: 'candidate_profile_dto')
+    @JsonKey(name: 'candidate_profile')
     final CandidateProfileDto? candidateProfileDto,
-    @JsonKey(name: 'employer_profile_dto')
+    @JsonKey(name: 'employer_profile')
     final EmployerProfileDto? employerProfileDto,
   }) = _$AccountDtoImpl;
 
@@ -404,10 +402,10 @@ abstract class _AccountDto implements AccountDto {
   @override
   Role get role;
   @override
-  @JsonKey(name: 'candidate_profile_dto')
+  @JsonKey(name: 'candidate_profile')
   CandidateProfileDto? get candidateProfileDto;
   @override
-  @JsonKey(name: 'employer_profile_dto')
+  @JsonKey(name: 'employer_profile')
   EmployerProfileDto? get employerProfileDto;
 
   /// Create a copy of AccountDto
