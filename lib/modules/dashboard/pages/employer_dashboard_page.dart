@@ -10,6 +10,7 @@ import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/my_job_page.dart';
+import 'package:find_job_mobile/modules/dashboard/pages/saved_candidates_page.dart';
 import 'package:intl/intl.dart';
 
 class EmployerDashboardPage extends StatefulWidget {
@@ -374,9 +375,11 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
             if (_savedCandidates.isNotEmpty)
               TextButton.icon(
                 onPressed: () {
-                  // TODO: Navigate to all saved candidates page
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('View all candidates - Coming soon')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SavedCandidatesPage(),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.arrow_forward, size: 18),
@@ -505,11 +508,23 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
           
           // Bookmark button
           IconButton(
-            onPressed: () {
-              // TODO: Handle unfollow
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Unsave $fullName - Coming soon')),
-              );
+            onPressed: () async {
+              try {
+                await _employerFollowerRepository.unfollowCandidate(candidate.id);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Unfollowed $fullName')),
+                  );
+                  // Refresh the list
+                  _loadSavedCandidates();
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to unfollow: ${e.toString()}')),
+                  );
+                }
+              }
             },
             icon: const Icon(
               Icons.bookmark,

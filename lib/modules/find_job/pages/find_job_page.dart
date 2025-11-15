@@ -226,7 +226,7 @@ class _FindJobPageState extends State<FindJobPage> {
           onRefresh: _onRefresh,
           child: CustomScrollView(
             slivers: [
-              // Header with gradient background
+              // Header with gradient background and back button (passed as leading)
               SliverToBoxAdapter(
                 child: FindHeader(
                   searchController: _searchController,
@@ -237,6 +237,26 @@ class _FindJobPageState extends State<FindJobPage> {
                       _showAdvancedFilters = !_showAdvancedFilters;
                     });
                   },
+                  leading: SafeArea(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).maybePop(),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.25),
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 20,
+                          semanticLabel: 'Back',
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               
