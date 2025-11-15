@@ -81,7 +81,7 @@ class EmployerProfileService {
   }
 
   /// Update existing employer profile
-  Future<BaseResponse<dynamic>> updateProfile({
+  Future<BaseResponse<EmployerProfileDto>> updateProfile({
     required String name,
     required String establishedIn,
     required String websiteUrl,
@@ -105,7 +105,7 @@ class EmployerProfileService {
       vision: vision?.trim(),
     );
 
-    final updateResponse = await _repository.updateProfile(request);
+    await _repository.updateProfile(request);
 
     // Step 2: Update logo if provided
     if (logoFile != null) {
@@ -128,6 +128,21 @@ class EmployerProfileService {
       }
     }
 
-    return updateResponse;
+    // Step 4: Get complete updated profile from server
+    final currentProfile = AuthHelper.employerProfile;
+    if (currentProfile == null) {
+      throw Exception('No employer profile found');
+    }
+
+    final profileResponse = await _repository.getProfile(currentProfile.id);
+
+    if (profileResponse.data == null) {
+      throw Exception('Failed to fetch updated profile');
+    }
+
+    // Step 5: Save updated profile to AuthHelper for app-wide access
+    await AuthHelper.saveEmployerProfile(profileResponse.data!);
+
+    return profileResponse;
   }
 }

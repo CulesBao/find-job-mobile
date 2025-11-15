@@ -104,7 +104,7 @@ class ProfileSetupService {
     return profileResponse;
   }
 
-  Future<BaseResponse<void>> updateProfile({
+  Future<BaseResponse<CandidateProfileDto>> updateProfile({
     required String firstName,
     required String lastName,
     required String provinceCode,
@@ -133,7 +133,7 @@ class ProfileSetupService {
           : null,
     );
 
-    final updateResponse = await _repository.updateProfile(profileRequest);
+    await _repository.updateProfile(profileRequest);
 
     if (avatarFile != null) {
       try {
@@ -161,6 +161,21 @@ class ProfileSetupService {
       } catch (e) {}
     }
 
-    return updateResponse;
+    // Get complete updated profile from server
+    final currentProfile = AuthHelper.candidateProfile;
+    if (currentProfile == null) {
+      throw Exception('No candidate profile found');
+    }
+
+    final profileResponse = await _repository.getProfile(currentProfile.id);
+
+    if (profileResponse.data == null) {
+      throw Exception('Failed to fetch updated profile');
+    }
+
+    // Save updated profile to AuthHelper for app-wide access
+    await AuthHelper.saveCandidateProfile(profileResponse.data!);
+
+    return profileResponse;
   }
 }
