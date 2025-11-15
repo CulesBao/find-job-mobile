@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../shared/styles/colors.dart';
 import '../../../shared/styles/text_styles.dart';
 import 'custom_text_field.dart';
@@ -40,6 +41,10 @@ class ContactInfoSection extends StatelessWidget {
             hint: 'Enter your phone number',
             keyboardType: TextInputType.phone,
             validator: _phoneValidator,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(11),
+            ],
             prefixIcon: Icon(Icons.phone, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 16),
@@ -79,10 +84,11 @@ class ContactInfoSection extends StatelessWidget {
     if (value == null || value.isEmpty) {
       return 'Please enter your phone number';
     }
-    // Chấp nhận số bắt đầu bằng 0 hoặc +84
-    final phoneRegex = RegExp(r'^(0|\+84)\d{9}$');
-    if (!phoneRegex.hasMatch(value.replaceAll(RegExp(r'[\s-]'), ''))) {
-      return 'Please enter a valid Vietnamese phone number';
+    // Vietnamese phone: 10 digits starting with 0, or 11 digits starting with +84
+    final cleanValue = value.replaceAll(RegExp(r'[\s-]'), '');
+    final phoneRegex = RegExp(r'^0\d{9}$');
+    if (!phoneRegex.hasMatch(cleanValue)) {
+      return 'Please enter a valid 10-digit phone number starting with 0';
     }
     return null;
   }

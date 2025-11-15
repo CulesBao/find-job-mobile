@@ -94,7 +94,7 @@ class _SetupScreenCandidateProfileState
           );
           _biographyController.text = cand.bio ?? '';
           _selectedGender = (cand.gender == true) ? 'male' : 'female';
-          _selectedEducation = cand.education?.name.toUpperCase();
+          _selectedEducation = _educationToValue(cand.education);
           _selectedProvinceCode = cand.province?.code;
           _selectedDistrictCode = cand.district?.code;
 
@@ -127,6 +127,22 @@ class _SetupScreenCandidateProfileState
   String _capitalizePlatform(String platform) {
     if (platform.isEmpty) return 'Facebook';
     return platform[0].toUpperCase() + platform.substring(1).toLowerCase();
+  }
+
+  String? _educationToValue(Education? education) {
+    if (education == null) return null;
+    switch (education) {
+      case Education.highSchool:
+        return 'HIGH_SCHOOL';
+      case Education.intermediate:
+        return 'INTERMEDIATE';
+      case Education.graduation:
+        return 'GRADUATION';
+      case Education.masterDegree:
+        return 'MASTER_DEGREE';
+      case Education.bachelorDegree:
+        return 'BACHELOR_DEGREE';
+    }
   }
 
   Future<void> _handleSubmit() async {
@@ -407,6 +423,7 @@ class _SetupScreenCandidateProfileState
 
                     // Education select
                     EducationDropdown(
+                      initialValue: _selectedEducation,
                       onChanged: (value) =>
                           setState(() => _selectedEducation = value),
                     ),

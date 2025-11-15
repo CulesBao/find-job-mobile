@@ -2,13 +2,10 @@ class FormatHelper {
   static String formatPhoneNumber(String phone) {
     if (phone.isEmpty) return phone;
 
+    // Remove non-digit characters but keep the leading zero
     phone = phone.replaceAll(RegExp(r'[^\d]'), '');
 
-    if (phone.startsWith('0')) {
-      phone = phone.substring(1);
-    }
-
-    return '+84$phone';
+    return phone;
   }
 
   /// Format date from API "YYYY-MM-DD" or "YYYY-MM-DD HH:MM:SS.S" to display format "DD MMM YYYY"
