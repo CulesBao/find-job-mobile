@@ -1,4 +1,6 @@
 import 'package:find_job_mobile/modules/setting/pages/change_password_page.dart';
+import 'package:find_job_mobile/modules/setup/screens/setup_screen_candidate_profile.dart';
+import 'package:find_job_mobile/modules/setup/screens/setup_screen_employer_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
@@ -92,7 +94,24 @@ class SettingScreen extends StatelessWidget {
                 icon: Icons.person_outline,
                 title: 'Profile',
                 subtitle: 'Manage your profile',
-                onTap: () {},
+                onTap: () {
+                  // Navigate to setup screen based on user role
+                  if (AuthHelper.isCandidate) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SetupScreenCandidateProfile(),
+                      ),
+                    );
+                  } else if (AuthHelper.isEmployer) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SetupScreenEmployerProfile(),
+                      ),
+                    );
+                  }
+                },
               ),
               _SettingItem(
                 icon: Icons.lock_outline,
