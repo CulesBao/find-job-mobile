@@ -9,12 +9,14 @@ class FindHeader extends StatelessWidget {
     required this.onFilterTap,
     this.onSearchSubmit,
     this.onFindTap,
+    this.leading,
   });
 
   final TextEditingController searchController;
   final VoidCallback onFilterTap;
   final VoidCallback? onSearchSubmit;
   final VoidCallback? onFindTap;
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +40,15 @@ class FindHeader extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 8),
-            // Search field with filter button
+            // Search field with optional leading, find and filter buttons
             Row(
               children: [
+                if (leading != null) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: SizedBox(width: 40, height: 40, child: leading),
+                  ),
+                ],
                 Expanded(
                   child: Container(
                     height: 50,

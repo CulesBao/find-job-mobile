@@ -1,4 +1,5 @@
-import 'package:find_job_mobile/modules/community/pages/find_community.dart';
+import 'package:find_job_mobile/modules/find_job/pages/find_job_page.dart';
+import 'package:find_job_mobile/modules/dashboard/pages/saved_employers_page.dart';
 import 'package:flutter/material.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/dto/filter_job_request.dart';
@@ -486,7 +487,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const FindCommunityPage(),
+                            builder: (context) => const FindJobPage(),
                           ),
                         );
                       },
@@ -549,9 +550,11 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
             if (_savedEmployers.isNotEmpty)
               TextButton.icon(
                 onPressed: () {
-                  // TODO: Navigate to all saved employers page
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('View all saved employers - Coming soon')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SavedEmployersPage(),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.arrow_forward, size: 18),
@@ -674,11 +677,23 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
           
           // Follow button
           IconButton(
-            onPressed: () {
-              // TODO: Handle unfollow
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Unfollow ${employer.name}')),
-              );
+            onPressed: () async {
+              try {
+                await _candidateFollowerRepository.unfollowEmployer(employer.id);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Unfollowed ${employer.name}')),
+                  );
+                  // Refresh the list
+                  _loadSavedEmployers();
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to unfollow: ${e.toString()}')),
+                  );
+                }
+              }
             },
             icon: const Icon(
               Icons.bookmark,

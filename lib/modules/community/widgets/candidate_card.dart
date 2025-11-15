@@ -1,13 +1,68 @@
+import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
 import 'package:find_job_mobile/shared/data/models/candidate_filter_dto.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:find_job_mobile/shared/data/repositories/employer_follower_repository.dart';
+import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 
-class CandidateCard extends StatelessWidget {
+class CandidateCard extends StatefulWidget {
   const CandidateCard({super.key, required this.candidate});
 
   final CandidateFilterDto candidate;
+
+  @override
+  State<CandidateCard> createState() => _CandidateCardState();
+}
+
+class _CandidateCardState extends State<CandidateCard> {
+  bool? _isFollowed;
+  final _employerFollowerRepo = getIt<EmployerFollowerRepository>();
+
+  @override
+  void initState() {
+    super.initState();
+    _initFollowState();
+  }
+
+  Future<void> _initFollowState() async {
+    // only employers can follow candidates
+    if (!AuthHelper.isEmployer) return;
+    try {
+      final resp = await _employerFollowerRepo.isFollowed(widget.candidate.id);
+      if (mounted && resp.data != null) {
+        setState(() => _isFollowed = resp.data);
+      }
+    } catch (e) {
+      debugPrint('Failed to check follow state: $e');
+    }
+  }
+
+  Future<void> _toggleFollow() async {
+    if (!AuthHelper.isEmployer) return;
+  final id = widget.candidate.id;
+    try {
+      if (_isFollowed == true) {
+        await _employerFollowerRepo.unfollowCandidate(id);
+        if (mounted) setState(() => _isFollowed = false);
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unfollowed ${widget.candidate.firstName}')),
+        );
+      } else {
+        await _employerFollowerRepo.followCandidate(id);
+        if (mounted) setState(() => _isFollowed = true);
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Followed ${widget.candidate.firstName}')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Follow action failed: $e');
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Action failed: ${e.toString()}')),
+      );
+    }
+  }
 
   String _getEducationLabel(Education? education) {
     switch (education) {
@@ -28,6 +83,7 @@ class CandidateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final candidate = widget.candidate;
     final fullName = '${candidate.firstName} ${candidate.lastName}';
     
     // Debug logs - detailed inspection
@@ -141,8 +197,15 @@ class CandidateCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.bookmark_outline, color: AppColors.primary),
-            onPressed: () {},
+            icon: Icon(
+              // show bookmark when followed
+              _isFollowed == true ? Icons.bookmark : Icons.bookmark_outline,
+              color: AppColors.primary,
+            ),
+            onPressed: AuthHelper.isEmployer ? _toggleFollow : null,
+            tooltip: AuthHelper.isEmployer
+                ? (_isFollowed == true ? 'Unfollow' : 'Follow')
+                : 'Only employers can follow',
           ),
         ],
       ),
