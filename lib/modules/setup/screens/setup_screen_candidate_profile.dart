@@ -348,10 +348,18 @@ class _SetupScreenCandidateProfileState
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            HeaderSection(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                // Background color fill for top area when in update mode
+                if (_isUpdateMode)
+                  Container(
+                    height: 80,
+                    color: AppColors.primary,
+                  ),
+                HeaderSection(
               name: _account?.candidateProfileDto != null
                   ? '${_account!.candidateProfileDto!.firstName} ${_account!.candidateProfileDto!.lastName}'
                   : AuthHelper.candidateProfile != null
@@ -482,6 +490,36 @@ class _SetupScreenCandidateProfileState
             ),
           ],
         ),
+      ),
+      // Back button overlay for update mode
+      if (_isUpdateMode)
+        Positioned(
+          top: MediaQuery.of(context).padding.top + 8,
+          left: 28,
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 197, 203, 255),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+              onPressed: () => Navigator.of(context).pop(),
+              padding: const EdgeInsets.all(8),
+              constraints: const BoxConstraints(
+                minWidth: 40,
+                minHeight: 40,
+              ),
+            ),
+          ),
+        ),
+        ],
       ),
     );
   }
