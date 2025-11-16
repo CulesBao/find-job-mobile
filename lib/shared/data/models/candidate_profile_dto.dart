@@ -30,12 +30,12 @@ class CandidateProfileDto with _$CandidateProfileDto {
     @JsonKey(name: 'date_of_birth') String? dateOfBirth,
     Education? education,
     @JsonKey(name: 'first_name') required String firstName,
-    bool? gender,
+    @JsonKey(name: 'is_male') bool? gender,
     @JsonKey(name: 'last_name') required String lastName,
     @JsonKey(name: 'phone_number') String? phoneNumber,
-    required ProvinceDto province,
-    required DistrictDto district,
-    @JsonKey(name: 'social_links') required List<SocialLinkDto> socialLinks,
+    ProvinceDto? province,
+    DistrictDto? district,
+    @JsonKey(name: 'social_links') List<SocialLinkDto>? socialLinks,
   }) = _CandidateProfileDto;
 
   factory CandidateProfileDto.fromJson(Map<String, dynamic> json) =>

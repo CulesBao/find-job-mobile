@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:find_job_mobile/shared/data/dto/create_employer_profile_request.dart';
+import 'package:find_job_mobile/shared/data/dto/filter_employer_profile_request.dart';
 import 'package:find_job_mobile/shared/data/dto/update_social_links_request.dart';
 import 'package:find_job_mobile/shared/data/models/base_response.dart';
 import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/models/pageable_response.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'employer_profile_api_service.g.dart';
@@ -34,4 +36,11 @@ abstract class EmployerProfileApiService {
   @MultiPart()
   @PUT('/employer-profile/update-logo')
   Future<BaseResponse<dynamic>> updateLogo(@Part(name: 'logo') File logo);
+
+  @GET('/employer-profile/filter')
+  Future<BaseResponse<PageableResponse<EmployerProfileDto>>> filterEmployerProfile(
+    @Queries() FilterEmployerProfileRequest filter,
+    @Query('page') int page,
+    @Query('size') int size,
+  );
 }

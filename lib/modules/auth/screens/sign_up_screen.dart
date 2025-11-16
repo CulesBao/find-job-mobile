@@ -22,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _rememberMe = false;
+  final _confirmPasswordController = TextEditingController();
   Role _selectedRole = Role.candidate;
   bool _isLoading = false;
 
@@ -30,6 +30,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -128,7 +129,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'I am a',
                   style: AppTextStyles.label.copyWith(
-                    color: AppColors.textPrimary,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -202,41 +204,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 25),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              _rememberMe = value ?? false;
-                            });
-                          },
-                          activeColor: AppColors.primary,
-                        ),
-                        Text(
-                          'Remember me',
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColors.textTertiary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // TODO: Navigate to forgot password screen
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 20),
+                CustomTextField(
+                  controller: _confirmPasswordController,
+                  label: 'Confirm Password',
+                  hintText: '••••••••',
+                  isPassword: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 20),
                 SizedBox(

@@ -25,6 +25,9 @@ _$JobDtoImpl _$$JobDtoImplFromJson(Map<String, dynamic> json) => _$JobDtoImpl(
   employerLogoUrl: json['employer_logo_url'] as String?,
   appliedCount: (json['applied_count'] as num?)?.toInt(),
   e: json['e'] as String?,
+  name: json['name'] as String?,
+  logoUrl: json['logo_url'] as String?,
+  location: json['location'] as String?,
 );
 
 Map<String, dynamic> _$$JobDtoImplToJson(_$JobDtoImpl instance) =>
@@ -47,6 +50,9 @@ Map<String, dynamic> _$$JobDtoImplToJson(_$JobDtoImpl instance) =>
       'employer_logo_url': instance.employerLogoUrl,
       'applied_count': instance.appliedCount,
       'e': instance.e,
+      'name': instance.name,
+      'logo_url': instance.logoUrl,
+      'location': instance.location,
     };
 
 const _$JobTypeEnumMap = {

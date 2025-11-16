@@ -18,9 +18,9 @@ class EmployerProfileDto with _$EmployerProfileDto {
     required String name,
     String? vision,
     @JsonKey(name: 'website_url') String? websiteUrl,
-    required ProvinceDto province,
-    required DistrictDto district,
-    @JsonKey(name: 'social_links') required List<SocialLinkDto> socialLinks,
+    ProvinceDto? province,
+    DistrictDto? district,
+    @JsonKey(name: 'social_links') List<SocialLinkDto>? socialLinks,
   }) = _EmployerProfileDto;
 
   factory EmployerProfileDto.fromJson(Map<String, dynamic> json) =>

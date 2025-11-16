@@ -22,7 +22,6 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _rememberMe = false;
   bool _isLoading = false;
 
   @override
@@ -155,41 +154,20 @@ class _SignInScreenState extends State<SignInScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 25),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberMe,
-                          onChanged: (value) {
-                            setState(() {
-                              _rememberMe = value ?? false;
-                            });
-                          },
-                          activeColor: AppColors.primary,
-                        ),
-                        Text(
-                          'Remember me',
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColors.textTertiary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // TODO: Navigate to forgot password screen
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.primary,
-                        ),
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      // TODO: Navigate to forgot password screen
+                    },
+                    child: Text(
+                      'Forgot Password?',
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.primary,
                       ),
                     ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(

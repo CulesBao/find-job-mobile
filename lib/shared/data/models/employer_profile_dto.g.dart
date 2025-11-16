@@ -22,10 +22,14 @@ _$EmployerProfileDtoImpl _$$EmployerProfileDtoImplFromJson(
   name: json['name'] as String,
   vision: json['vision'] as String?,
   websiteUrl: json['website_url'] as String?,
-  province: ProvinceDto.fromJson(json['province'] as Map<String, dynamic>),
-  district: DistrictDto.fromJson(json['district'] as Map<String, dynamic>),
-  socialLinks: (json['social_links'] as List<dynamic>)
-      .map((e) => SocialLinkDto.fromJson(e as Map<String, dynamic>))
+  province: json['province'] == null
+      ? null
+      : ProvinceDto.fromJson(json['province'] as Map<String, dynamic>),
+  district: json['district'] == null
+      ? null
+      : DistrictDto.fromJson(json['district'] as Map<String, dynamic>),
+  socialLinks: (json['social_links'] as List<dynamic>?)
+      ?.map((e) => SocialLinkDto.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 

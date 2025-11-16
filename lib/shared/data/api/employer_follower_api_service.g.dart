@@ -102,14 +102,14 @@ class _EmployerFollowerApiService implements EmployerFollowerApiService {
   }
 
   @override
-  Future<BaseResponse<PageableResponse<CandidateProfileDto>>>
+  Future<BaseResponse<PageableResponse<SavedCandidateDto>>>
   getFollowedCandidates(int page, int size) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'page': page, r'size': size};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
-        _setStreamType<BaseResponse<PageableResponse<CandidateProfileDto>>>(
+        _setStreamType<BaseResponse<PageableResponse<SavedCandidateDto>>>(
           Options(method: 'GET', headers: _headers, extra: _extra)
               .compose(
                 _dio.options,
@@ -122,13 +122,13 @@ class _EmployerFollowerApiService implements EmployerFollowerApiService {
               ),
         );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<PageableResponse<CandidateProfileDto>> _value;
+    late BaseResponse<PageableResponse<SavedCandidateDto>> _value;
     try {
-      _value = BaseResponse<PageableResponse<CandidateProfileDto>>.fromJson(
+      _value = BaseResponse<PageableResponse<SavedCandidateDto>>.fromJson(
         _result.data!,
-        (json) => PageableResponse<CandidateProfileDto>.fromJson(
+        (json) => PageableResponse<SavedCandidateDto>.fromJson(
           json as Map<String, dynamic>,
-          (json) => CandidateProfileDto.fromJson(json as Map<String, dynamic>),
+          (json) => SavedCandidateDto.fromJson(json as Map<String, dynamic>),
         ),
       );
     } on Object catch (e, s) {

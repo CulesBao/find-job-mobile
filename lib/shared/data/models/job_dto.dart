@@ -86,6 +86,8 @@ enum Currency {
 
 @freezed
 class JobDto with _$JobDto {
+  const JobDto._();
+  
   const factory JobDto({
     required String id,
     @JsonKey(name: 'created_at') String? createdAt,
@@ -101,11 +103,21 @@ class JobDto with _$JobDto {
     required String title,
     @JsonKey(name: 'employer_id') String? employerId,
     Currency? currency,
+    // Detail endpoint format
     @JsonKey(name: 'employer_name') String? employerName,
     @JsonKey(name: 'employer_logo_url') String? employerLogoUrl,
     @JsonKey(name: 'applied_count') int? appliedCount,
     String? e,
+    // List endpoint format (additional fields)
+    String? name,
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    String? location,
   }) = _JobDto;
+  
+  // Getters to handle both formats
+  String? get companyName => employerName ?? name;
+  String? get companyLogo => employerLogoUrl ?? logoUrl;
+  String? get jobLocation => e ?? location;
 
   factory JobDto.fromJson(Map<String, dynamic> json) => _$JobDtoFromJson(json);
 }

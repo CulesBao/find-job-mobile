@@ -1,6 +1,7 @@
 import 'package:find_job_mobile/shared/data/api/employer_follower_api_service.dart';
 import 'package:find_job_mobile/shared/data/models/base_response.dart';
 import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/models/saved_candidate_dto.dart';
 import 'package:find_job_mobile/shared/data/models/pageable_response.dart';
 
 class EmployerFollowerRepository {
@@ -36,7 +37,7 @@ class EmployerFollowerRepository {
   }
 
   /// Get list of followed candidates with pagination
-  Future<BaseResponse<PageableResponse<CandidateProfileDto>>>
+  Future<BaseResponse<PageableResponse<SavedCandidateDto>>>
       getFollowedCandidates({
     int page = 0,
     int size = 10,

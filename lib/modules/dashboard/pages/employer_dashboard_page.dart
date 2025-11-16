@@ -3,13 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/models/job_dto.dart';
-import 'package:find_job_mobile/shared/data/models/candidate_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/models/saved_candidate_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/job_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/employer_follower_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/my_job_page.dart';
+import 'package:find_job_mobile/modules/dashboard/pages/saved_candidates_page.dart';
 import 'package:intl/intl.dart';
 
 class EmployerDashboardPage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
   bool _isLoadingJobs = false;
   bool _isLoadingCandidates = false;
   List<JobDto> _recentJobs = [];
-  List<CandidateProfileDto> _savedCandidates = [];
+  List<SavedCandidateDto> _savedCandidates = [];
   String? _errorMessage;
 
   @override
@@ -374,9 +375,11 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
             if (_savedCandidates.isNotEmpty)
               TextButton.icon(
                 onPressed: () {
-                  // TODO: Navigate to all saved candidates page
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('View all candidates - Coming soon')),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SavedCandidatesPage(),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.arrow_forward, size: 18),
@@ -416,7 +419,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
     );
   }
 
-  Widget _buildCandidateCard(CandidateProfileDto candidate) {
+  Widget _buildCandidateCard(SavedCandidateDto candidate) {
     final fullName = '${candidate.firstName} ${candidate.lastName}';
     
     return Container(
@@ -435,18 +438,27 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
       child: Row(
         children: [
           // Avatar
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-            backgroundImage: candidate.avatarUrl != null && candidate.avatarUrl!.isNotEmpty
-                ? NetworkImage(candidate.avatarUrl!)
-                : null,
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              image: candidate.avatarUrl != null && candidate.avatarUrl!.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(candidate.avatarUrl!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+            ),
             child: candidate.avatarUrl == null || candidate.avatarUrl!.isEmpty
-                ? Text(
-                    fullName.isNotEmpty ? fullName[0].toUpperCase() : 'C',
-                    style: AppTextStyles.heading3.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
+                ? Center(
+                    child: Text(
+                      fullName.isNotEmpty ? fullName[0].toUpperCase() : 'C',
+                      style: AppTextStyles.heading3.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   )
                 : null,
@@ -468,23 +480,10 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
+                
+                // Location (just string now)
                 Row(
                   children: [
-                    if (candidate.education != null) ...[
-                      Icon(
-                        Icons.school_outlined,
-                        size: 16,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        _getEducationLabel(candidate.education!),
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                    ],
                     Icon(
                       Icons.location_on_outlined,
                       size: 16,
@@ -493,7 +492,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        candidate.province.name,
+                        candidate.location, // Just a string like "Văn Chấn, Yên Bái"
                         style: AppTextStyles.body.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -507,10 +506,30 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
             ),
           ),
           
-          // Arrow icon
-          const Icon(
-            Icons.chevron_right,
-            color: AppColors.textTertiary,
+          // Bookmark button
+          IconButton(
+            onPressed: () async {
+              try {
+                await _employerFollowerRepository.unfollowCandidate(candidate.id);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Unfollowed $fullName')),
+                  );
+                  // Refresh the list
+                  _loadSavedCandidates();
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to unfollow: ${e.toString()}')),
+                  );
+                }
+              }
+            },
+            icon: const Icon(
+              Icons.bookmark,
+              color: AppColors.primary,
+            ),
           ),
         ],
       ),
@@ -522,46 +541,41 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
     required String title,
     required String subtitle,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.textTertiary.withValues(alpha: 0.2),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 48,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: AppTextStyles.heading3.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              style: AppTextStyles.body.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              size: 40,
-              color: AppColors.primary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: AppTextStyles.heading3.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            style: AppTextStyles.body.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
   }
@@ -586,21 +600,6 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
       }
     } catch (e) {
       return dateStr;
-    }
-  }
-
-  String _getEducationLabel(Education education) {
-    switch (education) {
-      case Education.highSchool:
-        return 'High School';
-      case Education.intermediate:
-        return 'Intermediate';
-      case Education.graduation:
-        return 'Graduation';
-      case Education.bachelorDegree:
-        return 'Bachelor Degree';
-      case Education.masterDegree:
-        return 'Master Degree';
     }
   }
 }

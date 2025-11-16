@@ -7,10 +7,16 @@ class FindHeader extends StatelessWidget {
     super.key,
     required this.searchController,
     required this.onFilterTap,
+    this.onSearchSubmit,
+    this.onFindTap,
+    this.leading,
   });
 
   final TextEditingController searchController;
   final VoidCallback onFilterTap;
+  final VoidCallback? onSearchSubmit;
+  final VoidCallback? onFindTap;
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +40,15 @@ class FindHeader extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 8),
-            // Search field with filter button
+            // Search field with optional leading, find and filter buttons
             Row(
               children: [
+                if (leading != null) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: SizedBox(width: 40, height: 40, child: leading),
+                  ),
+                ],
                 Expanded(
                   child: Container(
                     height: 50,
@@ -46,6 +58,7 @@ class FindHeader extends StatelessWidget {
                     ),
                     child: TextField(
                       controller: searchController,
+                      onSubmitted: (_) => onSearchSubmit?.call(),
                       style: AppTextStyles.body.copyWith(
                         color: AppColors.textPrimary,
                         fontSize: 14,
@@ -61,6 +74,19 @@ class FindHeader extends StatelessWidget {
                           color: AppColors.textTertiary,
                           size: 20,
                         ),
+                        suffixIcon: searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(
+                                  Icons.clear,
+                                  color: AppColors.textTertiary,
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  searchController.clear();
+                                  onSearchSubmit?.call();
+                                },
+                              )
+                            : null,
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -71,6 +97,44 @@ class FindHeader extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
+                GestureDetector(
+                  onTap: onFindTap ?? onSearchSubmit,
+                  child: Container(
+                    height: 50,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.search,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Find',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 GestureDetector(
                   onTap: onFilterTap,
                   child: Container(
