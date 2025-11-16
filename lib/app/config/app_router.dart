@@ -1,13 +1,12 @@
 import 'package:find_job_mobile/modules/auth/screens/sign_in_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/sign_up_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/verify_screen.dart';
-import 'package:find_job_mobile/modules/community/pages/find_job_page.dart';
 import 'package:find_job_mobile/modules/detail/pages/job_detail_page.dart';
 import 'package:find_job_mobile/modules/detail/pages/upload_cv_page.dart';
 import 'package:find_job_mobile/modules/detail/pages/employer_detail_page.dart';
 import 'package:find_job_mobile/modules/detail/pages/candidate_detail_page.dart';
 import 'package:find_job_mobile/modules/community/pages/find_community.dart';
-import 'package:find_job_mobile/modules/job_details/pages/job_details_page.dart';
+import 'package:find_job_mobile/modules/find_job/pages/find_job_page.dart';
 import 'package:find_job_mobile/modules/main/screens/main_screen.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_candidate_profile.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_employer_profile.dart';
@@ -79,9 +78,13 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       name: 'find-job',
       path: RoutePath.findJob,
+      builder: (context, state) => const FindJobPage(),
+    ),
+    GoRoute(
+      name: 'find-community',
+      path: RoutePath.findCommunity,
       builder: (context, state) => const FindCommunityPage(),
     ),
-
     GoRoute(
       name: 'job-detail',
       path: RoutePath.jobDetail,
