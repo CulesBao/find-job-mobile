@@ -1,6 +1,11 @@
 import 'package:find_job_mobile/modules/auth/screens/sign_in_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/sign_up_screen.dart';
 import 'package:find_job_mobile/modules/auth/screens/verify_screen.dart';
+import 'package:find_job_mobile/modules/community/pages/find_job_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/job_detail_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/upload_cv_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/employer_detail_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/candidate_detail_page.dart';
 import 'package:find_job_mobile/modules/community/pages/find_community.dart';
 import 'package:find_job_mobile/modules/job_details/pages/job_details_page.dart';
 import 'package:find_job_mobile/modules/main/screens/main_screen.dart';
@@ -76,14 +81,26 @@ final GoRouter appRouter = GoRouter(
       path: RoutePath.findJob,
       builder: (context, state) => const FindCommunityPage(),
     ),
+
     GoRoute(
-      name: 'job-details',
-      path: RoutePath.jobDetails,
-      builder: (context, state) {
-        final jobId = state.pathParameters['jobId'];
-        final extra = state.extra as Map<String, dynamic>?;
-        return JobDetailsPage(jobId: jobId, job: extra?['job']);
-      },
+      name: 'job-detail',
+      path: RoutePath.jobDetail,
+      builder: (context, state) => const JobDetailPage(),
+    ),
+    GoRoute(
+      name: 'job-apply',
+      path: RoutePath.jobApply,
+      builder: (context, state) => const UploadCvPage(),
+    ),
+    GoRoute(
+      name: 'employer-detail',
+      path: RoutePath.employerDetail,
+      builder: (context, state) => const EmployerDetailPage(),
+    ),
+    GoRoute(
+      name: 'candidate-detail',
+      path: RoutePath.candidateDetail,
+      builder: (context, state) => const CandidateDetailPage(),
     ),
   ],
 );
