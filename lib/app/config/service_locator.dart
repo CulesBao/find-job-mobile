@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:find_job_mobile/shared/data/api/dio_client.dart';
 import 'package:find_job_mobile/shared/data/api/auth_api_service.dart';
+import 'package:find_job_mobile/shared/data/api/account_api_service.dart';
 import 'package:find_job_mobile/shared/data/api/candidate_profile_api_service.dart';
 import 'package:find_job_mobile/shared/data/api/employer_profile_api_service.dart';
 import 'package:find_job_mobile/shared/data/api/location_api_service.dart';
@@ -10,6 +11,7 @@ import 'package:find_job_mobile/shared/data/api/job_api_service.dart';
 import 'package:find_job_mobile/shared/data/api/candidate_follower_api_service.dart';
 import 'package:find_job_mobile/shared/data/api/employer_follower_api_service.dart';
 import 'package:find_job_mobile/shared/data/repositories/auth_repository.dart';
+import 'package:find_job_mobile/shared/data/repositories/account_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/candidate_profile_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/employer_profile_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/employer_profile_repository_impl.dart';
@@ -68,6 +70,10 @@ Future<void> setupServiceLocator() async {
     () => EmployerFollowerApiService(getIt<DioClient>().dio),
   );
 
+  getIt.registerLazySingleton<AccountApiService>(
+    () => AccountApiService(getIt<DioClient>().dio),
+  );
+
   // Repositories
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepository(getIt<AuthApiService>(), getIt<SharedPreferences>()),
@@ -99,5 +105,9 @@ Future<void> setupServiceLocator() async {
 
   getIt.registerLazySingleton<EmployerFollowerRepository>(
     () => EmployerFollowerRepository(getIt<EmployerFollowerApiService>()),
+  );
+
+  getIt.registerLazySingleton<AccountRepository>(
+    () => AccountRepository(getIt<AccountApiService>()),
   );
 }

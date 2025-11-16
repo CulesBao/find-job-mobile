@@ -19,7 +19,7 @@ class _EducationDropdownState extends State<EducationDropdown> {
   final List<Map<String, String>> _educationLevels = [
     {'display': 'Graduation', 'value': 'GRADUATION'},
     {'display': "Bachelor's Degree", 'value': 'BACHELOR_DEGREE'},
-    {'display': "Master's Degree", 'value': 'MASTER_DEGREE'},
+    {'display': "Master's Degree", 'value': 'MASTER_GEGREE'},
     {'display': 'High School', 'value': 'HIGH_SCHOOL'},
     {'display': 'Intermediate', 'value': 'INTERMEDIATE'},
   ];

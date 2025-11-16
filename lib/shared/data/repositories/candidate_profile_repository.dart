@@ -67,7 +67,8 @@ class CandidateProfileRepository {
     }
   }
 
-  Future<BaseResponse<PageableResponse<CandidateFilterDto>>> filterCandidateProfiles({
+  Future<BaseResponse<PageableResponse<CandidateFilterDto>>>
+  filterCandidateProfiles({
     String? firstName,
     String? lastName,
     Education? education,
@@ -77,14 +78,6 @@ class CandidateProfileRepository {
     int size = 10,
   }) async {
     try {
-      debugPrint('📤 API Request - Filter Candidates:');
-      debugPrint('   firstName: $firstName');
-      debugPrint('   lastName: $lastName');
-      debugPrint('   education: $education');
-      debugPrint('   provinceCode: $provinceCode');
-      debugPrint('   gender (enum): $gender');
-      debugPrint('   page: $page, size: $size');
-      
       final filter = FilterCandidateProfileRequest(
         firstName: firstName,
         lastName: lastName,
@@ -92,31 +85,13 @@ class CandidateProfileRepository {
         provinceCode: provinceCode,
         gender: gender,
       );
-      
-      debugPrint('   Filter object: ${filter.toJson()}');
-
-      final response = await _apiService.filterCandidateProfile(filter, page, size);
-      
-      debugPrint('📥 API Response:');
-      debugPrint('   Success: ${response.success}');
-      debugPrint('   Data count: ${response.data?.content.length ?? 0}');
-      
-      // Log each candidate's raw data for debugging
-      if (response.data?.content != null) {
-        for (var i = 0; i < response.data!.content.length; i++) {
-          final candidate = response.data!.content[i];
-          debugPrint('   Candidate $i:');
-          debugPrint('     - Name: ${candidate.firstName} ${candidate.lastName}');
-          debugPrint('     - Gender (boolean): ${candidate.gender}');
-          debugPrint('     - Gender type: ${candidate.gender.runtimeType}');
-          debugPrint('     - Location: ${candidate.location}');
-          debugPrint('     - Education: ${candidate.education}');
-        }
-      }
-      
+      final response = await _apiService.filterCandidateProfile(
+        filter,
+        page,
+        size,
+      );
       return response;
     } catch (e) {
-      debugPrint('❌ API Error: $e');
       rethrow;
     }
   }

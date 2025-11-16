@@ -44,6 +44,11 @@ class _ProvinceDistrictSelectorState extends State<ProvinceDistrictSelector> {
     _selectedProvince = widget.initialProvince;
     _selectedDistrict = widget.initialDistrict;
     _loadProvinces();
+
+    // Load districts if province is already selected
+    if (widget.initialProvince != null) {
+      _loadDistricts(widget.initialProvince!);
+    }
   }
 
   Future<void> _loadProvinces() async {

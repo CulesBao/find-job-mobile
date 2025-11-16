@@ -57,13 +57,11 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
           _recentJobs = response.data?.content ?? [];
         });
       } else {
-        print('Failed to load jobs - Response not successful: ${response.message}');
         setState(() {
           _errorMessage = response.message;
         });
       }
     } catch (e) {
-      print('Error loading jobs: $e');
       setState(() {
         _errorMessage = 'Unable to load jobs. Please try again.';
       });
@@ -86,10 +84,10 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
           _savedCandidates = response.data?.content ?? [];
         });
       } else {
-        print('Failed to load candidates: ${response.message}');
+
       }
     } catch (e) {
-      print('Error loading candidates: $e');
+
     } finally {
       setState(() {
         _isLoadingCandidates = false;

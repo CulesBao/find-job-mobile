@@ -52,12 +52,66 @@ class EmployerProfileService {
 
     final profileId = createResponse.data!.id;
 
+    if (logoFile != null) {
+      try {
+        await _repository.updateLogo(logoFile);
+      } catch (e) {}
+    }
+
+    if (socialLinks != null && socialLinks.isNotEmpty) {
+      try {
+        final socialLinksRequest = UpdateSocialLinksRequest(
+          socialLinks: socialLinks,
+        );
+        await _repository.updateSocialLinks(socialLinksRequest);
+      } catch (e) {}
+    }
+
+    // Step 4: Get complete profile with all updates
+    final profileResponse = await _repository.getProfile(profileId);
+
+    if (profileResponse.data == null) {
+      throw Exception('Failed to fetch complete profile');
+    }
+
+    // Step 5: Save to AuthHelper for app-wide access
+    await AuthHelper.saveEmployerProfile(profileResponse.data!);
+
+    return profileResponse;
+  }
+
+  /// Update existing employer profile
+  Future<BaseResponse<EmployerProfileDto>> updateProfile({
+    required String name,
+    required String establishedIn,
+    required String websiteUrl,
+    required String provinceCode,
+    required String districtCode,
+    required String location,
+    String? about,
+    String? vision,
+    File? logoFile,
+    List<SocialLinkInput>? socialLinks,
+  }) async {
+    // Step 1: Update basic profile
+    final request = CreateEmployerProfileRequest(
+      name: name.trim(),
+      establishedIn: FormatHelper.convertDateFormat(establishedIn.trim()),
+      websiteUrl: websiteUrl.trim(),
+      provinceCode: provinceCode,
+      districtCode: districtCode,
+      location: location.trim(),
+      about: about?.trim(),
+      vision: vision?.trim(),
+    );
+
+    await _repository.updateProfile(request);
+
     // Step 2: Update logo if provided
     if (logoFile != null) {
       try {
         await _repository.updateLogo(logoFile);
       } catch (e) {
-        // Continue even if logo upload fails
         print('Failed to upload logo: $e');
       }
     }
@@ -70,19 +124,23 @@ class EmployerProfileService {
         );
         await _repository.updateSocialLinks(socialLinksRequest);
       } catch (e) {
-        // Continue even if social links update fails
         print('Failed to update social links: $e');
       }
     }
 
-    // Step 4: Get complete profile with all updates
-    final profileResponse = await _repository.getProfile(profileId);
-
-    if (profileResponse.data == null) {
-      throw Exception('Failed to fetch complete profile');
+    // Step 4: Get complete updated profile from server
+    final currentProfile = AuthHelper.employerProfile;
+    if (currentProfile == null) {
+      throw Exception('No employer profile found');
     }
 
-    // Step 5: Save to AuthHelper for app-wide access
+    final profileResponse = await _repository.getProfile(currentProfile.id);
+
+    if (profileResponse.data == null) {
+      throw Exception('Failed to fetch updated profile');
+    }
+
+    // Step 5: Save updated profile to AuthHelper for app-wide access
     await AuthHelper.saveEmployerProfile(profileResponse.data!);
 
     return profileResponse;

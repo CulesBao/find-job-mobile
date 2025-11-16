@@ -84,8 +84,7 @@ class _FindCommunityPageState extends State<FindCommunityPage>
         });
       }
     } catch (e) {
-      // Silent fail - provinces are optional
-      debugPrint('Failed to load provinces: $e');
+
     }
   }
 
@@ -125,15 +124,6 @@ class _FindCommunityPageState extends State<FindCommunityPage>
         genderFilter = _selectedGender == false ? GenderFilter.male : GenderFilter.female;
       }
       
-      // Debug logs
-      debugPrint('🔍 Loading candidates with filters:');
-      debugPrint('  - Search: $searchText');
-      debugPrint('  - Education: $_selectedEducation');
-      debugPrint('  - Gender (UI bool): $_selectedGender');
-      debugPrint('  - Gender (API enum): $genderFilter');
-      debugPrint('  - Province Code: ${_selectedProvince?.code}');
-      debugPrint('  - Page: $_candidatePage');
-      
       final response = await _candidateRepository.filterCandidateProfiles(
         firstName: searchText.isNotEmpty ? searchText : null,
         education: _selectedEducation,
@@ -143,8 +133,6 @@ class _FindCommunityPageState extends State<FindCommunityPage>
         size: 10,
       );
 
-      debugPrint('📦 Response received: ${response.data?.content.length ?? 0} candidates');
-
       if (mounted) {
         if (response.data != null) {
           final newCandidates = response.data?.content ?? [];
@@ -153,10 +141,6 @@ class _FindCommunityPageState extends State<FindCommunityPage>
           // Debug: Log first candidate details if available
           if (newCandidates.isNotEmpty) {
             final first = newCandidates[0];
-            debugPrint('📋 First candidate raw data:');
-            debugPrint('   Name: ${first.firstName} ${first.lastName}');
-            debugPrint('   Gender field value: ${first.gender}');
-            debugPrint('   Location: ${first.location ?? "null"}');
           }
 
           setState(() {
