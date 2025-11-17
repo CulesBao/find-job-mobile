@@ -7,8 +7,7 @@ class ProfileHeaderWidget extends StatelessWidget {
   final String phoneNumber;
   final String followerCount;
   final String followingCount;
-  final VoidCallback? onShareTap;
-  final VoidCallback? onSettingsTap;
+  final VoidCallback? onBackTap;
 
   const ProfileHeaderWidget({
     super.key,
@@ -17,8 +16,7 @@ class ProfileHeaderWidget extends StatelessWidget {
     required this.phoneNumber,
     required this.followerCount,
     required this.followingCount,
-    this.onShareTap,
-    this.onSettingsTap,
+    required this.onBackTap,
   });
 
   @override
@@ -36,25 +34,17 @@ class ProfileHeaderWidget extends StatelessWidget {
         bottom: false,
         child: Column(
           children: [
+            const SizedBox(height: 12),
             // Top bar with share and settings icons
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: onShareTap,
+                    onTap: onBackTap,
                     child: const Icon(
-                      Icons.share,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  GestureDetector(
-                    onTap: onSettingsTap,
-                    child: const Icon(
-                      Icons.settings,
+                      Icons.arrow_back,
                       color: Colors.white,
                       size: 24,
                     ),
