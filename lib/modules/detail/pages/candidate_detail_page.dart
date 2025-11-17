@@ -27,11 +27,8 @@ class _CandidateDetailPageState extends State<CandidateDetailPage> {
               phoneNumber: '+1 234 567 890',
               followerCount: '120k',
               followingCount: '23k',
-              onShareTap: () {
-                // Handle share
-              },
-              onSettingsTap: () {
-                // Handle settings
+              onBackTap: () {
+                // Handle back tap
               },
             ),
             const SizedBox(height: 20),
