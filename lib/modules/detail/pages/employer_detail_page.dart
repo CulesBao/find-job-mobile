@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:find_job_mobile/app/config/service_locator.dart';
+import 'package:find_job_mobile/shared/data/models/employer_profile_dto.dart';
+import 'package:find_job_mobile/shared/data/repositories/employer_profile_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/modules/detail/widgets/employer/company_header_widget.dart';
@@ -9,7 +12,9 @@ import 'package:find_job_mobile/modules/detail/widgets/employer/job_card_widget.
 import 'package:find_job_mobile/modules/detail/widgets/employer/relative_company_card_widget.dart';
 
 class EmployerDetailPage extends StatefulWidget {
-  const EmployerDetailPage({super.key});
+  final String employerId;
+
+  const EmployerDetailPage({super.key, required this.employerId});
 
   @override
   State<EmployerDetailPage> createState() => _EmployerDetailPageState();
@@ -19,11 +24,34 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isFollowing = false;
+  bool _isLoading = true;
+  EmployerProfileDto? _profile;
+  final _repository = getIt<EmployerProfileRepository>();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    try {
+      final response = await _repository.getProfile(widget.employerId);
+      if (mounted) {
+        setState(() {
+          _profile = response.data;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load profile: $e')));
+      }
+    }
   }
 
   @override
@@ -34,19 +62,39 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_profile == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: const Text('Employer Profile')),
+        body: const Center(child: Text('Profile not found')),
+      );
+    }
+
+    final location = _profile!.province != null
+        ? (_profile!.district != null
+              ? '${_profile!.district!.name}, ${_profile!.province!.name}'
+              : _profile!.province!.name)
+        : 'Not specified';
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(),
-            const CompanyHeaderWidget(
-              companyName: 'FPT Software',
-              industry: 'Google',
-              location: 'California',
-              timeAgo: '1 day ago',
-              logoUrl:
-                  'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
+            CompanyHeaderWidget(
+              companyName: _profile!.name,
+              industry: 'Technology', // TODO: Add industry field
+              location: location,
+              timeAgo: '1 day ago', // TODO: Calculate from created_at
+              logoUrl: _profile!.logoUrl,
             ),
             ActionButtonsWidget(
               isFollowing: _isFollowing,

@@ -39,10 +39,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
   }
 
   Future<void> _loadData() async {
-    await Future.wait([
-      _loadRecentJobs(),
-      _loadSavedCandidates(),
-    ]);
+    await Future.wait([_loadRecentJobs(), _loadSavedCandidates()]);
   }
 
   Future<void> _loadRecentJobs() async {
@@ -80,16 +77,16 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
     });
 
     try {
-      final response = await _employerFollowerRepository.getFollowedCandidates(page: 0, size: 3);
+      final response = await _employerFollowerRepository.getFollowedCandidates(
+        page: 0,
+        size: 3,
+      );
       if (response.success || response.data != null) {
         setState(() {
           _savedCandidates = response.data?.content ?? [];
         });
-      } else {
-
-      }
+      } else {}
     } catch (e) {
-
     } finally {
       setState(() {
         _isLoadingCandidates = false;
@@ -99,11 +96,11 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
 
   String _getStatusText(JobDto job) {
     if (job.expiredAt == null) return 'Active';
-    
+
     try {
       final expiredDate = DateTime.parse(job.expiredAt!);
       final now = DateTime.now();
-      
+
       if (expiredDate.isBefore(now)) {
         return 'Expired';
       } else {
@@ -160,9 +157,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
       children: [
         Text(
           'Welcome,',
-          style: AppTextStyles.body.copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: 4),
         Text(
@@ -195,21 +190,17 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const MyJobPage(),
-                    ),
+                    MaterialPageRoute(builder: (context) => const MyJobPage()),
                   );
                 },
                 icon: const Icon(Icons.arrow_forward, size: 18),
                 label: const Text('View All'),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                ),
+                style: TextButton.styleFrom(foregroundColor: AppColors.primary),
               ),
           ],
         ),
         const SizedBox(height: 16),
-        
+
         if (_isLoadingJobs)
           const Center(
             child: Padding(
@@ -223,17 +214,11 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
               padding: const EdgeInsets.all(32.0),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 48,
-                    color: AppColors.error,
-                  ),
+                  Icon(Icons.error_outline, size: 48, color: AppColors.error),
                   const SizedBox(height: 16),
                   Text(
                     _errorMessage!,
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.error,
-                    ),
+                    style: AppTextStyles.body.copyWith(color: AppColors.error),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -278,9 +263,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const JobDetailPage(),
-          ),
+          MaterialPageRoute(builder: (context) => const JobDetailPage()),
         );
       },
       child: Container(
@@ -296,75 +279,78 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
             ),
           ],
         ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  job.title,
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  status,
-                  style: AppTextStyles.caption.copyWith(
-                    color: statusColor,
-                    fontWeight: FontWeight.w600,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    job.title,
+                    style: AppTextStyles.heading3.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          
-          Row(
-            children: [
-              Icon(
-                Icons.people_outline,
-                size: 18,
-                color: AppColors.textSecondary,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                '${job.appliedCount ?? 0} applicant${(job.appliedCount ?? 0) == 1 ? '' : 's'}',
-                style: AppTextStyles.body.copyWith(
-                  color: AppColors.textSecondary,
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    status,
+                    style: AppTextStyles.caption.copyWith(
+                      color: statusColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              if (job.createdAt != null) ...[
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            Row(
+              children: [
                 Icon(
-                  Icons.calendar_today_outlined,
-                  size: 16,
+                  Icons.people_outline,
+                  size: 18,
                   color: AppColors.textSecondary,
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Posted ${_formatDate(job.createdAt!)}',
+                  '${job.appliedCount ?? 0} applicant${(job.appliedCount ?? 0) == 1 ? '' : 's'}',
                   style: AppTextStyles.body.copyWith(
                     color: AppColors.textSecondary,
                   ),
                 ),
+                const SizedBox(width: 16),
+                if (job.createdAt != null) ...[
+                  Icon(
+                    Icons.calendar_today_outlined,
+                    size: 16,
+                    color: AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Posted ${_formatDate(job.createdAt!)}',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
               ],
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 
@@ -394,14 +380,12 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
                 },
                 icon: const Icon(Icons.arrow_forward, size: 18),
                 label: const Text('View All'),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                ),
+                style: TextButton.styleFrom(foregroundColor: AppColors.primary),
               ),
           ],
         ),
         const SizedBox(height: 16),
-        
+
         if (_isLoadingCandidates)
           const Center(
             child: Padding(
@@ -431,13 +415,14 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
 
   Widget _buildCandidateCard(SavedCandidateDto candidate) {
     final fullName = '${candidate.firstName} ${candidate.lastName}';
-    
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const CandidateDetailPage(),
+            builder: (context) =>
+                CandidateDetailPage(candidateId: candidate.id),
           ),
         );
       },
@@ -454,105 +439,109 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
             ),
           ],
         ),
-      child: Row(
-        children: [
-          // Avatar
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              image: candidate.avatarUrl != null && candidate.avatarUrl!.isNotEmpty
-                  ? DecorationImage(
-                      image: NetworkImage(candidate.avatarUrl!),
-                      fit: BoxFit.cover,
+        child: Row(
+          children: [
+            // Avatar
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                image:
+                    candidate.avatarUrl != null &&
+                        candidate.avatarUrl!.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(candidate.avatarUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: candidate.avatarUrl == null || candidate.avatarUrl!.isEmpty
+                  ? Center(
+                      child: Text(
+                        fullName.isNotEmpty ? fullName[0].toUpperCase() : 'C',
+                        style: AppTextStyles.heading3.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     )
                   : null,
             ),
-            child: candidate.avatarUrl == null || candidate.avatarUrl!.isEmpty
-                ? Center(
-                    child: Text(
-                      fullName.isNotEmpty ? fullName[0].toUpperCase() : 'C',
-                      style: AppTextStyles.heading3.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
+            const SizedBox(width: 16),
+
+            // Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    fullName,
+                    style: AppTextStyles.heading3.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
                     ),
-                  )
-                : null,
-          ),
-          const SizedBox(width: 16),
-          
-          // Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  fullName,
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                
-                // Location (just string now)
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        candidate.location, // Just a string like "Văn Chấn, Yên Bái"
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 4),
+
+                  // Location (just string now)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 16,
+                        color: AppColors.textSecondary,
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          candidate
+                              .location, // Just a string like "Văn Chấn, Yên Bái"
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          
-          // Bookmark button
-          IconButton(
-            onPressed: () async {
-              try {
-                await _employerFollowerRepository.unfollowCandidate(candidate.id);
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Unfollowed $fullName')),
+
+            // Bookmark button
+            IconButton(
+              onPressed: () async {
+                try {
+                  await _employerFollowerRepository.unfollowCandidate(
+                    candidate.id,
                   );
-                  // Refresh the list
-                  _loadSavedCandidates();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Unfollowed $fullName')),
+                    );
+                    // Refresh the list
+                    _loadSavedCandidates();
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to unfollow: ${e.toString()}'),
+                      ),
+                    );
+                  }
                 }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to unfollow: ${e.toString()}')),
-                  );
-                }
-              }
-            },
-            icon: const Icon(
-              Icons.bookmark,
-              color: AppColors.primary,
+              },
+              icon: const Icon(Icons.bookmark, color: AppColors.primary),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
     );
   }
 
@@ -572,11 +561,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
                 color: AppColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 48,
-                color: AppColors.primary,
-              ),
+              child: Icon(icon, size: 48, color: AppColors.primary),
             ),
             const SizedBox(height: 16),
             Text(

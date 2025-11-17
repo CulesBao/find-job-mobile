@@ -45,21 +45,24 @@ class _EmployerCardState extends State<EmployerCard> {
       if (_isFollowed == true) {
         await _candidateFollowerRepo.unfollowEmployer(id);
         if (mounted) setState(() => _isFollowed = false);
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unfollowed ${widget.employer.name}')),
-        );
+        if (mounted)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Unfollowed ${widget.employer.name}')),
+          );
       } else {
         await _candidateFollowerRepo.followEmployer(id);
         if (mounted) setState(() => _isFollowed = true);
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Followed ${widget.employer.name}')),
-        );
+        if (mounted)
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Followed ${widget.employer.name}')),
+          );
       }
     } catch (e) {
       debugPrint('Follow action failed: $e');
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Action failed: ${e.toString()}')),
-      );
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Action failed: ${e.toString()}')),
+        );
     }
   }
 
@@ -76,13 +79,13 @@ class _EmployerCardState extends State<EmployerCard> {
     } else {
       location = 'Not specified';
     }
-    
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const EmployerDetailPage(),
+            builder: (context) => EmployerDetailPage(employerId: employer.id),
           ),
         );
       },
@@ -99,103 +102,103 @@ class _EmployerCardState extends State<EmployerCard> {
             ),
           ],
         ),
-      child: Row(
-        children: [
-          // Avatar/Logo
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: AppColors.secondary.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(16),
-              image: employer.logoUrl != null
-                  ? DecorationImage(
-                      image: NetworkImage(employer.logoUrl!),
-                      fit: BoxFit.cover,
+        child: Row(
+          children: [
+            // Avatar/Logo
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.secondary.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(16),
+                image: employer.logoUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(employer.logoUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: employer.logoUrl == null
+                  ? const Icon(
+                      Icons.business,
+                      color: AppColors.primary,
+                      size: 32,
                     )
                   : null,
             ),
-            child: employer.logoUrl == null
-                ? const Icon(
-                    Icons.business,
-                    color: AppColors.primary,
-                    size: 32,
-                  )
-                : null,
-          ),
-          const SizedBox(width: 16),
-          // Information
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  employer.name,
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
+            const SizedBox(width: 16),
+            // Information
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    employer.name,
+                    style: AppTextStyles.heading3.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.location_on_outlined,
-                      size: 16,
-                      color: AppColors.textTertiary,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        location,
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 12,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                if (employer.about != null)
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(
-                        Icons.info_outline,
+                        Icons.location_on_outlined,
                         size: 16,
                         color: AppColors.textTertiary,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          employer.about!,
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textTertiary,
+                          location,
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.textSecondary,
                             fontSize: 12,
                           ),
-                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-              ],
+                  const SizedBox(height: 4),
+                  if (employer.about != null)
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: AppColors.textTertiary,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            employer.about!,
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textTertiary,
+                              fontSize: 12,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            icon: Icon(
-              _isFollowed == true ? Icons.bookmark : Icons.bookmark_outline,
-              color: AppColors.primary,
+            IconButton(
+              icon: Icon(
+                _isFollowed == true ? Icons.bookmark : Icons.bookmark_outline,
+                color: AppColors.primary,
+              ),
+              onPressed: AuthHelper.isCandidate ? _toggleFollow : null,
+              tooltip: AuthHelper.isCandidate
+                  ? (_isFollowed == true ? 'Unfollow' : 'Follow')
+                  : 'Only candidates can follow',
             ),
-            onPressed: AuthHelper.isCandidate ? _toggleFollow : null,
-            tooltip: AuthHelper.isCandidate
-                ? (_isFollowed == true ? 'Unfollow' : 'Follow')
-                : 'Only candidates can follow',
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
     );
   }
 }

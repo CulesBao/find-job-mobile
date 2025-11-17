@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'http://localhost:8080/api';
+  static const String baseUrl = 'http://192.168.0.149:8080/api';
 
   // Timeout
   static const Duration connectTimeout = Duration(seconds: 30);
