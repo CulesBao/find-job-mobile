@@ -11,6 +11,8 @@ import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/my_job_page.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/saved_candidates_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/job_detail_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/candidate_detail_page.dart';
 import 'package:intl/intl.dart';
 
 class EmployerDashboardPage extends StatefulWidget {
@@ -272,19 +274,28 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
     final status = _getStatusText(job);
     final statusColor = _getStatusColor(status);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const JobDetailPage(),
           ),
-        ],
-      ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -353,6 +364,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
           ),
         ],
       ),
+    ),
     );
   }
 
@@ -420,19 +432,28 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
   Widget _buildCandidateCard(SavedCandidateDto candidate) {
     final fullName = '${candidate.firstName} ${candidate.lastName}';
     
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CandidateDetailPage(),
           ),
-        ],
-      ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
       child: Row(
         children: [
           // Avatar
@@ -531,6 +552,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
           ),
         ],
       ),
+    ),
     );
   }
 

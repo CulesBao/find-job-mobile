@@ -1,5 +1,7 @@
 import 'package:find_job_mobile/modules/find_job/pages/find_job_page.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/saved_employers_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/job_detail_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/employer_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/dto/filter_job_request.dart';
@@ -108,11 +110,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
           _savedEmployers = [];
         });
       }
-    } on TypeError catch (e, stackTrace) {
-      setState(() {
-        _savedEmployers = [];
-      });
-    } catch (e, stackTrace) {
+    } catch (e) {
       setState(() {
         _savedEmployers = [];
       });
@@ -297,10 +295,9 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
             height: 195,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: _jobs.length > 3 ? 4 : _jobs.length,
+              itemCount: _jobs.isEmpty ? 0 : _jobs.length + 1,
               itemBuilder: (context, index) {
-                if (index == 3) {
-                  // View All card
+                if (index == _jobs.length) {
                   return _buildViewAllCard();
                 }
                 return _buildJobCard(_jobs[index]);
@@ -313,21 +310,30 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
 
   Widget _buildJobCard(JobDto job) {
     final daysRemaining = _getDaysRemaining(job.expiredAt);
-    return Container(
-      width: 300,
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const JobDetailPage(),
           ),
-        ],
-      ),
+        );
+      },
+      child: Container(
+        width: 300,
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,28 +484,29 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
           ),
         ],
       ),
+    ),
     );
   }
 
   Widget _buildViewAllCard() {
     return InkWell(
       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FindJobPage(),
-                          ),
-                        );
-                      },
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const FindJobPage(),
+          ),
+        );
+      },
       child: Container(
         width: 180,
         margin: const EdgeInsets.only(right: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.primary,
+            color: const Color.fromARGB(255, 191, 182, 227),
             width: 2,
           ),
         ),
@@ -509,7 +516,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: const Color.fromARGB(255, 141, 116, 255),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -595,19 +602,28 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
   }
 
   Widget _buildEmployerCard(SavedEmployerDto employer) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const EmployerDetailPage(),
           ),
-        ],
-      ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
       child: Row(
         children: [
           // Company Logo
@@ -702,6 +718,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
           ),
         ],
       ),
+    ),
     );
   }
 

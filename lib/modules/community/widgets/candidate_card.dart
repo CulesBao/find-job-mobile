@@ -6,6 +6,7 @@ import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:find_job_mobile/shared/data/repositories/employer_follower_repository.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
+import 'package:find_job_mobile/modules/detail/pages/candidate_detail_page.dart';
 
 class CandidateCard extends StatefulWidget {
   const CandidateCard({super.key, required this.candidate});
@@ -88,19 +89,28 @@ class _CandidateCardState extends State<CandidateCard> {
 
     final location = candidate.location ?? 'Not specified';
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CandidateDetailPage(),
           ),
-        ],
-      ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
       child: Row(
         children: [
           // Avatar
@@ -199,6 +209,7 @@ class _CandidateCardState extends State<CandidateCard> {
           ),
         ],
       ),
+    ),
     );
   }
 }
