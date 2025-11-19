@@ -304,7 +304,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const JobDetailPage()),
+          MaterialPageRoute(builder: (context) => JobDetailPage(jobId: job.id)),
         );
       },
       child: Container(

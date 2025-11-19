@@ -87,8 +87,11 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       name: 'job-detail',
-      path: RoutePath.jobDetail,
-      builder: (context, state) => const JobDetailPage(),
+      path: '${RoutePath.jobDetail}/:jobId',
+      builder: (context, state) {
+        final jobId = state.pathParameters['jobId'] ?? '';
+        return JobDetailPage(jobId: jobId);
+      },
     ),
     GoRoute(
       name: 'job-apply',

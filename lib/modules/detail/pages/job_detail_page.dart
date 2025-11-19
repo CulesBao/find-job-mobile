@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:find_job_mobile/app/config/service_locator.dart';
+import 'package:find_job_mobile/shared/data/models/job_dto.dart';
+import 'package:find_job_mobile/shared/data/repositories/job_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:go_router/go_router.dart';
 import 'package:find_job_mobile/app/config/route_path.dart';
 
 class JobDetailPage extends StatefulWidget {
-  const JobDetailPage({super.key});
+  final String jobId;
+
+  const JobDetailPage({super.key, required this.jobId});
 
   @override
   State<JobDetailPage> createState() => _JobDetailPageState();
@@ -16,11 +21,34 @@ class _JobDetailPageState extends State<JobDetailPage>
   late TabController _tabController;
   bool _showFullDescription = false;
   final Set<String> _bookmarkedCompanies = {};
+  bool _isLoading = true;
+  JobDto? _job;
+  final _repository = getIt<JobRepository>();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadJobData();
+  }
+
+  Future<void> _loadJobData() async {
+    try {
+      final response = await _repository.getJobById(widget.jobId);
+      if (mounted) {
+        setState(() {
+          _job = response.data;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load job: $e')));
+      }
+    }
   }
 
   @override
@@ -31,6 +59,21 @@ class _JobDetailPageState extends State<JobDetailPage>
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_job == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: const Text('Job Details')),
+        body: const Center(child: Text('Job not found')),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
