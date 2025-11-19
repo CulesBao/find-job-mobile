@@ -8,6 +8,7 @@ class AboutTabWidget extends StatelessWidget {
   final String website;
   final String location;
   final List<RelativeCompanyCardData> relativeCompanies;
+  final void Function(String?)? onCompanyTap;
 
   const AboutTabWidget({
     super.key,
@@ -16,6 +17,7 @@ class AboutTabWidget extends StatelessWidget {
     required this.website,
     required this.location,
     required this.relativeCompanies,
+    this.onCompanyTap,
   });
 
   @override
@@ -90,7 +92,12 @@ class AboutTabWidget extends StatelessWidget {
               padding: EdgeInsets.only(
                 bottom: index < relativeCompanies.length - 1 ? 12 : 0,
               ),
-              child: RelativeCompanyCardWidget(data: company),
+              child: RelativeCompanyCardWidget(
+                data: company,
+                onTap: onCompanyTap != null 
+                    ? () => onCompanyTap!(company.employerId)
+                    : null,
+              ),
             );
           }),
         ],

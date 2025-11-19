@@ -5,10 +5,14 @@ import 'package:find_job_mobile/shared/styles/text_styles.dart';
 class RelativeCompanyCardData {
   final String companyName;
   final String industry;
+  final String? employerId;
+  final String? logoUrl;
 
   const RelativeCompanyCardData({
     required this.companyName,
     required this.industry,
+    this.employerId,
+    this.logoUrl,
   });
 }
 
@@ -39,11 +43,26 @@ class RelativeCompanyCardWidget extends StatelessWidget {
                 color: const Color(0xFFAFECFE),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(
-                Icons.business,
-                color: AppColors.primary,
-                size: 24,
-              ),
+              child: data.logoUrl != null && data.logoUrl!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        data.logoUrl!,
+                        width: 48,
+                        height: 48,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.business,
+                          color: AppColors.primary,
+                          size: 24,
+                        ),
+                      ),
+                    )
+                  : const Icon(
+                      Icons.business,
+                      color: AppColors.primary,
+                      size: 24,
+                    ),
             ),
             const SizedBox(width: 12),
             // Company Info

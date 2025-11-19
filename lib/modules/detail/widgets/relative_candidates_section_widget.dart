@@ -3,8 +3,13 @@ import 'package:find_job_mobile/shared/styles/text_styles.dart';
 
 class RelativeCandidatesSectionWidget extends StatelessWidget {
   final List<CandidateCardData> candidates;
+  final void Function(String?)? onCandidateTap;
 
-  const RelativeCandidatesSectionWidget({super.key, required this.candidates});
+  const RelativeCandidatesSectionWidget({
+    super.key, 
+    required this.candidates,
+    this.onCandidateTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +61,12 @@ class RelativeCandidatesSectionWidget extends StatelessWidget {
           ...candidates.map(
             (candidate) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: _CandidateCard(data: candidate),
+              child: _CandidateCard(
+                data: candidate,
+                onTap: onCandidateTap != null
+                    ? () => onCandidateTap!(candidate.candidateId)
+                    : null,
+              ),
             ),
           ),
         ],
@@ -69,30 +79,37 @@ class CandidateCardData {
   final String name;
   final String position;
   final String location;
+  final String? candidateId;
+  final String? avatarUrl;
 
   const CandidateCardData({
     required this.name,
     required this.position,
     required this.location,
+    this.candidateId,
+    this.avatarUrl,
   });
 }
 
 class _CandidateCard extends StatelessWidget {
   final CandidateCardData data;
+  final VoidCallback? onTap;
 
-  const _CandidateCard({required this.data});
+  const _CandidateCard({required this.data, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: Row(
-        children: [
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
+        ),
+        child: Row(
+          children: [
           // Candidate Avatar
           Container(
             width: 48,
@@ -101,8 +118,23 @@ class _CandidateCard extends StatelessWidget {
               color: const Color(0xFFAFECFE),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Center(
-              child: Icon(Icons.person, size: 24, color: Colors.white),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: data.avatarUrl != null && data.avatarUrl!.isNotEmpty
+                  ? Image.network(
+                      data.avatarUrl!,
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                          child: Icon(Icons.person, size: 24, color: Colors.white),
+                        );
+                      },
+                    )
+                  : const Center(
+                      child: Icon(Icons.person, size: 24, color: Colors.white),
+                    ),
             ),
           ),
           const SizedBox(width: 12),
@@ -141,6 +173,7 @@ class _CandidateCard extends StatelessWidget {
           // Arrow Icon
           Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[600]),
         ],
+      ),
       ),
     );
   }

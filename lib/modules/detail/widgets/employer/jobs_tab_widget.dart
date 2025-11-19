@@ -3,8 +3,13 @@ import 'package:find_job_mobile/modules/detail/widgets/employer/job_card_widget.
 
 class JobsTabWidget extends StatelessWidget {
   final List<JobCardData> jobs;
+  final void Function(String?)? onJobTap;
 
-  const JobsTabWidget({super.key, required this.jobs});
+  const JobsTabWidget({
+    super.key, 
+    required this.jobs,
+    this.onJobTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +18,13 @@ class JobsTabWidget extends StatelessWidget {
       itemCount: jobs.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
-        return JobCardWidget(data: jobs[index]);
+        final job = jobs[index];
+        return JobCardWidget(
+          data: job,
+          onTap: onJobTap != null 
+              ? () => onJobTap!(job.jobId)
+              : null,
+        );
       },
     );
   }
