@@ -87,8 +87,11 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       name: 'job-detail',
-      path: RoutePath.jobDetail,
-      builder: (context, state) => const JobDetailPage(),
+      path: '${RoutePath.jobDetail}/:jobId',
+      builder: (context, state) {
+        final jobId = state.pathParameters['jobId'] ?? '';
+        return JobDetailPage(jobId: jobId);
+      },
     ),
     GoRoute(
       name: 'job-apply',
@@ -97,13 +100,19 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       name: 'employer-detail',
-      path: RoutePath.employerDetail,
-      builder: (context, state) => const EmployerDetailPage(),
+      path: '${RoutePath.employerDetail}/:employerId',
+      builder: (context, state) {
+        final employerId = state.pathParameters['employerId'] ?? '';
+        return EmployerDetailPage(employerId: employerId);
+      },
     ),
     GoRoute(
       name: 'candidate-detail',
-      path: RoutePath.candidateDetail,
-      builder: (context, state) => const CandidateDetailPage(),
+      path: '${RoutePath.candidateDetail}/:candidateId',
+      builder: (context, state) {
+        final candidateId = state.pathParameters['candidateId'] ?? '';
+        return CandidateDetailPage(candidateId: candidateId);
+      },
     ),
   ],
 );

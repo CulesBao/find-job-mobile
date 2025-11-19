@@ -5,18 +5,16 @@ class ProfileHeaderWidget extends StatelessWidget {
   final String name;
   final String location;
   final String phoneNumber;
-  final String followerCount;
-  final String followingCount;
-  final VoidCallback? onBackTap;
+  final VoidCallback? onShareTap;
+  final VoidCallback? onSettingsTap;
 
   const ProfileHeaderWidget({
     super.key,
     required this.name,
     required this.location,
     required this.phoneNumber,
-    required this.followerCount,
-    required this.followingCount,
-    required this.onBackTap,
+    this.onShareTap,
+    this.onSettingsTap,
   });
 
   @override
@@ -93,58 +91,6 @@ class ProfileHeaderWidget extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 12,
               ),
-            ),
-            const SizedBox(height: 20),
-            // Follower & Following (centered)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Follower
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: followerCount,
-                        style: AppTextStyles.body.copyWith(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ' Follower',
-                        style: AppTextStyles.body.copyWith(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 30),
-                // Following
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: followingCount,
-                        style: AppTextStyles.body.copyWith(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ' Following',
-                        style: AppTextStyles.body.copyWith(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
             ),
             const SizedBox(height: 20),
           ],

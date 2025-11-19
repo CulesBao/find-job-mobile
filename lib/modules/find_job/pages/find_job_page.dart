@@ -8,6 +8,7 @@ import 'package:find_job_mobile/shared/data/repositories/job_repository.dart';
 import 'package:find_job_mobile/shared/data/repositories/location_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
+import 'package:find_job_mobile/modules/detail/pages/job_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -22,7 +23,7 @@ class _FindJobPageState extends State<FindJobPage> {
   final TextEditingController _searchController = TextEditingController();
   final _jobRepository = getIt<JobRepository>();
   final _locationRepository = getIt<LocationRepository>();
-  
+
   bool _showAdvancedFilters = false;
 
   // Filter states
@@ -30,18 +31,18 @@ class _FindJobPageState extends State<FindJobPage> {
   JobType? _selectedJobType;
   Education? _selectedEducation;
   SalaryType? _selectedSalaryType;
-  
+
   // Province list
   List<ProvinceDto> _provinces = [];
-  
+
   // Data
   List<JobDto> _jobs = [];
-  
+
   // Loading & pagination
   bool _isLoadingJobs = false;
   int _jobPage = 0;
   bool _hasMoreJobs = true;
-  
+
   // Error state
   String? _jobError;
 
@@ -80,7 +81,7 @@ class _FindJobPageState extends State<FindJobPage> {
 
     try {
       final searchText = _searchController.text.trim();
-      
+
       final filterRequest = FilterJobRequest(
         title: searchText.isNotEmpty ? searchText : null,
         provinceCode: _selectedProvince?.code,
@@ -150,30 +151,35 @@ class _FindJobPageState extends State<FindJobPage> {
 
   String _formatJobType(JobType? jobType) {
     if (jobType == null) return '';
-    return jobType.name.replaceAll('_', ' ').split(' ').map((word) => 
-      word[0].toUpperCase() + word.substring(1).toLowerCase()
-    ).join(' ');
+    return jobType.name
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
   }
 
   String _formatEducation(Education? education) {
     if (education == null) return '';
-    return education.name.replaceAll('_', ' ').split(' ').map((word) => 
-      word[0].toUpperCase() + word.substring(1).toLowerCase()
-    ).join(' ');
+    return education.name
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
   }
 
   String _formatSalaryType(SalaryType? salaryType) {
     if (salaryType == null) return '';
-    return salaryType.name[0].toUpperCase() + salaryType.name.substring(1).toLowerCase();
+    return salaryType.name[0].toUpperCase() +
+        salaryType.name.substring(1).toLowerCase();
   }
 
   String _formatSalary(JobDto job) {
     if (job.minSalary == null && job.maxSalary == null) {
       return 'Negotiable';
     }
-    
+
     final currencySymbol = _getCurrencySymbol(job.currency);
-    
+
     if (job.minSalary != null && job.maxSalary != null) {
       return '$currencySymbol${_formatNumber(job.minSalary!)} - $currencySymbol${_formatNumber(job.maxSalary!)}';
     } else if (job.minSalary != null) {
@@ -205,12 +211,12 @@ class _FindJobPageState extends State<FindJobPage> {
 
   int _getDaysRemaining(String? expiredAt) {
     if (expiredAt == null) return 999;
-    
+
     try {
       final expiredDate = DateTime.parse(expiredAt);
       final now = DateTime.now();
       final difference = expiredDate.difference(now);
-      
+
       return difference.inDays > 0 ? difference.inDays : 0;
     } catch (e) {
       return 999;
@@ -259,16 +265,14 @@ class _FindJobPageState extends State<FindJobPage> {
                   ),
                 ),
               ),
-              
+
               // Advanced Filters Section (if visible)
               if (_showAdvancedFilters)
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  sliver: SliverToBoxAdapter(
-                    child: _buildAdvancedFilters(),
-                  ),
+                  sliver: SliverToBoxAdapter(child: _buildAdvancedFilters()),
                 ),
-              
+
               // Section Title
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
@@ -282,7 +286,7 @@ class _FindJobPageState extends State<FindJobPage> {
                   ),
                 ),
               ),
-              
+
               // Job List or Loading/Error States
               if (_isLoadingJobs && _jobs.isEmpty)
                 const SliverFillRemaining(
@@ -294,11 +298,17 @@ class _FindJobPageState extends State<FindJobPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.error_outline, size: 48, color: AppColors.error),
+                        Icon(
+                          Icons.error_outline,
+                          size: 48,
+                          color: AppColors.error,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           _jobError!,
-                          style: AppTextStyles.body.copyWith(color: AppColors.error),
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.error,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
@@ -321,16 +331,24 @@ class _FindJobPageState extends State<FindJobPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.work_outline, size: 48, color: AppColors.textSecondary),
+                        Icon(
+                          Icons.work_outline,
+                          size: 48,
+                          color: AppColors.textSecondary,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           'No jobs found',
-                          style: AppTextStyles.heading3.copyWith(color: AppColors.textPrimary),
+                          style: AppTextStyles.heading3.copyWith(
+                            color: AppColors.textPrimary,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Try adjusting your filters',
-                          style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -370,167 +388,174 @@ class _FindJobPageState extends State<FindJobPage> {
 
   Widget _buildJobCard(JobDto job) {
     final daysRemaining = _getDaysRemaining(job.expiredAt);
-    
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Company Logo + Job Title
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  image: job.companyLogo != null
-                      ? DecorationImage(
-                          image: NetworkImage(job.companyLogo!),
-                          fit: BoxFit.cover,
-                        )
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => JobDetailPage(jobId: job.id)),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Company Logo + Job Title
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    image: job.companyLogo != null
+                        ? DecorationImage(
+                            image: NetworkImage(job.companyLogo!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: job.companyLogo == null
+                      ? Icon(Icons.business, color: AppColors.primary, size: 28)
                       : null,
                 ),
-                child: job.companyLogo == null
-                    ? Icon(
-                        Icons.business,
-                        color: AppColors.primary,
-                        size: 28,
-                      )
-                    : null,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      job.title,
-                      style: AppTextStyles.heading3.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        job.title,
+                        style: AppTextStyles.heading3.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      job.companyName ?? 'Company',
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w600,
+                      const SizedBox(height: 4),
+                      Text(
+                        job.companyName ?? 'Company',
+                        style: AppTextStyles.body.copyWith(
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // Location
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 16,
-                color: AppColors.textSecondary,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  job.jobLocation ?? 'Vietnam',
-                  style: AppTextStyles.body.copyWith(
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Location
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  size: 16,
+                  color: AppColors.textSecondary,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    job.jobLocation ?? 'Vietnam',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Job Type & Education
+            if (job.jobType != null)
+              Row(
+                children: [
+                  Icon(
+                    Icons.work_outline,
+                    size: 16,
                     color: AppColors.textSecondary,
                   ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          
-          // Job Type & Education
-          if (job.jobType != null)
-            Row(
-              children: [
-                Icon(
-                  Icons.work_outline,
-                  size: 16,
-                  color: AppColors.textSecondary,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    _formatJobType(job.jobType),
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.textSecondary,
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      _formatJobType(job.jobType),
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
+                ],
+              ),
+            if (job.jobType != null && job.education != null)
+              const SizedBox(height: 8),
+            if (job.education != null && job.education!.isNotEmpty)
+              Row(
+                children: [
+                  Icon(
+                    Icons.school_outlined,
+                    size: 16,
+                    color: AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      job.education!,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            if (job.jobType != null ||
+                (job.education != null && job.education!.isNotEmpty))
+              const SizedBox(height: 16),
+
+            // Badges
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                // Salary badge
+                _buildBadge(
+                  icon: Icons.payments_outlined,
+                  label: _formatSalary(job),
+                  color: AppColors.success,
+                ),
+
+                // Days remaining badge
+                _buildBadge(
+                  icon: Icons.schedule,
+                  label: '$daysRemaining days',
+                  color: daysRemaining > 3
+                      ? AppColors.success
+                      : AppColors.accent,
                 ),
               ],
             ),
-          if (job.jobType != null && job.education != null)
-            const SizedBox(height: 8),
-          if (job.education != null && job.education!.isNotEmpty)
-            Row(
-              children: [
-                Icon(
-                  Icons.school_outlined,
-                  size: 16,
-                  color: AppColors.textSecondary,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    job.education!,
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          if (job.jobType != null || (job.education != null && job.education!.isNotEmpty))
-            const SizedBox(height: 16),
-          
-          // Badges
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              // Salary badge
-              _buildBadge(
-                icon: Icons.payments_outlined,
-                label: _formatSalary(job),
-                color: AppColors.success,
-              ),
-              
-              // Days remaining badge
-              _buildBadge(
-                icon: Icons.schedule,
-                label: '$daysRemaining days',
-                color: daysRemaining > 3 ? AppColors.success : AppColors.accent,
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -595,7 +620,10 @@ class _FindJobPageState extends State<FindJobPage> {
                   if (_getActiveFiltersCount() > 0) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(12),
@@ -650,7 +678,10 @@ class _FindJobPageState extends State<FindJobPage> {
             ),
           ),
           const SizedBox(height: 8),
-          _buildFilterChip('Job Type', _selectedJobType != null ? _formatJobType(_selectedJobType) : null),
+          _buildFilterChip(
+            'Job Type',
+            _selectedJobType != null ? _formatJobType(_selectedJobType) : null,
+          ),
           const SizedBox(height: 16),
           Text(
             'Education',
@@ -660,7 +691,12 @@ class _FindJobPageState extends State<FindJobPage> {
             ),
           ),
           const SizedBox(height: 8),
-          _buildFilterChip('Education', _selectedEducation != null ? _formatEducation(_selectedEducation) : null),
+          _buildFilterChip(
+            'Education',
+            _selectedEducation != null
+                ? _formatEducation(_selectedEducation)
+                : null,
+          ),
           const SizedBox(height: 16),
           Text(
             'Salary Type',
@@ -670,7 +706,12 @@ class _FindJobPageState extends State<FindJobPage> {
             ),
           ),
           const SizedBox(height: 8),
-          _buildFilterChip('Salary Type', _selectedSalaryType != null ? _formatSalaryType(_selectedSalaryType) : null),
+          _buildFilterChip(
+            'Salary Type',
+            _selectedSalaryType != null
+                ? _formatSalaryType(_selectedSalaryType)
+                : null,
+          ),
         ],
       ),
     );
@@ -695,7 +736,9 @@ class _FindJobPageState extends State<FindJobPage> {
           color: AppColors.background,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: value != null ? AppColors.primary : AppColors.textTertiary.withValues(alpha: 0.3),
+            color: value != null
+                ? AppColors.primary
+                : AppColors.textTertiary.withValues(alpha: 0.3),
             width: value != null ? 2 : 1,
           ),
         ),
@@ -705,13 +748,17 @@ class _FindJobPageState extends State<FindJobPage> {
             Text(
               value ?? 'Select $label',
               style: AppTextStyles.body.copyWith(
-                color: value != null ? AppColors.primary : AppColors.textSecondary,
+                color: value != null
+                    ? AppColors.primary
+                    : AppColors.textSecondary,
                 fontWeight: value != null ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
             Icon(
               Icons.arrow_drop_down,
-              color: value != null ? AppColors.primary : AppColors.textSecondary,
+              color: value != null
+                  ? AppColors.primary
+                  : AppColors.textSecondary,
             ),
           ],
         ),
@@ -760,7 +807,7 @@ class _FindJobPageState extends State<FindJobPage> {
                 ],
               ),
             ),
-            
+
             // Clear selection option
             if (_selectedProvince != null)
               ListTile(
@@ -778,7 +825,7 @@ class _FindJobPageState extends State<FindJobPage> {
                   _loadJobs(refresh: true);
                 },
               ),
-            
+
             // Province list
             Expanded(
               child: _provinces.isEmpty
@@ -787,18 +834,27 @@ class _FindJobPageState extends State<FindJobPage> {
                       itemCount: _provinces.length,
                       itemBuilder: (context, index) {
                         final province = _provinces[index];
-                        final isSelected = _selectedProvince?.code == province.code;
-                        
+                        final isSelected =
+                            _selectedProvince?.code == province.code;
+
                         return ListTile(
                           leading: Icon(
-                            isSelected ? Icons.check_circle : Icons.location_on_outlined,
-                            color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                            isSelected
+                                ? Icons.check_circle
+                                : Icons.location_on_outlined,
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.textSecondary,
                           ),
                           title: Text(
                             province.name,
                             style: AppTextStyles.body.copyWith(
-                              color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.textPrimary,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
                             ),
                           ),
                           onTap: () {
@@ -818,7 +874,7 @@ class _FindJobPageState extends State<FindJobPage> {
 
   void _showJobTypeSelector() {
     final jobTypes = JobType.values;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -859,7 +915,7 @@ class _FindJobPageState extends State<FindJobPage> {
                 ],
               ),
             ),
-            
+
             // Clear selection option
             if (_selectedJobType != null)
               ListTile(
@@ -877,7 +933,7 @@ class _FindJobPageState extends State<FindJobPage> {
                   _loadJobs(refresh: true);
                 },
               ),
-            
+
             // Job type list
             Expanded(
               child: ListView.builder(
@@ -889,13 +945,19 @@ class _FindJobPageState extends State<FindJobPage> {
                   return ListTile(
                     leading: Icon(
                       isSelected ? Icons.check_circle : Icons.work_outline,
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
                     ),
                     title: Text(
                       _formatJobType(jobType),
                       style: AppTextStyles.body.copyWith(
-                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                     ),
                     onTap: () {
@@ -915,7 +977,7 @@ class _FindJobPageState extends State<FindJobPage> {
 
   void _showEducationSelector() {
     final educations = Education.values;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -956,7 +1018,7 @@ class _FindJobPageState extends State<FindJobPage> {
                 ],
               ),
             ),
-            
+
             // Clear selection option
             if (_selectedEducation != null)
               ListTile(
@@ -974,7 +1036,7 @@ class _FindJobPageState extends State<FindJobPage> {
                   _loadJobs(refresh: true);
                 },
               ),
-            
+
             // Education list
             Expanded(
               child: ListView.builder(
@@ -986,13 +1048,19 @@ class _FindJobPageState extends State<FindJobPage> {
                   return ListTile(
                     leading: Icon(
                       isSelected ? Icons.check_circle : Icons.school_outlined,
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
                     ),
                     title: Text(
                       _formatEducation(education),
                       style: AppTextStyles.body.copyWith(
-                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                     ),
                     onTap: () {
@@ -1012,7 +1080,7 @@ class _FindJobPageState extends State<FindJobPage> {
 
   void _showSalaryTypeSelector() {
     final salaryTypes = SalaryType.values;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1053,7 +1121,7 @@ class _FindJobPageState extends State<FindJobPage> {
                 ],
               ),
             ),
-            
+
             // Clear selection option
             if (_selectedSalaryType != null)
               ListTile(
@@ -1071,7 +1139,7 @@ class _FindJobPageState extends State<FindJobPage> {
                   _loadJobs(refresh: true);
                 },
               ),
-            
+
             // Salary type list
             Expanded(
               child: ListView.builder(
@@ -1083,13 +1151,19 @@ class _FindJobPageState extends State<FindJobPage> {
                   return ListTile(
                     leading: Icon(
                       isSelected ? Icons.check_circle : Icons.payments_outlined,
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
                     ),
                     title: Text(
                       _formatSalaryType(salaryType),
                       style: AppTextStyles.body.copyWith(
-                        color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                     ),
                     onTap: () {

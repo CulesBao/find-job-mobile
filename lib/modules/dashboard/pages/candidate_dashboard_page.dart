@@ -1,5 +1,7 @@
 import 'package:find_job_mobile/modules/find_job/pages/find_job_page.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/saved_employers_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/job_detail_page.dart';
+import 'package:find_job_mobile/modules/detail/pages/employer_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/dto/filter_job_request.dart';
@@ -45,10 +47,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
   }
 
   Future<void> _loadData() async {
-    await Future.wait([
-      _loadJobs(),
-      _loadSavedEmployers(),
-    ]);
+    await Future.wait([_loadJobs(), _loadSavedEmployers()]);
   }
 
   Future<void> _loadJobs() async {
@@ -95,8 +94,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
         page: 0,
         size: 3,
       );
-      
-      
+
       if (response.success || response.data != null) {
         final content = response.data?.content ?? [];
 
@@ -108,11 +106,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
           _savedEmployers = [];
         });
       }
-    } on TypeError catch (e, stackTrace) {
-      setState(() {
-        _savedEmployers = [];
-      });
-    } catch (e, stackTrace) {
+    } catch (e) {
       setState(() {
         _savedEmployers = [];
       });
@@ -125,12 +119,12 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
 
   int _getDaysRemaining(String? expiredAt) {
     if (expiredAt == null) return 999;
-    
+
     try {
       final expiredDate = DateTime.parse(expiredAt);
       final now = DateTime.now();
       final difference = expiredDate.difference(now);
-      
+
       return difference.inDays > 0 ? difference.inDays : 0;
     } catch (e) {
       return 999;
@@ -141,9 +135,9 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
     if (job.minSalary == null && job.maxSalary == null) {
       return 'Negotiable';
     }
-    
+
     final currencySymbol = _getCurrencySymbol(job.currency);
-    
+
     if (job.minSalary != null && job.maxSalary != null) {
       return '$currencySymbol${_formatNumber(job.minSalary!)} - $currencySymbol${_formatNumber(job.maxSalary!)}';
     } else if (job.minSalary != null) {
@@ -175,7 +169,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userName = _candidateProfile != null 
+    final userName = _candidateProfile != null
         ? '${_candidateProfile!.firstName} ${_candidateProfile!.lastName}'
         : AuthHelper.currentUser?.email.split('@').first ?? 'User';
 
@@ -245,7 +239,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         if (_isLoadingJobs)
           const Center(
             child: Padding(
@@ -259,17 +253,11 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
               padding: const EdgeInsets.all(32.0),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 48,
-                    color: AppColors.error,
-                  ),
+                  Icon(Icons.error_outline, size: 48, color: AppColors.error),
                   const SizedBox(height: 16),
                   Text(
                     _errorMessage!,
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.error,
-                    ),
+                    style: AppTextStyles.body.copyWith(color: AppColors.error),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -297,10 +285,9 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
             height: 195,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: _jobs.length > 3 ? 4 : _jobs.length,
+              itemCount: _jobs.isEmpty ? 0 : _jobs.length + 1,
               itemBuilder: (context, index) {
-                if (index == 3) {
-                  // View All card
+                if (index == _jobs.length) {
                   return _buildViewAllCard();
                 }
                 return _buildJobCard(_jobs[index]);
@@ -313,170 +300,184 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
 
   Widget _buildJobCard(JobDto job) {
     final daysRemaining = _getDaysRemaining(job.expiredAt);
-    return Container(
-      width: 300,
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Top: Logo + Job Title
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Company Logo
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(36),
-                  image: job.companyLogo != null
-                      ? DecorationImage(
-                          image: NetworkImage(job.companyLogo!),
-                          fit: BoxFit.cover,
-                        )
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => JobDetailPage(jobId: job.id)),
+        );
+      },
+      child: Container(
+        width: 300,
+        margin: const EdgeInsets.only(right: 12),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top: Logo + Job Title
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Company Logo
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(36),
+                    image: job.companyLogo != null
+                        ? DecorationImage(
+                            image: NetworkImage(job.companyLogo!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: job.companyLogo == null
+                      ? Icon(Icons.business, color: AppColors.primary, size: 24)
                       : null,
                 ),
-                child: job.companyLogo == null
-                    ? Icon(
-                        Icons.business,
-                        color: AppColors.primary,
-                        size: 24,
-                      )
-                    : null,
-              ),
-              const SizedBox(width: 12),
-              
-              // Job Title (right of logo)
-              Expanded(
-                child: Text(
-                  job.title,
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          
-          // Company Name + Location (below title)
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  job.companyName ?? 'Company',
-                  style: AppTextStyles.body.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 14,
-                color: AppColors.textSecondary,
-              ),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  job.jobLocation ?? 'Vietnam',
-                  style: AppTextStyles.body.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              // Salary badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.payments_outlined,
-                      size: 12,
-                      color: AppColors.success,
+                const SizedBox(width: 12),
+
+                // Job Title (right of logo)
+                Expanded(
+                  child: Text(
+                    job.title,
+                    style: AppTextStyles.heading3.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      _formatSalary(job),
-                      style: AppTextStyles.caption.copyWith(
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Company Name + Location (below title)
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    job.companyName ?? 'Company',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  size: 14,
+                  color: AppColors.textSecondary,
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    job.jobLocation ?? 'Vietnam',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                // Salary badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.payments_outlined,
+                        size: 12,
                         color: AppColors.success,
-                        fontWeight: FontWeight.w600,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              // Days Remaining badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: daysRemaining > 3
-                      ? AppColors.success.withValues(alpha: 0.1)
-                      : AppColors.accent.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.schedule,
-                      size: 12,
-                      color: daysRemaining > 3 ? AppColors.success : AppColors.accent,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '$daysRemaining days',
-                      style: AppTextStyles.caption.copyWith(
-                        color: daysRemaining > 3 ? AppColors.success : AppColors.accent,
-                        fontWeight: FontWeight.w600,
+                      const SizedBox(width: 4),
+                      Text(
+                        _formatSalary(job),
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.success,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+
+                // Days Remaining badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: daysRemaining > 3
+                        ? AppColors.success.withValues(alpha: 0.1)
+                        : AppColors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.schedule,
+                        size: 12,
+                        color: daysRemaining > 3
+                            ? AppColors.success
+                            : AppColors.accent,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$daysRemaining days',
+                        style: AppTextStyles.caption.copyWith(
+                          color: daysRemaining > 3
+                              ? AppColors.success
+                              : AppColors.accent,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -484,22 +485,20 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
   Widget _buildViewAllCard() {
     return InkWell(
       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FindJobPage(),
-                          ),
-                        );
-                      },
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FindJobPage()),
+        );
+      },
       child: Container(
         width: 180,
         margin: const EdgeInsets.only(right: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.primary,
+            color: const Color.fromARGB(255, 191, 182, 227),
             width: 2,
           ),
         ),
@@ -509,7 +508,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: const Color.fromARGB(255, 141, 116, 255),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -559,14 +558,12 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
                 },
                 icon: const Icon(Icons.arrow_forward, size: 18),
                 label: const Text('View All'),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                ),
+                style: TextButton.styleFrom(foregroundColor: AppColors.primary),
               ),
           ],
         ),
         const SizedBox(height: 16),
-        
+
         if (_isLoadingEmployers)
           const Center(
             child: Padding(
@@ -595,112 +592,119 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
   }
 
   Widget _buildEmployerCard(SavedEmployerDto employer) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textTertiary.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EmployerDetailPage(employerId: employer.id),
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Company Logo
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              image: employer.logoUrl != null
-                  ? DecorationImage(
-                      image: NetworkImage(employer.logoUrl!),
-                      fit: BoxFit.cover,
-                    )
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Company Logo
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                image: employer.logoUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(employer.logoUrl!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: employer.logoUrl == null
+                  ? Icon(Icons.business, color: AppColors.primary, size: 30)
                   : null,
             ),
-            child: employer.logoUrl == null
-                ? Icon(
-                    Icons.business,
-                    color: AppColors.primary,
-                    size: 30,
-                  )
-                : null,
-          ),
-          const SizedBox(width: 16),
-          
-          // Company Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  employer.name,
-                  style: AppTextStyles.heading3.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
+            const SizedBox(width: 16),
+
+            // Company Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    employer.name,
+                    style: AppTextStyles.heading3.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                
-                // Location (just string now, not object)
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        employer.location, // Just a string like "Lai Chau"
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 4),
+
+                  // Location (just string now, not object)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 16,
+                        color: AppColors.textSecondary,
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          employer.location, // Just a string like "Lai Chau"
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          
-          // Follow button
-          IconButton(
-            onPressed: () async {
-              try {
-                await _candidateFollowerRepository.unfollowEmployer(employer.id);
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Unfollowed ${employer.name}')),
+
+            // Follow button
+            IconButton(
+              onPressed: () async {
+                try {
+                  await _candidateFollowerRepository.unfollowEmployer(
+                    employer.id,
                   );
-                  // Refresh the list
-                  _loadSavedEmployers();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Unfollowed ${employer.name}')),
+                    );
+                    // Refresh the list
+                    _loadSavedEmployers();
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to unfollow: ${e.toString()}'),
+                      ),
+                    );
+                  }
                 }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to unfollow: ${e.toString()}')),
-                  );
-                }
-              }
-            },
-            icon: const Icon(
-              Icons.bookmark,
-              color: AppColors.primary,
+              },
+              icon: const Icon(Icons.bookmark, color: AppColors.primary),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -721,11 +725,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
                 color: AppColors.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 48,
-                color: AppColors.primary,
-              ),
+              child: Icon(icon, size: 48, color: AppColors.primary),
             ),
             const SizedBox(height: 16),
             Text(

@@ -7,12 +7,16 @@ class JobCardData {
   final String company;
   final String salary;
   final String time;
+  final String? jobId;
+  final String? logoUrl;
 
   const JobCardData({
     required this.title,
     required this.company,
     required this.salary,
     required this.time,
+    this.jobId,
+    this.logoUrl,
   });
 }
 
@@ -47,7 +51,21 @@ class JobCardWidget extends StatelessWidget {
                 color: const Color(0xFFAFECFE),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.business, color: AppColors.primary),
+              child: data.logoUrl != null && data.logoUrl!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        data.logoUrl!,
+                        width: 56,
+                        height: 56,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.business,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    )
+                  : const Icon(Icons.business, color: AppColors.primary),
             ),
             const SizedBox(width: 12),
             Expanded(
