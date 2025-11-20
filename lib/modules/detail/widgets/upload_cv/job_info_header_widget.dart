@@ -4,16 +4,12 @@ import 'package:find_job_mobile/shared/styles/text_styles.dart';
 class JobInfoHeaderWidget extends StatelessWidget {
   final String jobTitle;
   final String company;
-  final String location;
-  final String timeAgo;
   final String? logoUrl;
 
   const JobInfoHeaderWidget({
     super.key,
     required this.jobTitle,
     required this.company,
-    required this.location,
-    required this.timeAgo,
     this.logoUrl,
   });
 
@@ -64,40 +60,19 @@ class JobInfoHeaderWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          // Company Info Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                company,
-                style: AppTextStyles.body.copyWith(
-                  color: const Color(0xFF0D0140),
-                  fontSize: 16,
-                ),
+          // Company Name
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              company,
+              style: AppTextStyles.body.copyWith(
+                color: const Color(0xFF0D0140),
+                fontSize: 14,
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(Icons.circle, size: 7, color: Color(0xFF0D0140)),
-              ),
-              Text(
-                location,
-                style: AppTextStyles.body.copyWith(
-                  color: const Color(0xFF0D0140),
-                  fontSize: 16,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Icon(Icons.circle, size: 7, color: Color(0xFF0D0140)),
-              ),
-              Text(
-                timeAgo,
-                style: AppTextStyles.body.copyWith(
-                  color: const Color(0xFF0D0140),
-                  fontSize: 16,
-                ),
-              ),
-            ],
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

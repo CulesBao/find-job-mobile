@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:find_job_mobile/app/config/service_locator.dart';
 import 'package:find_job_mobile/shared/data/models/job_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/job_repository.dart';
+import 'package:find_job_mobile/shared/data/repositories/application_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:go_router/go_router.dart';
@@ -21,9 +22,12 @@ class JobDetailPage extends StatefulWidget {
 class _JobDetailPageState extends State<JobDetailPage> {
   bool _showFullDescription = false;
   bool _isLoading = true;
+  bool _isCheckingApplicationStatus = true;
+  bool _hasApplied = false;
   JobDto? _job;
   List<JobDto> _relatedJobs = [];
   final _repository = getIt<JobRepository>();
+  final _applicationRepository = getIt<ApplicationRepository>();
 
   @override
   void initState() {
@@ -38,8 +42,11 @@ class _JobDetailPageState extends State<JobDetailPage> {
         setState(() {
           _job = response.data;
         });
-        // Load related jobs after getting the main job
-        await _loadRelatedJobs();
+        // Load related jobs and check application status after getting the main job
+        await Future.wait([
+          _loadRelatedJobs(),
+          _checkApplicationStatus(),
+        ]);
       }
     } catch (e) {
       if (mounted) {
@@ -47,6 +54,41 @@ class _JobDetailPageState extends State<JobDetailPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Failed to load job: $e')));
+      }
+    }
+  }
+
+  Future<void> _checkApplicationStatus() async {
+    try {
+      final response = await _applicationRepository.getApplicationStatus(widget.jobId);
+      
+      // Debug: Print raw response
+      debugPrint('=== Application Status Check ===');
+      debugPrint('Job ID: ${widget.jobId}');
+      debugPrint('Message: ${response.message}');
+      debugPrint('Data (has applied): ${response.data}');
+      
+      if (mounted) {
+        setState(() {
+          _hasApplied = response.data ?? false;
+          _isCheckingApplicationStatus = false;
+        });
+        
+        debugPrint('Has Applied: $_hasApplied');
+        debugPrint('================================');
+      }
+    } catch (e, stackTrace) {
+      // If error (e.g., user not logged in or wrong role), assume not applied
+      debugPrint('=== Error checking application status ===');
+      debugPrint('Error: $e');
+      debugPrint('StackTrace: $stackTrace');
+      debugPrint('=========================================');
+      
+      if (mounted) {
+        setState(() {
+          _hasApplied = false;
+          _isCheckingApplicationStatus = false;
+        });
       }
     }
   }
@@ -843,6 +885,8 @@ class _JobDetailPageState extends State<JobDetailPage> {
 
 
   Widget _buildBottomBar() {
+    final isLoading = _isLoading || _isCheckingApplicationStatus;
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -857,37 +901,106 @@ class _JobDetailPageState extends State<JobDetailPage> {
       ),
       child: SafeArea(
         top: false,
-        child: ElevatedButton(
-          onPressed: () {
-            context.push(RoutePath.jobApply);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 0,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.send,
-                size: 20,
-                color: Colors.white,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Apply Now',
-                style: AppTextStyles.button.copyWith(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_hasApplied && !isLoading)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      color: AppColors.success,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'You have already applied for this job',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.success,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ElevatedButton(
+              onPressed: (isLoading || _hasApplied)
+                  ? null
+                  : () async {
+                      // Double check before navigation
+                      if (_hasApplied) {
+                        debugPrint('Blocked: User has already applied');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('You have already applied for this job'),
+                            backgroundColor: AppColors.error,
+                          ),
+                        );
+                        return;
+                      }
+                      
+                      debugPrint('Navigating to upload CV page for job: ${widget.jobId}');
+                      
+                      // Navigate and wait for result
+                      final result = await context.push('${RoutePath.jobApply}/${widget.jobId}');
+                      
+                      debugPrint('Returned from upload CV page with result: $result');
+                      
+                      // If application was submitted, refresh the application status
+                      if (result == true && mounted) {
+                        debugPrint('Refreshing application status after successful submission');
+                        await _checkApplicationStatus();
+                      }
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.3),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: isLoading
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          _hasApplied ? Icons.check_circle_outline : Icons.send,
+                          size: 20,
+                          color: _hasApplied 
+                              ? AppColors.textSecondary.withValues(alpha: 0.5)
+                              : Colors.white,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _hasApplied ? 'Already Applied' : 'Apply Now',
+                          style: AppTextStyles.button.copyWith(
+                            color: _hasApplied 
+                                ? AppColors.textSecondary.withValues(alpha: 0.5)
+                                : Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ],
         ),
       ),
     );

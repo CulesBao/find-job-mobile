@@ -40,7 +40,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: onBackTap,
+                    onTap: onShareTap,
                     child: const Icon(
                       Icons.arrow_back,
                       color: Colors.white,
