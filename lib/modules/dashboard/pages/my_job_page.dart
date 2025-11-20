@@ -6,6 +6,7 @@ import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/modules/post/pages/edit_job_page.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 
 class MyJobPage extends StatefulWidget {
   const MyJobPage({super.key});
@@ -511,8 +512,25 @@ class _MyJobPageState extends State<MyJobPage> {
             ),
           ],
           
-          // Action Buttons (Edit and Delete)
+          // Action Buttons (View Applications, Edit and Delete)
           const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () {
+              context.push('/view-applications/${job.id}?title=${Uri.encodeComponent(job.title)}');
+            },
+            icon: const Icon(Icons.assignment, size: 18),
+            label: const Text('View Applications'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 48),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(

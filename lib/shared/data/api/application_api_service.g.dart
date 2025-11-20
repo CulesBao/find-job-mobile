@@ -88,12 +88,14 @@ class _ApplicationApiService implements ApplicationApiService {
     String? jobProcess,
     int page = 0,
     int limit = 10,
+    String? populate,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'jobProcess': jobProcess,
       r'page': page,
       r'limit': limit,
+      r'populate': populate,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};

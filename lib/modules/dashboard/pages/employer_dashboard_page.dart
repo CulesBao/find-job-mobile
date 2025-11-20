@@ -11,9 +11,9 @@ import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/shared/utils/auth_helper.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/my_job_page.dart';
 import 'package:find_job_mobile/modules/dashboard/pages/saved_candidates_page.dart';
-import 'package:find_job_mobile/modules/detail/pages/job_detail_page.dart';
 import 'package:find_job_mobile/modules/detail/pages/candidate_detail_page.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 
 class EmployerDashboardPage extends StatefulWidget {
   const EmployerDashboardPage({super.key});
@@ -261,10 +261,7 @@ class _EmployerDashboardPageState extends State<EmployerDashboardPage> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => JobDetailPage(jobId: job.id)),
-        );
+        context.push('/view-applications/${job.id}?title=${Uri.encodeComponent(job.title)}');
       },
       child: Container(
         padding: const EdgeInsets.all(16),

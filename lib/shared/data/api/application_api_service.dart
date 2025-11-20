@@ -31,6 +31,7 @@ abstract class ApplicationApiService {
     @Query('jobProcess') String? jobProcess,
     @Query('page') int page = 0,
     @Query('limit') int limit = 10,
+    @Query('populate') String? populate,
   });
 
   /// Get application by ID

@@ -83,6 +83,7 @@ class ApplicationRepository {
         jobProcess: jobProcess,
         page: page,
         limit: limit,
+        populate: 'candidate_profile',
       );
     } catch (e) {
       rethrow;

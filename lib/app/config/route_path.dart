@@ -26,4 +26,7 @@ class RoutePath {
   // Applied jobs routes (candidate only)
   static const String appliedJobs = '/applied-jobs';
   static const String appliedJobDetail = '/applied-job';
+  // View applications routes (employer only)
+  static const String viewApplications = '/view-applications';
+  static const String viewApplicationDetail = '/view-application';
 }
