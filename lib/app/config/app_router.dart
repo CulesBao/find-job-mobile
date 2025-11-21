@@ -11,6 +11,10 @@ import 'package:find_job_mobile/modules/main/screens/main_screen.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_candidate_profile.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_employer_profile.dart';
 import 'package:find_job_mobile/modules/splash/screens/splash_screen.dart';
+import 'package:find_job_mobile/modules/setting/pages/applied_job_page.dart';
+import 'package:find_job_mobile/modules/setting/pages/applied_job_detail_page.dart';
+import 'package:find_job_mobile/modules/view_applications/view_applications_page.dart';
+import 'package:find_job_mobile/modules/view_applications/view_application_detail_page.dart';
 
 import 'package:go_router/go_router.dart';
 import 'route_path.dart';
@@ -95,8 +99,11 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       name: 'job-apply',
-      path: RoutePath.jobApply,
-      builder: (context, state) => const UploadCvPage(),
+      path: '${RoutePath.jobApply}/:jobId',
+      builder: (context, state) {
+        final jobId = state.pathParameters['jobId'] ?? '';
+        return UploadCvPage(jobId: jobId);
+      },
     ),
     GoRoute(
       name: 'employer-detail',
@@ -112,6 +119,40 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final candidateId = state.pathParameters['candidateId'] ?? '';
         return CandidateDetailPage(candidateId: candidateId);
+      },
+    ),
+    GoRoute(
+      name: 'applied-jobs',
+      path: RoutePath.appliedJobs,
+      builder: (context, state) => const AppliedJobPage(),
+    ),
+    GoRoute(
+      name: 'applied-job-detail',
+      path: '${RoutePath.appliedJobDetail}/:applicationId',
+      builder: (context, state) {
+        final applicationId = state.pathParameters['applicationId'] ?? '';
+        return AppliedJobDetailPage(applicationId: applicationId);
+      },
+    ),
+    GoRoute(
+      name: 'view-applications',
+      path: '${RoutePath.viewApplications}/:jobId',
+      builder: (context, state) {
+        final jobId = state.pathParameters['jobId'] ?? '';
+        final jobTitle = state.uri.queryParameters['title'] ?? 'Job';
+        return ViewApplicationsPage(jobId: jobId, jobTitle: jobTitle);
+      },
+    ),
+    GoRoute(
+      name: 'view-application-detail',
+      path: '${RoutePath.viewApplicationDetail}/:applicationId',
+      builder: (context, state) {
+        final applicationId = state.pathParameters['applicationId'] ?? '';
+        final jobId = state.uri.queryParameters['jobId'];
+        return ViewApplicationDetailPage(
+          applicationId: applicationId,
+          jobId: jobId,
+        );
       },
     ),
   ],

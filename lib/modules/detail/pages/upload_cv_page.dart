@@ -5,9 +5,15 @@ import 'package:find_job_mobile/shared/styles/text_styles.dart';
 import 'package:find_job_mobile/modules/detail/widgets/upload_cv/job_info_header_widget.dart';
 import 'package:find_job_mobile/modules/detail/widgets/upload_cv/upload_cv_section_widget.dart';
 import 'package:find_job_mobile/modules/detail/widgets/upload_cv/information_section_widget.dart';
+import 'package:find_job_mobile/app/config/service_locator.dart';
+import 'package:find_job_mobile/shared/data/repositories/job_repository.dart';
+import 'package:find_job_mobile/shared/data/repositories/application_repository.dart';
+import 'package:find_job_mobile/shared/data/models/job_dto.dart';
 
 class UploadCvPage extends StatefulWidget {
-  const UploadCvPage({super.key});
+  final String jobId;
+  
+  const UploadCvPage({super.key, required this.jobId});
 
   @override
   State<UploadCvPage> createState() => _UploadCvPageState();
@@ -16,14 +22,47 @@ class UploadCvPage extends StatefulWidget {
 class _UploadCvPageState extends State<UploadCvPage> {
   File? _selectedFile;
   final TextEditingController _informationController = TextEditingController();
+  final _jobRepository = getIt<JobRepository>();
+  final _applicationRepository = getIt<ApplicationRepository>();
+  
+  bool _isLoading = true;
+  bool _isSubmitting = false;
+  JobDto? _job;
 
   @override
+  void initState() {
+    super.initState();
+    _loadJobData();
+  }
+
+  Future<void> _loadJobData() async {
+    try {
+      final response = await _jobRepository.getJobById(widget.jobId);
+      if (mounted) {
+        setState(() {
+          _job = response.data;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load job: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
   void dispose() {
     _informationController.dispose();
     super.dispose();
   }
 
-  void _applyNow() {
+  Future<void> _applyNow() async {
     if (_selectedFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -44,22 +83,60 @@ class _UploadCvPageState extends State<UploadCvPage> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Application submitted successfully!'),
-        backgroundColor: AppColors.success,
-      ),
-    );
+    setState(() => _isSubmitting = true);
 
-    Future.delayed(const Duration(seconds: 1), () {
+    try {
+      await _applicationRepository.createApplication(
+        resumeFile: _selectedFile!,
+        coverLetter: _informationController.text.trim(),
+        jobId: widget.jobId,
+      );
+
       if (mounted) {
-        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Application submitted successfully!'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+
+        // Navigate back with success result
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            Navigator.pop(context, true); // Return true to indicate success
+          }
+        });
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to submit application: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_job == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(title: const Text('Apply for Job')),
+        body: const Center(child: Text('Job not found')),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -71,13 +148,10 @@ class _UploadCvPageState extends State<UploadCvPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildHeader(),
-                    const JobInfoHeaderWidget(
-                      jobTitle: 'UI/UX Designer',
-                      company: 'Google',
-                      location: 'California',
-                      timeAgo: '1 day ago',
-                      logoUrl:
-                          'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
+                    JobInfoHeaderWidget(
+                      jobTitle: _job?.title ?? 'Job Title',
+                      company: _job?.companyName ?? 'Company',
+                      logoUrl: _job?.companyLogo,
                     ),
                     const SizedBox(height: 14),
                     UploadCvSectionWidget(
@@ -140,23 +214,33 @@ class _UploadCvPageState extends State<UploadCvPage> {
         width: double.infinity,
         height: 50,
         child: ElevatedButton(
-          onPressed: _applyNow,
+          onPressed: _isSubmitting ? null : _applyNow,
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primary,
+            disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
             ),
             elevation: 0,
           ),
-          child: Text(
-            'APPLY NOW',
-            style: AppTextStyles.button.copyWith(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.84,
-            ),
-          ),
+          child: _isSubmitting
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : Text(
+                  'APPLY NOW',
+                  style: AppTextStyles.button.copyWith(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.84,
+                  ),
+                ),
         ),
       ),
     );

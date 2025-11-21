@@ -60,7 +60,7 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
       final response = await _jobRepository.getJobByFilter(
         FilterJobRequest(),
         page: 0,
-        size: 6,
+        size: 3,
       );
 
       if (response.success || response.data != null) {

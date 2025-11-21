@@ -23,4 +23,10 @@ class RoutePath {
   static const String employerDetail = '/community/employer-detail';
   // Candidate detail page (view other user's profile)
   static const String candidateDetail = '/community/candidate-detail';
+  // Applied jobs routes (candidate only)
+  static const String appliedJobs = '/applied-jobs';
+  static const String appliedJobDetail = '/applied-job';
+  // View applications routes (employer only)
+  static const String viewApplications = '/view-applications';
+  static const String viewApplicationDetail = '/view-application';
 }

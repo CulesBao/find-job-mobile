@@ -1,4 +1,5 @@
 import 'package:find_job_mobile/modules/setting/pages/change_password_page.dart';
+import 'package:find_job_mobile/modules/setting/pages/applied_job_page.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_candidate_profile.dart';
 import 'package:find_job_mobile/modules/setup/screens/setup_screen_employer_profile.dart';
 import 'package:flutter/material.dart';
@@ -113,6 +114,21 @@ class SettingScreen extends StatelessWidget {
                   }
                 },
               ),
+              // Applied Jobs - Only for candidates
+              if (AuthHelper.isCandidate)
+                _SettingItem(
+                  icon: Icons.work_history,
+                  title: 'Applied Jobs',
+                  subtitle: 'View your job applications',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AppliedJobPage(),
+                      ),
+                    );
+                  },
+                ),
               _SettingItem(
                 icon: Icons.lock_outline,
                 title: 'Change Password',

@@ -14,7 +14,7 @@ class InformationSectionWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Information',
+            'Cover Letter',
             style: AppTextStyles.heading3.copyWith(
               color: const Color(0xFF150B3D),
               fontWeight: FontWeight.w700,
