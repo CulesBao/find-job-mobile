@@ -55,10 +55,7 @@ class ApplicationRepository {
 
   /// Get candidate's applications with pagination
   Future<BaseResponse<PageableResponse<AppliedJobDto>>>
-      getCandidateApplications({
-    int page = 0,
-    int limit = 10,
-  }) async {
+  getCandidateApplications({int page = 0, int limit = 10}) async {
     try {
       return await _apiService.getCandidateApplications(
         page: page,
@@ -71,7 +68,7 @@ class ApplicationRepository {
 
   /// Get employer's applications for a specific job
   Future<BaseResponse<PageableResponse<ApplicationDto>>>
-      getEmployerApplications({
+  getEmployerApplications({
     required String jobId,
     String? jobProcess,
     int page = 0,
@@ -108,41 +105,25 @@ class ApplicationRepository {
     required List<Map<String, dynamic>> applications,
   }) async {
     try {
-      return await _apiService.updateApplicationStatus(
-        jobId,
-        {'applications': applications},
-      );
+      return await _apiService.updateApplicationStatus(jobId, {
+        'applications': applications,
+      });
     } catch (e) {
       rethrow;
     }
   }
 
   /// Get application status for a job (check if candidate has applied)
-  Future<BaseResponse<bool>> getApplicationStatus(
-    String jobId,
-  ) async {
+  Future<BaseResponse<bool>> getApplicationStatus(String jobId) async {
     try {
-      // Call API directly with Dio because response is bool, not ApplicationStatusDto
-      final response = await _dio.get<Map<String, dynamic>>(
-        '/application/job/$jobId/status',
-      );
+      // Use API service to get application status
+      final response = await _apiService.getApplicationStatus(jobId);
 
-      // Parse the response manually
-      if (response.data != null) {
-        final message = response.data!['message'] as String?;
-        final data = response.data!['data']; // This should be bool
-        
-        return BaseResponse<bool>(
-          message: message ?? 'Success',
-          data: data is bool ? data : false,
-          success: true,
-        );
-      }
-      
-      return const BaseResponse<bool>(
-        message: 'Success',
-        data: false,
-        success: true,
+      // Extract hasApplied from ApplicationStatusDto
+      return BaseResponse<bool>(
+        message: response.message,
+        data: response.data?.hasApplied ?? false,
+        success: response.success,
       );
     } catch (e) {
       rethrow;

@@ -43,10 +43,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
           _job = response.data;
         });
         // Load related jobs and check application status after getting the main job
-        await Future.wait([
-          _loadRelatedJobs(),
-          _checkApplicationStatus(),
-        ]);
+        await Future.wait([_loadRelatedJobs(), _checkApplicationStatus()]);
       }
     } catch (e) {
       if (mounted) {
@@ -60,20 +57,22 @@ class _JobDetailPageState extends State<JobDetailPage> {
 
   Future<void> _checkApplicationStatus() async {
     try {
-      final response = await _applicationRepository.getApplicationStatus(widget.jobId);
-      
+      final response = await _applicationRepository.getApplicationStatus(
+        widget.jobId,
+      );
+
       // Debug: Print raw response
       debugPrint('=== Application Status Check ===');
       debugPrint('Job ID: ${widget.jobId}');
       debugPrint('Message: ${response.message}');
       debugPrint('Data (has applied): ${response.data}');
-      
+
       if (mounted) {
         setState(() {
           _hasApplied = response.data ?? false;
           _isCheckingApplicationStatus = false;
         });
-        
+
         debugPrint('Has Applied: $_hasApplied');
         debugPrint('================================');
       }
@@ -83,7 +82,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
       debugPrint('Error: $e');
       debugPrint('StackTrace: $stackTrace');
       debugPrint('=========================================');
-      
+
       if (mounted) {
         setState(() {
           _hasApplied = false;
@@ -104,10 +103,12 @@ class _JobDetailPageState extends State<JobDetailPage> {
       if (mounted) {
         setState(() {
           // Filter out current job and take max 3 jobs
-          _relatedJobs = response.data?.content
-              .where((job) => job.id != widget.jobId)
-              .take(3)
-              .toList() ?? [];
+          _relatedJobs =
+              response.data?.content
+                  .where((job) => job.id != widget.jobId)
+                  .take(3)
+                  .toList() ??
+              [];
           _isLoading = false;
         });
       }
@@ -117,8 +118,6 @@ class _JobDetailPageState extends State<JobDetailPage> {
       }
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -132,8 +131,41 @@ class _JobDetailPageState extends State<JobDetailPage> {
     if (_job == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('Job Details')),
-        body: const Center(child: Text('Job not found')),
+        appBar: AppBar(
+          title: const Text('Job Details'),
+          backgroundColor: Colors.white,
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.work_off_outlined,
+                  size: 64,
+                  color: AppColors.textTertiary.withValues(alpha: 0.5),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Job Not Found',
+                  style: AppTextStyles.heading2.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'The job you are looking for could not be found.\nIt may have been removed or expired.',
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     }
 
@@ -145,10 +177,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                children: [
-                  _buildCompanyHeader(),
-                  _buildJobContent(),
-                ],
+                children: [_buildCompanyHeader(), _buildJobContent()],
               ),
             ),
           ),
@@ -209,10 +238,10 @@ class _JobDetailPageState extends State<JobDetailPage> {
   }
 
   Widget _buildCompanyHeader() {
-    final createdDate = _job?.createdAt != null 
+    final createdDate = _job?.createdAt != null
         ? _formatTimeAgo(DateTime.parse(_job!.createdAt!))
         : 'Recently';
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -249,11 +278,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                   : null,
             ),
             child: _job?.companyLogo == null
-                ? const Icon(
-                    Icons.business,
-                    color: AppColors.primary,
-                    size: 48,
-                  )
+                ? const Icon(Icons.business, color: AppColors.primary, size: 48)
                 : null,
           ),
           const SizedBox(height: 16),
@@ -285,14 +310,8 @@ class _JobDetailPageState extends State<JobDetailPage> {
             runSpacing: 8,
             children: [
               if (_job?.jobLocation != null)
-                _buildChip(
-                  Icons.location_on_outlined,
-                  _job!.jobLocation!,
-                ),
-              _buildChip(
-                Icons.access_time_outlined,
-                createdDate,
-              ),
+                _buildChip(Icons.location_on_outlined, _job!.jobLocation!),
+              _buildChip(Icons.access_time_outlined, createdDate),
             ],
           ),
         ],
@@ -317,11 +336,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: AppColors.primary,
-          ),
+          Icon(icon, size: 16, color: AppColors.primary),
           const SizedBox(width: 4),
           Text(
             text,
@@ -338,7 +353,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
   String _formatTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 30) {
       return DateFormat('MMM dd, yyyy').format(dateTime);
     } else if (difference.inDays > 0) {
@@ -396,11 +411,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
               _formatSalary(_job),
             ),
           ),
-          Container(
-            width: 1,
-            height: 50,
-            color: AppColors.background,
-          ),
+          Container(width: 1, height: 50, color: AppColors.background),
           Expanded(
             child: _buildInfoColumn(
               Icons.work_outline,
@@ -408,11 +419,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
               _formatJobType(_job?.jobType),
             ),
           ),
-          Container(
-            width: 1,
-            height: 50,
-            color: AppColors.background,
-          ),
+          Container(width: 1, height: 50, color: AppColors.background),
           Expanded(
             child: _buildInfoColumn(
               Icons.school_outlined,
@@ -428,11 +435,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
   Widget _buildInfoColumn(IconData icon, String label, String value) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: AppColors.primary,
-          size: 24,
-        ),
+        Icon(icon, color: AppColors.primary, size: 24),
         const SizedBox(height: 8),
         Text(
           label,
@@ -461,9 +464,9 @@ class _JobDetailPageState extends State<JobDetailPage> {
     if (job == null || (job.minSalary == null && job.maxSalary == null)) {
       return 'Negotiable';
     }
-    
+
     final currencySymbol = _getCurrencySymbol(job.currency);
-    
+
     if (job.minSalary != null && job.maxSalary != null) {
       return '$currencySymbol${_formatNumber(job.minSalary!)} - $currencySymbol${_formatNumber(job.maxSalary!)}';
     } else if (job.minSalary != null) {
@@ -495,15 +498,17 @@ class _JobDetailPageState extends State<JobDetailPage> {
 
   String _formatJobType(JobType? jobType) {
     if (jobType == null) return 'N/A';
-    return jobType.name.replaceAll('_', ' ').split(' ').map((word) => 
-      word[0].toUpperCase() + word.substring(1).toLowerCase()
-    ).join(' ');
+    return jobType.name
+        .replaceAll('_', ' ')
+        .split(' ')
+        .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
   }
 
   Widget _buildJobDescription() {
     final description = _job?.description ?? 'No description available.';
-    final shortText = description.length > 200 
-        ? '${description.substring(0, 200)}...' 
+    final shortText = description.length > 200
+        ? '${description.substring(0, 200)}...'
         : description;
 
     return _buildSection(
@@ -562,11 +567,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: AppColors.primary,
-                size: 20,
-              ),
+              Icon(icon, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -586,8 +587,13 @@ class _JobDetailPageState extends State<JobDetailPage> {
   }
 
   Widget _buildResponsibilities() {
-    final responsibilities = _job?.responsibility?.split('\n').where((r) => r.trim().isNotEmpty).toList() ?? [];
-    
+    final responsibilities =
+        _job?.responsibility
+            ?.split('\n')
+            .where((r) => r.trim().isNotEmpty)
+            .toList() ??
+        [];
+
     if (responsibilities.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -596,52 +602,54 @@ class _JobDetailPageState extends State<JobDetailPage> {
       'Responsibilities',
       Icons.checklist_outlined,
       Column(
-        children: responsibilities.map(
-          (resp) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 6),
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check,
-                    size: 12,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    resp,
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColors.textSecondary,
-                      fontSize: 14,
-                      height: 1.6,
+        children: responsibilities
+            .map(
+              (resp) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 6),
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        size: 12,
+                        color: AppColors.primary,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        resp,
+                        style: AppTextStyles.body.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ).toList(),
+              ),
+            )
+            .toList(),
       ),
     );
   }
 
   Widget _buildInformations() {
-    final postedDate = _job?.createdAt != null 
+    final postedDate = _job?.createdAt != null
         ? DateFormat('dd MMM yyyy').format(DateTime.parse(_job!.createdAt!))
         : 'N/A';
-    final expiredDate = _job?.expiredAt != null 
+    final expiredDate = _job?.expiredAt != null
         ? DateFormat('dd MMM yyyy').format(DateTime.parse(_job!.expiredAt!))
         : 'N/A';
-    
+
     return _buildSection(
       'Job Information',
       Icons.info_outline,
@@ -654,11 +662,19 @@ class _JobDetailPageState extends State<JobDetailPage> {
           _buildInfoRow(Icons.payments_outlined, 'Salary', _formatSalary(_job)),
           const SizedBox(height: 12),
           if (_job?.salaryType != null) ...[
-            _buildInfoRow(Icons.schedule_outlined, 'Salary Type', _formatSalaryType(_job!.salaryType)),
+            _buildInfoRow(
+              Icons.schedule_outlined,
+              'Salary Type',
+              _formatSalaryType(_job!.salaryType),
+            ),
             const SizedBox(height: 12),
           ],
           if (_job?.jobLocation != null)
-            _buildInfoRow(Icons.location_on_outlined, 'Location', _job!.jobLocation!),
+            _buildInfoRow(
+              Icons.location_on_outlined,
+              'Location',
+              _job!.jobLocation!,
+            ),
         ],
       ),
     );
@@ -673,11 +689,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
             color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            size: 16,
-            color: AppColors.primary,
-          ),
+          child: Icon(icon, size: 16, color: AppColors.primary),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -709,7 +721,8 @@ class _JobDetailPageState extends State<JobDetailPage> {
 
   String _formatSalaryType(SalaryType? salaryType) {
     if (salaryType == null) return 'N/A';
-    return salaryType.name[0].toUpperCase() + salaryType.name.substring(1).toLowerCase();
+    return salaryType.name[0].toUpperCase() +
+        salaryType.name.substring(1).toLowerCase();
   }
 
   Widget _buildRelativeJobs() {
@@ -722,11 +735,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.work_outline,
-              color: AppColors.primary,
-              size: 20,
-            ),
+            Icon(Icons.work_outline, color: AppColors.primary, size: 20),
             const SizedBox(width: 8),
             Text(
               'Similar Jobs',
@@ -740,33 +749,25 @@ class _JobDetailPageState extends State<JobDetailPage> {
         ),
         const SizedBox(height: 16),
         ..._relatedJobs.map((job) {
-          final createdDate = job.createdAt != null 
+          final createdDate = job.createdAt != null
               ? _formatTimeAgo(DateTime.parse(job.createdAt!))
               : 'Recently';
-          
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: _buildRelativeJobCard(
-              job,
-              createdDate,
-            ),
+            child: _buildRelativeJobCard(job, createdDate),
           );
         }),
       ],
     );
   }
 
-  Widget _buildRelativeJobCard(
-    JobDto job,
-    String timeAgo,
-  ) {
+  Widget _buildRelativeJobCard(JobDto job, String timeAgo) {
     return GestureDetector(
       onTap: () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => JobDetailPage(jobId: job.id),
-          ),
+          MaterialPageRoute(builder: (context) => JobDetailPage(jobId: job.id)),
         );
       },
       child: Container(
@@ -774,10 +775,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.background,
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.background, width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -838,7 +836,10 @@ class _JobDetailPageState extends State<JobDetailPage> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
@@ -882,11 +883,9 @@ class _JobDetailPageState extends State<JobDetailPage> {
     );
   }
 
-
-
   Widget _buildBottomBar() {
     final isLoading = _isLoading || _isCheckingApplicationStatus;
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -936,29 +935,41 @@ class _JobDetailPageState extends State<JobDetailPage> {
                         debugPrint('Blocked: User has already applied');
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('You have already applied for this job'),
+                            content: Text(
+                              'You have already applied for this job',
+                            ),
                             backgroundColor: AppColors.error,
                           ),
                         );
                         return;
                       }
-                      
-                      debugPrint('Navigating to upload CV page for job: ${widget.jobId}');
-                      
+
+                      debugPrint(
+                        'Navigating to upload CV page for job: ${widget.jobId}',
+                      );
+
                       // Navigate and wait for result
-                      final result = await context.push('${RoutePath.jobApply}/${widget.jobId}');
-                      
-                      debugPrint('Returned from upload CV page with result: $result');
-                      
+                      final result = await context.push(
+                        '${RoutePath.jobApply}/${widget.jobId}',
+                      );
+
+                      debugPrint(
+                        'Returned from upload CV page with result: $result',
+                      );
+
                       // If application was submitted, refresh the application status
                       if (result == true && mounted) {
-                        debugPrint('Refreshing application status after successful submission');
+                        debugPrint(
+                          'Refreshing application status after successful submission',
+                        );
                         await _checkApplicationStatus();
                       }
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.3),
+                disabledBackgroundColor: AppColors.textSecondary.withValues(
+                  alpha: 0.3,
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -982,7 +993,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                         Icon(
                           _hasApplied ? Icons.check_circle_outline : Icons.send,
                           size: 20,
-                          color: _hasApplied 
+                          color: _hasApplied
                               ? AppColors.textSecondary.withValues(alpha: 0.5)
                               : Colors.white,
                         ),
@@ -990,7 +1001,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                         Text(
                           _hasApplied ? 'Already Applied' : 'Apply Now',
                           style: AppTextStyles.button.copyWith(
-                            color: _hasApplied 
+                            color: _hasApplied
                                 ? AppColors.textSecondary.withValues(alpha: 0.5)
                                 : Colors.white,
                             fontSize: 16,
