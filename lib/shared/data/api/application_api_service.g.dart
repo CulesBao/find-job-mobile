@@ -132,10 +132,12 @@ class _ApplicationApiService implements ApplicationApiService {
 
   @override
   Future<BaseResponse<ApplicationDto>> getApplicationById(
-    String applicationId,
-  ) async {
+    String applicationId, {
+    String? populate,
+  }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'populate': populate};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BaseResponse<ApplicationDto>>(

@@ -5,20 +5,36 @@ part 'application_dto.freezed.dart';
 part 'application_dto.g.dart';
 
 enum JobProcess {
-  @JsonValue('PENDING')
-  pending,
-  @JsonValue('REVIEWING')
-  reviewing,
-  @JsonValue('INTERVIEWING')
-  interviewing,
-  @JsonValue('ACCEPTED')
-  accepted,
+  @JsonValue('APPLICATION_SUBMITTED')
+  applicationSubmitted,
+  @JsonValue('APPLICATION_REVIEW')
+  applicationReview,
+  @JsonValue('SCREENING')
+  screening,
+  @JsonValue('PHONE_INTERVIEW')
+  phoneInterview,
+  @JsonValue('TECHNICAL_TEST')
+  technicalTest,
+  @JsonValue('FIRST_INTERVIEW')
+  firstInterview,
+  @JsonValue('SECOND_INTERVIEW')
+  secondInterview,
+  @JsonValue('FINAL_INTERVIEW')
+  finalInterview,
+  @JsonValue('OFFER_NEGOTIATION')
+  offerNegotiation,
+  @JsonValue('OFFER_SENT')
+  offerSent,
+  @JsonValue('OFFER_ACCEPTED')
+  offerAccepted,
+  @JsonValue('HIRED')
+  hired,
+  @JsonValue('ONBOARDING')
+  onboarding,
   @JsonValue('REJECTED')
   rejected,
   @JsonValue('WITHDRAWN')
   withdrawn,
-  @JsonValue('APPLICATION_SUBMITTED')
-  applicationSubmitted,
 }
 
 // DTO for candidate's applied jobs list

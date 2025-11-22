@@ -4,6 +4,7 @@ import 'package:find_job_mobile/shared/data/models/application_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/application_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
+import 'package:find_job_mobile/shared/utils/application_status_utils.dart';
 import 'package:intl/intl.dart';
 
 class ViewApplicationDetailPage extends StatefulWidget {
@@ -68,14 +69,19 @@ class _ViewApplicationDetailPageState extends State<ViewApplicationDetailPage> {
   Future<void> _updateApplicationStatus(JobProcess newStatus) async {
     if (_application == null) return;
 
+    // Get jobId from widget first (passed from previous page), fallback to application data
+    final jobId = widget.jobId ?? _application!.jobId;
+
     // Debug logs
     print('=== Updating status ===');
     print('Application ID: ${widget.applicationId}');
-    print('Job ID: ${_application!.jobId}');
+    print('Job ID from widget: ${widget.jobId}');
+    print('Job ID from application: ${_application!.jobId}');
+    print('Final Job ID: $jobId');
     print('Current Status: ${_application!.jobProcess}');
     print('New Status: $newStatus');
 
-    if (_application!.jobId == null || _application!.jobId!.isEmpty) {
+    if (jobId == null || jobId.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cannot update status: Job ID is missing'),
@@ -90,7 +96,7 @@ class _ViewApplicationDetailPageState extends State<ViewApplicationDetailPage> {
       builder: (context) => AlertDialog(
         title: const Text('Update Status'),
         content: Text(
-            'Are you sure you want to change the status to ${_getStatusText(newStatus)}?'),
+            'Are you sure you want to change the status to ${ApplicationStatusUtils.getStatusText(newStatus)}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -114,14 +120,17 @@ class _ViewApplicationDetailPageState extends State<ViewApplicationDetailPage> {
     });
 
     try {
+      // Prepare request body - use 'status' field as per API spec
+      final requestBody = {
+        'application_id': widget.applicationId,
+        'status': ApplicationStatusUtils.getJobProcessString(newStatus),
+      };
+      
+      print('=== Request body: $requestBody');
+      
       final response = await _applicationRepository.updateApplicationStatus(
-        jobId: _application!.jobId ?? widget.jobId ?? '',
-        applications: [
-          {
-            'application_id': widget.applicationId,
-            'job_process': _getJobProcessString(newStatus),
-          }
-        ],
+        jobId: jobId,
+        applications: [requestBody],
       );
 
       if (mounted) {
@@ -156,82 +165,6 @@ class _ViewApplicationDetailPageState extends State<ViewApplicationDetailPage> {
       setState(() {
         _isUpdatingStatus = false;
       });
-    }
-  }
-
-  String _getJobProcessString(JobProcess status) {
-    switch (status) {
-      case JobProcess.pending:
-        return 'PENDING';
-      case JobProcess.reviewing:
-        return 'REVIEWING';
-      case JobProcess.interviewing:
-        return 'INTERVIEWING';
-      case JobProcess.accepted:
-        return 'ACCEPTED';
-      case JobProcess.rejected:
-        return 'REJECTED';
-      case JobProcess.withdrawn:
-        return 'WITHDRAWN';
-      case JobProcess.applicationSubmitted:
-        return 'APPLICATION_SUBMITTED';
-    }
-  }
-
-  String _getStatusText(JobProcess? status) {
-    if (status == null) return 'Pending';
-    switch (status) {
-      case JobProcess.pending:
-        return 'Pending';
-      case JobProcess.reviewing:
-        return 'Reviewing';
-      case JobProcess.interviewing:
-        return 'Interviewing';
-      case JobProcess.accepted:
-        return 'Accepted';
-      case JobProcess.rejected:
-        return 'Rejected';
-      case JobProcess.withdrawn:
-        return 'Withdrawn';
-      case JobProcess.applicationSubmitted:
-        return 'Submitted';
-    }
-  }
-
-  Color _getStatusColor(JobProcess? status) {
-    if (status == null) return AppColors.accent;
-    switch (status) {
-      case JobProcess.pending:
-      case JobProcess.applicationSubmitted:
-        return AppColors.accent;
-      case JobProcess.reviewing:
-        return const Color(0xFF1890FF);
-      case JobProcess.interviewing:
-        return AppColors.primary;
-      case JobProcess.accepted:
-        return AppColors.success;
-      case JobProcess.rejected:
-      case JobProcess.withdrawn:
-        return AppColors.error;
-    }
-  }
-
-  IconData _getStatusIcon(JobProcess? status) {
-    if (status == null) return Icons.schedule;
-    switch (status) {
-      case JobProcess.pending:
-      case JobProcess.applicationSubmitted:
-        return Icons.schedule;
-      case JobProcess.reviewing:
-        return Icons.visibility;
-      case JobProcess.interviewing:
-        return Icons.people;
-      case JobProcess.accepted:
-        return Icons.check_circle;
-      case JobProcess.rejected:
-        return Icons.cancel;
-      case JobProcess.withdrawn:
-        return Icons.block;
     }
   }
 
@@ -365,9 +298,9 @@ class _ViewApplicationDetailPageState extends State<ViewApplicationDetailPage> {
   }
 
   Widget _buildStatusCard() {
-    final status = _getStatusText(_application!.jobProcess);
-    final statusColor = _getStatusColor(_application!.jobProcess);
-    final statusIcon = _getStatusIcon(_application!.jobProcess);
+    final status = ApplicationStatusUtils.getStatusText(_application!.jobProcess);
+    final statusColor = ApplicationStatusUtils.getStatusColor(_application!.jobProcess);
+    final statusIcon = ApplicationStatusUtils.getStatusIcon(_application!.jobProcess);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -687,9 +620,44 @@ class _ViewApplicationDetailPageState extends State<ViewApplicationDetailPage> {
   }
 
   Widget _buildUpdateStatusSection() {
-    // Don't show update status for withdrawn applications
-    if (_application!.jobProcess == JobProcess.withdrawn) {
-      return const SizedBox.shrink();
+    // Don't show update status for withdrawn, hired, or rejected applications
+    if (_application!.jobProcess == JobProcess.withdrawn ||
+        _application!.jobProcess == JobProcess.hired ||
+        _application!.jobProcess == JobProcess.rejected) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textTertiary.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.info_outline,
+              color: AppColors.textSecondary,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                _application!.jobProcess == JobProcess.withdrawn
+                    ? 'This application has been withdrawn by the candidate and cannot be updated.'
+                    : 'This application has been finalized and cannot be updated.',
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     return Container(
@@ -720,10 +688,19 @@ class _ViewApplicationDetailPageState extends State<ViewApplicationDetailPage> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildStatusButton(JobProcess.pending),
-              _buildStatusButton(JobProcess.reviewing),
-              _buildStatusButton(JobProcess.interviewing),
-              _buildStatusButton(JobProcess.accepted),
+              _buildStatusButton(JobProcess.applicationSubmitted),
+              _buildStatusButton(JobProcess.applicationReview),
+              _buildStatusButton(JobProcess.screening),
+              _buildStatusButton(JobProcess.phoneInterview),
+              _buildStatusButton(JobProcess.technicalTest),
+              _buildStatusButton(JobProcess.firstInterview),
+              _buildStatusButton(JobProcess.secondInterview),
+              _buildStatusButton(JobProcess.finalInterview),
+              _buildStatusButton(JobProcess.offerNegotiation),
+              _buildStatusButton(JobProcess.offerSent),
+              _buildStatusButton(JobProcess.offerAccepted),
+              _buildStatusButton(JobProcess.hired),
+              _buildStatusButton(JobProcess.onboarding),
               _buildStatusButton(JobProcess.rejected),
             ],
           ),
@@ -741,8 +718,8 @@ class _ViewApplicationDetailPageState extends State<ViewApplicationDetailPage> {
 
   Widget _buildStatusButton(JobProcess status) {
     final isCurrentStatus = _application!.jobProcess == status;
-    final statusText = _getStatusText(status);
-    final statusColor = _getStatusColor(status);
+    final statusText = ApplicationStatusUtils.getStatusText(status);
+    final statusColor = ApplicationStatusUtils.getStatusColor(status);
 
     return ElevatedButton(
       onPressed: isCurrentStatus || _isUpdatingStatus
