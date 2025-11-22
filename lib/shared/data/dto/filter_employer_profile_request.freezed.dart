@@ -24,7 +24,7 @@ FilterEmployerProfileRequest _$FilterEmployerProfileRequestFromJson(
 /// @nodoc
 mixin _$FilterEmployerProfileRequest {
   String? get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'province_code')
+  @JsonKey(name: 'provinceCode')
   String? get provinceCode => throw _privateConstructorUsedError;
 
   /// Serializes this FilterEmployerProfileRequest to a JSON map.
@@ -50,7 +50,7 @@ abstract class $FilterEmployerProfileRequestCopyWith<$Res> {
   @useResult
   $Res call({
     String? name,
-    @JsonKey(name: 'province_code') String? provinceCode,
+    @JsonKey(name: 'provinceCode') String? provinceCode,
   });
 }
 
@@ -99,7 +99,7 @@ abstract class _$$FilterEmployerProfileRequestImplCopyWith<$Res>
   @useResult
   $Res call({
     String? name,
-    @JsonKey(name: 'province_code') String? provinceCode,
+    @JsonKey(name: 'provinceCode') String? provinceCode,
   });
 }
 
@@ -142,7 +142,7 @@ class _$FilterEmployerProfileRequestImpl
     implements _FilterEmployerProfileRequest {
   const _$FilterEmployerProfileRequestImpl({
     this.name,
-    @JsonKey(name: 'province_code') this.provinceCode,
+    @JsonKey(name: 'provinceCode') this.provinceCode,
   });
 
   factory _$FilterEmployerProfileRequestImpl.fromJson(
@@ -152,7 +152,7 @@ class _$FilterEmployerProfileRequestImpl
   @override
   final String? name;
   @override
-  @JsonKey(name: 'province_code')
+  @JsonKey(name: 'provinceCode')
   final String? provinceCode;
 
   @override
@@ -197,7 +197,7 @@ abstract class _FilterEmployerProfileRequest
     implements FilterEmployerProfileRequest {
   const factory _FilterEmployerProfileRequest({
     final String? name,
-    @JsonKey(name: 'province_code') final String? provinceCode,
+    @JsonKey(name: 'provinceCode') final String? provinceCode,
   }) = _$FilterEmployerProfileRequestImpl;
 
   factory _FilterEmployerProfileRequest.fromJson(Map<String, dynamic> json) =
@@ -206,7 +206,7 @@ abstract class _FilterEmployerProfileRequest
   @override
   String? get name;
   @override
-  @JsonKey(name: 'province_code')
+  @JsonKey(name: 'provinceCode')
   String? get provinceCode;
 
   /// Create a copy of FilterEmployerProfileRequest

@@ -10,12 +10,12 @@ _$FilterEmployerProfileRequestImpl _$$FilterEmployerProfileRequestImplFromJson(
   Map<String, dynamic> json,
 ) => _$FilterEmployerProfileRequestImpl(
   name: json['name'] as String?,
-  provinceCode: json['province_code'] as String?,
+  provinceCode: json['provinceCode'] as String?,
 );
 
 Map<String, dynamic> _$$FilterEmployerProfileRequestImplToJson(
   _$FilterEmployerProfileRequestImpl instance,
 ) => <String, dynamic>{
   'name': instance.name,
-  'province_code': instance.provinceCode,
+  'provinceCode': instance.provinceCode,
 };
