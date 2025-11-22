@@ -50,8 +50,10 @@ mixin _$JobDto {
   String? get employerLogoUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'applied_count')
   int? get appliedCount => throw _privateConstructorUsedError;
-  String? get e =>
-      throw _privateConstructorUsedError; // List endpoint format (additional fields)
+  @JsonKey(name: 'province')
+  String? get province => throw _privateConstructorUsedError;
+  @JsonKey(name: 'province_name')
+  String? get provinceName => throw _privateConstructorUsedError; // List endpoint format (additional fields)
   String? get name => throw _privateConstructorUsedError;
   @JsonKey(name: 'logo_url')
   String? get logoUrl => throw _privateConstructorUsedError;
@@ -89,7 +91,8 @@ abstract class $JobDtoCopyWith<$Res> {
     @JsonKey(name: 'employer_name') String? employerName,
     @JsonKey(name: 'employer_logo_url') String? employerLogoUrl,
     @JsonKey(name: 'applied_count') int? appliedCount,
-    String? e,
+    @JsonKey(name: 'province') String? province,
+    @JsonKey(name: 'province_name') String? provinceName,
     String? name,
     @JsonKey(name: 'logo_url') String? logoUrl,
     String? location,
@@ -128,7 +131,8 @@ class _$JobDtoCopyWithImpl<$Res, $Val extends JobDto>
     Object? employerName = freezed,
     Object? employerLogoUrl = freezed,
     Object? appliedCount = freezed,
-    Object? e = freezed,
+    Object? province = freezed,
+    Object? provinceName = freezed,
     Object? name = freezed,
     Object? logoUrl = freezed,
     Object? location = freezed,
@@ -203,9 +207,13 @@ class _$JobDtoCopyWithImpl<$Res, $Val extends JobDto>
                 ? _value.appliedCount
                 : appliedCount // ignore: cast_nullable_to_non_nullable
                       as int?,
-            e: freezed == e
-                ? _value.e
-                : e // ignore: cast_nullable_to_non_nullable
+            province: freezed == province
+                ? _value.province
+                : province // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            provinceName: freezed == provinceName
+                ? _value.provinceName
+                : provinceName // ignore: cast_nullable_to_non_nullable
                       as String?,
             name: freezed == name
                 ? _value.name
@@ -251,7 +259,8 @@ abstract class _$$JobDtoImplCopyWith<$Res> implements $JobDtoCopyWith<$Res> {
     @JsonKey(name: 'employer_name') String? employerName,
     @JsonKey(name: 'employer_logo_url') String? employerLogoUrl,
     @JsonKey(name: 'applied_count') int? appliedCount,
-    String? e,
+    @JsonKey(name: 'province') String? province,
+    @JsonKey(name: 'province_name') String? provinceName,
     String? name,
     @JsonKey(name: 'logo_url') String? logoUrl,
     String? location,
@@ -289,7 +298,8 @@ class __$$JobDtoImplCopyWithImpl<$Res>
     Object? employerName = freezed,
     Object? employerLogoUrl = freezed,
     Object? appliedCount = freezed,
-    Object? e = freezed,
+    Object? province = freezed,
+    Object? provinceName = freezed,
     Object? name = freezed,
     Object? logoUrl = freezed,
     Object? location = freezed,
@@ -364,9 +374,13 @@ class __$$JobDtoImplCopyWithImpl<$Res>
             ? _value.appliedCount
             : appliedCount // ignore: cast_nullable_to_non_nullable
                   as int?,
-        e: freezed == e
-            ? _value.e
-            : e // ignore: cast_nullable_to_non_nullable
+        province: freezed == province
+            ? _value.province
+            : province // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        provinceName: freezed == provinceName
+            ? _value.provinceName
+            : provinceName // ignore: cast_nullable_to_non_nullable
                   as String?,
         name: freezed == name
             ? _value.name
@@ -406,7 +420,8 @@ class _$JobDtoImpl extends _JobDto {
     @JsonKey(name: 'employer_name') this.employerName,
     @JsonKey(name: 'employer_logo_url') this.employerLogoUrl,
     @JsonKey(name: 'applied_count') this.appliedCount,
-    this.e,
+    @JsonKey(name: 'province') this.province,
+    @JsonKey(name: 'province_name') this.provinceName,
     this.name,
     @JsonKey(name: 'logo_url') this.logoUrl,
     this.location,
@@ -462,7 +477,11 @@ class _$JobDtoImpl extends _JobDto {
   @JsonKey(name: 'applied_count')
   final int? appliedCount;
   @override
-  final String? e;
+  @JsonKey(name: 'province')
+  final String? province;
+  @override
+  @JsonKey(name: 'province_name')
+  final String? provinceName;
   // List endpoint format (additional fields)
   @override
   final String? name;
@@ -474,7 +493,7 @@ class _$JobDtoImpl extends _JobDto {
 
   @override
   String toString() {
-    return 'JobDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, education: $education, expiredAt: $expiredAt, jobType: $jobType, maxSalary: $maxSalary, minSalary: $minSalary, responsibility: $responsibility, salaryType: $salaryType, title: $title, employerId: $employerId, currency: $currency, employerName: $employerName, employerLogoUrl: $employerLogoUrl, appliedCount: $appliedCount, e: $e, name: $name, logoUrl: $logoUrl, location: $location)';
+    return 'JobDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, description: $description, education: $education, expiredAt: $expiredAt, jobType: $jobType, maxSalary: $maxSalary, minSalary: $minSalary, responsibility: $responsibility, salaryType: $salaryType, title: $title, employerId: $employerId, currency: $currency, employerName: $employerName, employerLogoUrl: $employerLogoUrl, appliedCount: $appliedCount, province: $province, provinceName: $provinceName, name: $name, logoUrl: $logoUrl, location: $location)';
   }
 
   @override
@@ -513,7 +532,10 @@ class _$JobDtoImpl extends _JobDto {
                 other.employerLogoUrl == employerLogoUrl) &&
             (identical(other.appliedCount, appliedCount) ||
                 other.appliedCount == appliedCount) &&
-            (identical(other.e, e) || other.e == e) &&
+            (identical(other.province, province) ||
+                other.province == province) &&
+            (identical(other.provinceName, provinceName) ||
+                other.provinceName == provinceName) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl) &&
             (identical(other.location, location) ||
@@ -541,7 +563,8 @@ class _$JobDtoImpl extends _JobDto {
     employerName,
     employerLogoUrl,
     appliedCount,
-    e,
+    province,
+    provinceName,
     name,
     logoUrl,
     location,
@@ -580,7 +603,8 @@ abstract class _JobDto extends JobDto {
     @JsonKey(name: 'employer_name') final String? employerName,
     @JsonKey(name: 'employer_logo_url') final String? employerLogoUrl,
     @JsonKey(name: 'applied_count') final int? appliedCount,
-    final String? e,
+    @JsonKey(name: 'province') final String? province,
+    @JsonKey(name: 'province_name') final String? provinceName,
     final String? name,
     @JsonKey(name: 'logo_url') final String? logoUrl,
     final String? location,
@@ -635,7 +659,11 @@ abstract class _JobDto extends JobDto {
   @JsonKey(name: 'applied_count')
   int? get appliedCount;
   @override
-  String? get e; // List endpoint format (additional fields)
+  @JsonKey(name: 'province')
+  String? get province;
+  @override
+  @JsonKey(name: 'province_name')
+  String? get provinceName; // List endpoint format (additional fields)
   @override
   String? get name;
   @override

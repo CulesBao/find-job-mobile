@@ -41,7 +41,8 @@ abstract class CandidateProfileApiService {
   Future<BaseResponse<void>> updateAvatar(@Part(name: 'avatar') File avatar);
 
   @GET('/candidate-profile/filter')
-  Future<BaseResponse<PageableResponse<CandidateFilterDto>>> filterCandidateProfile(
+  Future<BaseResponse<PageableResponse<CandidateFilterDto>>>
+  filterCandidateProfile(
     @Queries() FilterCandidateProfileRequest filter,
     @Query('page') int page,
     @Query('size') int size,

@@ -69,16 +69,6 @@ class _EmployerCardState extends State<EmployerCard> {
   @override
   Widget build(BuildContext context) {
     final employer = widget.employer;
-    String location;
-    if (employer.province != null) {
-      if (employer.district != null) {
-        location = '${employer.district!.name}, ${employer.province!.name}';
-      } else {
-        location = employer.province!.name;
-      }
-    } else {
-      location = 'Not specified';
-    }
 
     return GestureDetector(
       onTap: () {
@@ -150,7 +140,7 @@ class _EmployerCardState extends State<EmployerCard> {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          location,
+                          employer.displayLocation,
                           style: AppTextStyles.body.copyWith(
                             color: AppColors.textSecondary,
                             fontSize: 12,

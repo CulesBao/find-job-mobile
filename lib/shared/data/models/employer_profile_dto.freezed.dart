@@ -39,6 +39,9 @@ mixin _$EmployerProfileDto {
   DistrictDto? get district => throw _privateConstructorUsedError;
   @JsonKey(name: 'social_links')
   List<SocialLinkDto>? get socialLinks => throw _privateConstructorUsedError;
+  String? get location => throw _privateConstructorUsedError;
+  @JsonKey(name: 'job_count')
+  int? get jobCount => throw _privateConstructorUsedError;
 
   /// Serializes this EmployerProfileDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -70,6 +73,8 @@ abstract class $EmployerProfileDtoCopyWith<$Res> {
     ProvinceDto? province,
     DistrictDto? district,
     @JsonKey(name: 'social_links') List<SocialLinkDto>? socialLinks,
+    String? location,
+    @JsonKey(name: 'job_count') int? jobCount,
   });
 
   $ProvinceDtoCopyWith<$Res>? get province;
@@ -103,6 +108,8 @@ class _$EmployerProfileDtoCopyWithImpl<$Res, $Val extends EmployerProfileDto>
     Object? province = freezed,
     Object? district = freezed,
     Object? socialLinks = freezed,
+    Object? location = freezed,
+    Object? jobCount = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -154,6 +161,14 @@ class _$EmployerProfileDtoCopyWithImpl<$Res, $Val extends EmployerProfileDto>
                 ? _value.socialLinks
                 : socialLinks // ignore: cast_nullable_to_non_nullable
                       as List<SocialLinkDto>?,
+            location: freezed == location
+                ? _value.location
+                : location // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            jobCount: freezed == jobCount
+                ? _value.jobCount
+                : jobCount // ignore: cast_nullable_to_non_nullable
+                      as int?,
           )
           as $Val,
     );
@@ -210,6 +225,8 @@ abstract class _$$EmployerProfileDtoImplCopyWith<$Res>
     ProvinceDto? province,
     DistrictDto? district,
     @JsonKey(name: 'social_links') List<SocialLinkDto>? socialLinks,
+    String? location,
+    @JsonKey(name: 'job_count') int? jobCount,
   });
 
   @override
@@ -244,6 +261,8 @@ class __$$EmployerProfileDtoImplCopyWithImpl<$Res>
     Object? province = freezed,
     Object? district = freezed,
     Object? socialLinks = freezed,
+    Object? location = freezed,
+    Object? jobCount = freezed,
   }) {
     return _then(
       _$EmployerProfileDtoImpl(
@@ -295,6 +314,14 @@ class __$$EmployerProfileDtoImplCopyWithImpl<$Res>
             ? _value._socialLinks
             : socialLinks // ignore: cast_nullable_to_non_nullable
                   as List<SocialLinkDto>?,
+        location: freezed == location
+            ? _value.location
+            : location // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        jobCount: freezed == jobCount
+            ? _value.jobCount
+            : jobCount // ignore: cast_nullable_to_non_nullable
+                  as int?,
       ),
     );
   }
@@ -302,7 +329,7 @@ class __$$EmployerProfileDtoImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$EmployerProfileDtoImpl implements _EmployerProfileDto {
+class _$EmployerProfileDtoImpl extends _EmployerProfileDto {
   const _$EmployerProfileDtoImpl({
     required this.id,
     @JsonKey(name: 'created_at') this.createdAt,
@@ -316,7 +343,10 @@ class _$EmployerProfileDtoImpl implements _EmployerProfileDto {
     this.province,
     this.district,
     @JsonKey(name: 'social_links') final List<SocialLinkDto>? socialLinks,
-  }) : _socialLinks = socialLinks;
+    this.location,
+    @JsonKey(name: 'job_count') this.jobCount,
+  }) : _socialLinks = socialLinks,
+       super._();
 
   factory _$EmployerProfileDtoImpl.fromJson(Map<String, dynamic> json) =>
       _$$EmployerProfileDtoImplFromJson(json);
@@ -360,8 +390,14 @@ class _$EmployerProfileDtoImpl implements _EmployerProfileDto {
   }
 
   @override
+  final String? location;
+  @override
+  @JsonKey(name: 'job_count')
+  final int? jobCount;
+
+  @override
   String toString() {
-    return 'EmployerProfileDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, about: $about, establishedIn: $establishedIn, logoUrl: $logoUrl, name: $name, vision: $vision, websiteUrl: $websiteUrl, province: $province, district: $district, socialLinks: $socialLinks)';
+    return 'EmployerProfileDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, about: $about, establishedIn: $establishedIn, logoUrl: $logoUrl, name: $name, vision: $vision, websiteUrl: $websiteUrl, province: $province, district: $district, socialLinks: $socialLinks, location: $location, jobCount: $jobCount)';
   }
 
   @override
@@ -389,7 +425,11 @@ class _$EmployerProfileDtoImpl implements _EmployerProfileDto {
             const DeepCollectionEquality().equals(
               other._socialLinks,
               _socialLinks,
-            ));
+            ) &&
+            (identical(other.location, location) ||
+                other.location == location) &&
+            (identical(other.jobCount, jobCount) ||
+                other.jobCount == jobCount));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -408,6 +448,8 @@ class _$EmployerProfileDtoImpl implements _EmployerProfileDto {
     province,
     district,
     const DeepCollectionEquality().hash(_socialLinks),
+    location,
+    jobCount,
   );
 
   /// Create a copy of EmployerProfileDto
@@ -427,7 +469,7 @@ class _$EmployerProfileDtoImpl implements _EmployerProfileDto {
   }
 }
 
-abstract class _EmployerProfileDto implements EmployerProfileDto {
+abstract class _EmployerProfileDto extends EmployerProfileDto {
   const factory _EmployerProfileDto({
     required final String id,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
@@ -441,7 +483,10 @@ abstract class _EmployerProfileDto implements EmployerProfileDto {
     final ProvinceDto? province,
     final DistrictDto? district,
     @JsonKey(name: 'social_links') final List<SocialLinkDto>? socialLinks,
+    final String? location,
+    @JsonKey(name: 'job_count') final int? jobCount,
   }) = _$EmployerProfileDtoImpl;
+  const _EmployerProfileDto._() : super._();
 
   factory _EmployerProfileDto.fromJson(Map<String, dynamic> json) =
       _$EmployerProfileDtoImpl.fromJson;
@@ -476,6 +521,11 @@ abstract class _EmployerProfileDto implements EmployerProfileDto {
   @override
   @JsonKey(name: 'social_links')
   List<SocialLinkDto>? get socialLinks;
+  @override
+  String? get location;
+  @override
+  @JsonKey(name: 'job_count')
+  int? get jobCount;
 
   /// Create a copy of EmployerProfileDto
   /// with the given fields replaced by the non-null parameter values.

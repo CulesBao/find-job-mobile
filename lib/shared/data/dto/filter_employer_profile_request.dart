@@ -7,7 +7,7 @@ part 'filter_employer_profile_request.g.dart';
 class FilterEmployerProfileRequest with _$FilterEmployerProfileRequest {
   const factory FilterEmployerProfileRequest({
     String? name,
-    @JsonKey(name: 'province_code') String? provinceCode,
+    @JsonKey(name: 'provinceCode') String? provinceCode,
   }) = _FilterEmployerProfileRequest;
 
   factory FilterEmployerProfileRequest.fromJson(Map<String, dynamic> json) =>

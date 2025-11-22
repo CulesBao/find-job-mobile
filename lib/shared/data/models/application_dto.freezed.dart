@@ -458,17 +458,7 @@ mixin _$ApplicationDto {
   String? get companyLogo => throw _privateConstructorUsedError;
   @JsonKey(name: 'candidate_profile')
   CandidateProfileDto? get candidateProfile =>
-      throw _privateConstructorUsedError; // Candidate basic info (for list view when profile not populated)
-  @JsonKey(name: 'candidate_id')
-  String? get candidateId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'candidate_name')
-  String? get candidateName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'candidate_email')
-  String? get candidateEmail => throw _privateConstructorUsedError;
-  @JsonKey(name: 'candidate_phone')
-  String? get candidatePhone => throw _privateConstructorUsedError;
-  @JsonKey(name: 'candidate_avatar')
-  String? get candidateAvatar => throw _privateConstructorUsedError;
+      throw _privateConstructorUsedError;
 
   /// Serializes this ApplicationDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -499,11 +489,6 @@ abstract class $ApplicationDtoCopyWith<$Res> {
     @JsonKey(name: 'company_name') String? companyName,
     @JsonKey(name: 'company_logo') String? companyLogo,
     @JsonKey(name: 'candidate_profile') CandidateProfileDto? candidateProfile,
-    @JsonKey(name: 'candidate_id') String? candidateId,
-    @JsonKey(name: 'candidate_name') String? candidateName,
-    @JsonKey(name: 'candidate_email') String? candidateEmail,
-    @JsonKey(name: 'candidate_phone') String? candidatePhone,
-    @JsonKey(name: 'candidate_avatar') String? candidateAvatar,
   });
 
   $CandidateProfileDtoCopyWith<$Res>? get candidateProfile;
@@ -535,11 +520,6 @@ class _$ApplicationDtoCopyWithImpl<$Res, $Val extends ApplicationDto>
     Object? companyName = freezed,
     Object? companyLogo = freezed,
     Object? candidateProfile = freezed,
-    Object? candidateId = freezed,
-    Object? candidateName = freezed,
-    Object? candidateEmail = freezed,
-    Object? candidatePhone = freezed,
-    Object? candidateAvatar = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -587,26 +567,6 @@ class _$ApplicationDtoCopyWithImpl<$Res, $Val extends ApplicationDto>
                 ? _value.candidateProfile
                 : candidateProfile // ignore: cast_nullable_to_non_nullable
                       as CandidateProfileDto?,
-            candidateId: freezed == candidateId
-                ? _value.candidateId
-                : candidateId // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            candidateName: freezed == candidateName
-                ? _value.candidateName
-                : candidateName // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            candidateEmail: freezed == candidateEmail
-                ? _value.candidateEmail
-                : candidateEmail // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            candidatePhone: freezed == candidatePhone
-                ? _value.candidatePhone
-                : candidatePhone // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            candidateAvatar: freezed == candidateAvatar
-                ? _value.candidateAvatar
-                : candidateAvatar // ignore: cast_nullable_to_non_nullable
-                      as String?,
           )
           as $Val,
     );
@@ -650,11 +610,6 @@ abstract class _$$ApplicationDtoImplCopyWith<$Res>
     @JsonKey(name: 'company_name') String? companyName,
     @JsonKey(name: 'company_logo') String? companyLogo,
     @JsonKey(name: 'candidate_profile') CandidateProfileDto? candidateProfile,
-    @JsonKey(name: 'candidate_id') String? candidateId,
-    @JsonKey(name: 'candidate_name') String? candidateName,
-    @JsonKey(name: 'candidate_email') String? candidateEmail,
-    @JsonKey(name: 'candidate_phone') String? candidatePhone,
-    @JsonKey(name: 'candidate_avatar') String? candidateAvatar,
   });
 
   @override
@@ -686,11 +641,6 @@ class __$$ApplicationDtoImplCopyWithImpl<$Res>
     Object? companyName = freezed,
     Object? companyLogo = freezed,
     Object? candidateProfile = freezed,
-    Object? candidateId = freezed,
-    Object? candidateName = freezed,
-    Object? candidateEmail = freezed,
-    Object? candidatePhone = freezed,
-    Object? candidateAvatar = freezed,
   }) {
     return _then(
       _$ApplicationDtoImpl(
@@ -738,26 +688,6 @@ class __$$ApplicationDtoImplCopyWithImpl<$Res>
             ? _value.candidateProfile
             : candidateProfile // ignore: cast_nullable_to_non_nullable
                   as CandidateProfileDto?,
-        candidateId: freezed == candidateId
-            ? _value.candidateId
-            : candidateId // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        candidateName: freezed == candidateName
-            ? _value.candidateName
-            : candidateName // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        candidateEmail: freezed == candidateEmail
-            ? _value.candidateEmail
-            : candidateEmail // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        candidatePhone: freezed == candidatePhone
-            ? _value.candidatePhone
-            : candidatePhone // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        candidateAvatar: freezed == candidateAvatar
-            ? _value.candidateAvatar
-            : candidateAvatar // ignore: cast_nullable_to_non_nullable
-                  as String?,
       ),
     );
   }
@@ -778,11 +708,6 @@ class _$ApplicationDtoImpl implements _ApplicationDto {
     @JsonKey(name: 'company_name') this.companyName,
     @JsonKey(name: 'company_logo') this.companyLogo,
     @JsonKey(name: 'candidate_profile') this.candidateProfile,
-    @JsonKey(name: 'candidate_id') this.candidateId,
-    @JsonKey(name: 'candidate_name') this.candidateName,
-    @JsonKey(name: 'candidate_email') this.candidateEmail,
-    @JsonKey(name: 'candidate_phone') this.candidatePhone,
-    @JsonKey(name: 'candidate_avatar') this.candidateAvatar,
   });
 
   factory _$ApplicationDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -820,26 +745,10 @@ class _$ApplicationDtoImpl implements _ApplicationDto {
   @override
   @JsonKey(name: 'candidate_profile')
   final CandidateProfileDto? candidateProfile;
-  // Candidate basic info (for list view when profile not populated)
-  @override
-  @JsonKey(name: 'candidate_id')
-  final String? candidateId;
-  @override
-  @JsonKey(name: 'candidate_name')
-  final String? candidateName;
-  @override
-  @JsonKey(name: 'candidate_email')
-  final String? candidateEmail;
-  @override
-  @JsonKey(name: 'candidate_phone')
-  final String? candidatePhone;
-  @override
-  @JsonKey(name: 'candidate_avatar')
-  final String? candidateAvatar;
 
   @override
   String toString() {
-    return 'ApplicationDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, coverLetter: $coverLetter, cvUrl: $cvUrl, jobProcess: $jobProcess, jobId: $jobId, jobTitle: $jobTitle, companyName: $companyName, companyLogo: $companyLogo, candidateProfile: $candidateProfile, candidateId: $candidateId, candidateName: $candidateName, candidateEmail: $candidateEmail, candidatePhone: $candidatePhone, candidateAvatar: $candidateAvatar)';
+    return 'ApplicationDto(id: $id, createdAt: $createdAt, updatedAt: $updatedAt, coverLetter: $coverLetter, cvUrl: $cvUrl, jobProcess: $jobProcess, jobId: $jobId, jobTitle: $jobTitle, companyName: $companyName, companyLogo: $companyLogo, candidateProfile: $candidateProfile)';
   }
 
   @override
@@ -865,17 +774,7 @@ class _$ApplicationDtoImpl implements _ApplicationDto {
             (identical(other.companyLogo, companyLogo) ||
                 other.companyLogo == companyLogo) &&
             (identical(other.candidateProfile, candidateProfile) ||
-                other.candidateProfile == candidateProfile) &&
-            (identical(other.candidateId, candidateId) ||
-                other.candidateId == candidateId) &&
-            (identical(other.candidateName, candidateName) ||
-                other.candidateName == candidateName) &&
-            (identical(other.candidateEmail, candidateEmail) ||
-                other.candidateEmail == candidateEmail) &&
-            (identical(other.candidatePhone, candidatePhone) ||
-                other.candidatePhone == candidatePhone) &&
-            (identical(other.candidateAvatar, candidateAvatar) ||
-                other.candidateAvatar == candidateAvatar));
+                other.candidateProfile == candidateProfile));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -893,11 +792,6 @@ class _$ApplicationDtoImpl implements _ApplicationDto {
     companyName,
     companyLogo,
     candidateProfile,
-    candidateId,
-    candidateName,
-    candidateEmail,
-    candidatePhone,
-    candidateAvatar,
   );
 
   /// Create a copy of ApplicationDto
@@ -931,11 +825,6 @@ abstract class _ApplicationDto implements ApplicationDto {
     @JsonKey(name: 'company_logo') final String? companyLogo,
     @JsonKey(name: 'candidate_profile')
     final CandidateProfileDto? candidateProfile,
-    @JsonKey(name: 'candidate_id') final String? candidateId,
-    @JsonKey(name: 'candidate_name') final String? candidateName,
-    @JsonKey(name: 'candidate_email') final String? candidateEmail,
-    @JsonKey(name: 'candidate_phone') final String? candidatePhone,
-    @JsonKey(name: 'candidate_avatar') final String? candidateAvatar,
   }) = _$ApplicationDtoImpl;
 
   factory _ApplicationDto.fromJson(Map<String, dynamic> json) =
@@ -972,22 +861,7 @@ abstract class _ApplicationDto implements ApplicationDto {
   String? get companyLogo;
   @override
   @JsonKey(name: 'candidate_profile')
-  CandidateProfileDto? get candidateProfile; // Candidate basic info (for list view when profile not populated)
-  @override
-  @JsonKey(name: 'candidate_id')
-  String? get candidateId;
-  @override
-  @JsonKey(name: 'candidate_name')
-  String? get candidateName;
-  @override
-  @JsonKey(name: 'candidate_email')
-  String? get candidateEmail;
-  @override
-  @JsonKey(name: 'candidate_phone')
-  String? get candidatePhone;
-  @override
-  @JsonKey(name: 'candidate_avatar')
-  String? get candidateAvatar;
+  CandidateProfileDto? get candidateProfile;
 
   /// Create a copy of ApplicationDto
   /// with the given fields replaced by the non-null parameter values.

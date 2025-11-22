@@ -23,12 +23,12 @@ FilterCandidateProfileRequest _$FilterCandidateProfileRequestFromJson(
 
 /// @nodoc
 mixin _$FilterCandidateProfileRequest {
-  @JsonKey(name: 'first_name')
+  @JsonKey(name: 'firstName')
   String? get firstName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_name')
+  @JsonKey(name: 'lastName')
   String? get lastName => throw _privateConstructorUsedError;
   Education? get education => throw _privateConstructorUsedError;
-  @JsonKey(name: 'province_code')
+  @JsonKey(name: 'provinceCode')
   String? get provinceCode => throw _privateConstructorUsedError;
   GenderFilter? get gender => throw _privateConstructorUsedError;
 
@@ -54,10 +54,10 @@ abstract class $FilterCandidateProfileRequestCopyWith<$Res> {
       >;
   @useResult
   $Res call({
-    @JsonKey(name: 'first_name') String? firstName,
-    @JsonKey(name: 'last_name') String? lastName,
+    @JsonKey(name: 'firstName') String? firstName,
+    @JsonKey(name: 'lastName') String? lastName,
     Education? education,
-    @JsonKey(name: 'province_code') String? provinceCode,
+    @JsonKey(name: 'provinceCode') String? provinceCode,
     GenderFilter? gender,
   });
 }
@@ -124,10 +124,10 @@ abstract class _$$FilterCandidateProfileRequestImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @JsonKey(name: 'first_name') String? firstName,
-    @JsonKey(name: 'last_name') String? lastName,
+    @JsonKey(name: 'firstName') String? firstName,
+    @JsonKey(name: 'lastName') String? lastName,
     Education? education,
-    @JsonKey(name: 'province_code') String? provinceCode,
+    @JsonKey(name: 'provinceCode') String? provinceCode,
     GenderFilter? gender,
   });
 }
@@ -186,29 +186,29 @@ class __$$FilterCandidateProfileRequestImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$FilterCandidateProfileRequestImpl
-    implements _FilterCandidateProfileRequest {
+    extends _FilterCandidateProfileRequest {
   const _$FilterCandidateProfileRequestImpl({
-    @JsonKey(name: 'first_name') this.firstName,
-    @JsonKey(name: 'last_name') this.lastName,
+    @JsonKey(name: 'firstName') this.firstName,
+    @JsonKey(name: 'lastName') this.lastName,
     this.education,
-    @JsonKey(name: 'province_code') this.provinceCode,
+    @JsonKey(name: 'provinceCode') this.provinceCode,
     this.gender,
-  });
+  }) : super._();
 
   factory _$FilterCandidateProfileRequestImpl.fromJson(
     Map<String, dynamic> json,
   ) => _$$FilterCandidateProfileRequestImplFromJson(json);
 
   @override
-  @JsonKey(name: 'first_name')
+  @JsonKey(name: 'firstName')
   final String? firstName;
   @override
-  @JsonKey(name: 'last_name')
+  @JsonKey(name: 'lastName')
   final String? lastName;
   @override
   final Education? education;
   @override
-  @JsonKey(name: 'province_code')
+  @JsonKey(name: 'provinceCode')
   final String? provinceCode;
   @override
   final GenderFilter? gender;
@@ -265,28 +265,29 @@ class _$FilterCandidateProfileRequestImpl
 }
 
 abstract class _FilterCandidateProfileRequest
-    implements FilterCandidateProfileRequest {
+    extends FilterCandidateProfileRequest {
   const factory _FilterCandidateProfileRequest({
-    @JsonKey(name: 'first_name') final String? firstName,
-    @JsonKey(name: 'last_name') final String? lastName,
+    @JsonKey(name: 'firstName') final String? firstName,
+    @JsonKey(name: 'lastName') final String? lastName,
     final Education? education,
-    @JsonKey(name: 'province_code') final String? provinceCode,
+    @JsonKey(name: 'provinceCode') final String? provinceCode,
     final GenderFilter? gender,
   }) = _$FilterCandidateProfileRequestImpl;
+  const _FilterCandidateProfileRequest._() : super._();
 
   factory _FilterCandidateProfileRequest.fromJson(Map<String, dynamic> json) =
       _$FilterCandidateProfileRequestImpl.fromJson;
 
   @override
-  @JsonKey(name: 'first_name')
+  @JsonKey(name: 'firstName')
   String? get firstName;
   @override
-  @JsonKey(name: 'last_name')
+  @JsonKey(name: 'lastName')
   String? get lastName;
   @override
   Education? get education;
   @override
-  @JsonKey(name: 'province_code')
+  @JsonKey(name: 'provinceCode')
   String? get provinceCode;
   @override
   GenderFilter? get gender;

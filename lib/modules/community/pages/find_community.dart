@@ -26,38 +26,39 @@ class _FindCommunityPageState extends State<FindCommunityPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final _candidateRepository = getIt<CandidateProfileRepository>();
   final _employerRepository = getIt<EmployerProfileRepository>();
   final _locationRepository = getIt<LocationRepository>();
-  
+
   bool _showCandidateFilters = false;
   bool _showEmployerFilters = false;
-  
+
   // Filter states for candidates
   Education? _selectedEducation;
   bool? _selectedGender;
   ProvinceDto? _selectedProvince;
-  
+
   // Filter states for employers
   ProvinceDto? _employerProvince;
-  
+
   // Province list
   List<ProvinceDto> _provinces = [];
-  
+
   // Data
   List<CandidateFilterDto> _candidates = [];
   List<EmployerProfileDto> _employers = [];
-  
+
   // Loading states
   bool _isLoadingCandidates = false;
   bool _isLoadingEmployers = false;
-  
+
   // Pagination
   int _candidatePage = 0;
   int _employerPage = 0;
   bool _hasMoreCandidates = true;
   bool _hasMoreEmployers = true;
-  
+
   // Error states
   String? _candidateError;
   String? _employerError;
@@ -83,15 +84,14 @@ class _FindCommunityPageState extends State<FindCommunityPage>
           _provinces = response.data!.provinces;
         });
       }
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     _searchController.dispose();
+    _lastNameController.dispose();
     super.dispose();
   }
 
@@ -116,16 +116,20 @@ class _FindCommunityPageState extends State<FindCommunityPage>
     });
 
     try {
-      final searchText = _searchController.text.trim();
-      
+      final firstName = _searchController.text.trim();
+      final lastName = _lastNameController.text.trim();
+
       // Convert bool gender to GenderFilter enum
       GenderFilter? genderFilter;
       if (_selectedGender != null) {
-        genderFilter = _selectedGender == false ? GenderFilter.male : GenderFilter.female;
+        genderFilter = _selectedGender == false
+            ? GenderFilter.male
+            : GenderFilter.female;
       }
-      
+
       final response = await _candidateRepository.filterCandidateProfiles(
-        firstName: searchText.isNotEmpty ? searchText : null,
+        firstName: firstName.isNotEmpty ? firstName : null,
+        lastName: lastName.isNotEmpty ? lastName : null,
         education: _selectedEducation,
         gender: genderFilter,
         provinceCode: _selectedProvince?.code,
@@ -137,7 +141,7 @@ class _FindCommunityPageState extends State<FindCommunityPage>
         if (response.data != null) {
           final newCandidates = response.data?.content ?? [];
           final isLast = response.data?.last ?? true;
-          
+
           // Debug: Log first candidate details if available
           if (newCandidates.isNotEmpty) {
             final first = newCandidates[0];
@@ -183,7 +187,7 @@ class _FindCommunityPageState extends State<FindCommunityPage>
 
     try {
       final searchText = _searchController.text.trim();
-      
+
       final response = await _employerRepository.filterEmployerProfiles(
         name: searchText.isNotEmpty ? searchText : null,
         provinceCode: _employerProvince?.code,
@@ -306,6 +310,7 @@ class _FindCommunityPageState extends State<FindCommunityPage>
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
               sliver: SliverToBoxAdapter(
                 child: CandidateAdvancedFilters(
+                  lastNameController: _lastNameController,
                   selectedEducation: _selectedEducation,
                   selectedGender: _selectedGender,
                   selectedProvince: _selectedProvince,
@@ -314,6 +319,7 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (mounted) {
                         setState(() => _selectedEducation = value);
+                        _loadCandidates(refresh: true);
                       }
                     });
                   },
@@ -321,6 +327,7 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (mounted) {
                         setState(() => _selectedGender = value);
+                        _loadCandidates(refresh: true);
                       }
                     });
                   },
@@ -328,6 +335,7 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (mounted) {
                         setState(() => _selectedProvince = value);
+                        _loadCandidates(refresh: true);
                       }
                     });
                   },
@@ -339,13 +347,14 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                           _selectedGender = null;
                           _selectedProvince = null;
                         });
+                        _loadCandidates(refresh: true);
                       }
                     });
                   },
                 ),
               ),
             ),
-          
+
           if (_isLoadingCandidates && _candidates.isEmpty)
             const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
@@ -360,7 +369,9 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                     const SizedBox(height: 16),
                     Text(
                       _candidateError!,
-                      style: AppTextStyles.body.copyWith(color: AppColors.error),
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.error,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -383,16 +394,24 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.people_outline, size: 48, color: AppColors.textSecondary),
+                    Icon(
+                      Icons.people_outline,
+                      size: 48,
+                      color: AppColors.textSecondary,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'No candidates found',
-                      style: AppTextStyles.heading3.copyWith(color: AppColors.textPrimary),
+                      style: AppTextStyles.heading3.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Try adjusting your filters',
-                      style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -444,6 +463,7 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (mounted) {
                         setState(() => _employerProvince = value);
+                        _loadEmployers(refresh: true);
                       }
                     });
                   },
@@ -453,13 +473,14 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                         setState(() {
                           _employerProvince = null;
                         });
+                        _loadEmployers(refresh: true);
                       }
                     });
                   },
                 ),
               ),
             ),
-          
+
           if (_isLoadingEmployers && _employers.isEmpty)
             const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
@@ -474,7 +495,9 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                     const SizedBox(height: 16),
                     Text(
                       _employerError!,
-                      style: AppTextStyles.body.copyWith(color: AppColors.error),
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.error,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -497,16 +520,24 @@ class _FindCommunityPageState extends State<FindCommunityPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.business_outlined, size: 48, color: AppColors.textSecondary),
+                    Icon(
+                      Icons.business_outlined,
+                      size: 48,
+                      color: AppColors.textSecondary,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'No employers found',
-                      style: AppTextStyles.heading3.copyWith(color: AppColors.textPrimary),
+                      style: AppTextStyles.heading3.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Try adjusting your filters',
-                      style: AppTextStyles.body.copyWith(color: AppColors.textSecondary),
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),

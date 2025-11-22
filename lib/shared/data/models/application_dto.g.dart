@@ -55,11 +55,6 @@ _$ApplicationDtoImpl _$$ApplicationDtoImplFromJson(Map<String, dynamic> json) =>
           : CandidateProfileDto.fromJson(
               json['candidate_profile'] as Map<String, dynamic>,
             ),
-      candidateId: json['candidate_id'] as String?,
-      candidateName: json['candidate_name'] as String?,
-      candidateEmail: json['candidate_email'] as String?,
-      candidatePhone: json['candidate_phone'] as String?,
-      candidateAvatar: json['candidate_avatar'] as String?,
     );
 
 Map<String, dynamic> _$$ApplicationDtoImplToJson(
@@ -76,11 +71,6 @@ Map<String, dynamic> _$$ApplicationDtoImplToJson(
   'company_name': instance.companyName,
   'company_logo': instance.companyLogo,
   'candidate_profile': instance.candidateProfile,
-  'candidate_id': instance.candidateId,
-  'candidate_name': instance.candidateName,
-  'candidate_email': instance.candidateEmail,
-  'candidate_phone': instance.candidatePhone,
-  'candidate_avatar': instance.candidateAvatar,
 };
 
 const _$JobProcessEnumMap = {
