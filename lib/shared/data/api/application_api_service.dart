@@ -37,8 +37,9 @@ abstract class ApplicationApiService {
   /// Get application by ID
   @GET('/application/{applicationId}')
   Future<BaseResponse<ApplicationDto>> getApplicationById(
-    @Path('applicationId') String applicationId,
-  );
+    @Path('applicationId') String applicationId, {
+    @Query('populate') String? populate,
+  });
 
   /// Update application status (batch update)
   @PUT('/application/job/{jobId}')

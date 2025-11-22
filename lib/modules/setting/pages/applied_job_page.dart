@@ -4,6 +4,7 @@ import 'package:find_job_mobile/shared/data/models/application_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/application_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
+import 'package:find_job_mobile/shared/utils/application_status_utils.dart';
 import 'package:go_router/go_router.dart';
 
 class AppliedJobPage extends StatefulWidget {
@@ -294,8 +295,8 @@ class _AppliedJobPageState extends State<AppliedJobPage> {
 
   Widget _buildApplicationCard(AppliedJobDto application) {
     final status = application.jobProcess ?? 'APPLICATION_SUBMITTED';
-    final statusColor = _getStatusColorFromString(status);
-    final statusText = _getStatusTextFromString(status);
+    final statusColor = ApplicationStatusUtils.getStatusColorFromString(status);
+    final statusText = ApplicationStatusUtils.getStatusTextFromString(status);
 
     return InkWell(
       onTap: () async {
@@ -450,43 +451,5 @@ class _AppliedJobPageState extends State<AppliedJobPage> {
       return '${(salary / 1000).toStringAsFixed(1)}K';
     }
     return salary.toStringAsFixed(0);
-  }
-
-  String _getStatusTextFromString(String status) {
-    switch (status.toUpperCase()) {
-      case 'APPLICATION_SUBMITTED':
-      case 'PENDING':
-        return 'Pending';
-      case 'REVIEWING':
-        return 'Reviewing';
-      case 'INTERVIEWING':
-        return 'Interviewing';
-      case 'ACCEPTED':
-        return 'Accepted';
-      case 'REJECTED':
-        return 'Rejected';
-      case 'WITHDRAWN':
-        return 'Withdrawn';
-      default:
-        return 'Pending';
-    }
-  }
-
-  Color _getStatusColorFromString(String status) {
-    switch (status.toUpperCase()) {
-      case 'APPLICATION_SUBMITTED':
-      case 'PENDING':
-      case 'REVIEWING':
-        return AppColors.accent;
-      case 'INTERVIEWING':
-        return AppColors.primary;
-      case 'ACCEPTED':
-        return AppColors.success;
-      case 'REJECTED':
-      case 'WITHDRAWN':
-        return AppColors.error;
-      default:
-        return AppColors.accent;
-    }
   }
 }

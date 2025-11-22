@@ -74,13 +74,21 @@ Map<String, dynamic> _$$ApplicationDtoImplToJson(
 };
 
 const _$JobProcessEnumMap = {
-  JobProcess.pending: 'PENDING',
-  JobProcess.reviewing: 'REVIEWING',
-  JobProcess.interviewing: 'INTERVIEWING',
-  JobProcess.accepted: 'ACCEPTED',
+  JobProcess.applicationSubmitted: 'APPLICATION_SUBMITTED',
+  JobProcess.applicationReview: 'APPLICATION_REVIEW',
+  JobProcess.screening: 'SCREENING',
+  JobProcess.phoneInterview: 'PHONE_INTERVIEW',
+  JobProcess.technicalTest: 'TECHNICAL_TEST',
+  JobProcess.firstInterview: 'FIRST_INTERVIEW',
+  JobProcess.secondInterview: 'SECOND_INTERVIEW',
+  JobProcess.finalInterview: 'FINAL_INTERVIEW',
+  JobProcess.offerNegotiation: 'OFFER_NEGOTIATION',
+  JobProcess.offerSent: 'OFFER_SENT',
+  JobProcess.offerAccepted: 'OFFER_ACCEPTED',
+  JobProcess.hired: 'HIRED',
+  JobProcess.onboarding: 'ONBOARDING',
   JobProcess.rejected: 'REJECTED',
   JobProcess.withdrawn: 'WITHDRAWN',
-  JobProcess.applicationSubmitted: 'APPLICATION_SUBMITTED',
 };
 
 _$ApplicationStatusDtoImpl _$$ApplicationStatusDtoImplFromJson(

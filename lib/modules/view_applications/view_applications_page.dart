@@ -4,6 +4,7 @@ import 'package:find_job_mobile/shared/data/models/application_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/application_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
+import 'package:find_job_mobile/shared/utils/application_status_utils.dart';
 import 'package:go_router/go_router.dart';
 
 class ViewApplicationsPage extends StatefulWidget {
@@ -122,63 +123,6 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
       setState(() {
         _isLoadingMore = false;
       });
-    }
-  }
-
-  String _getStatusText(JobProcess? status) {
-    if (status == null) return 'Pending';
-    switch (status) {
-      case JobProcess.pending:
-        return 'Pending';
-      case JobProcess.reviewing:
-        return 'Reviewing';
-      case JobProcess.interviewing:
-        return 'Interviewing';
-      case JobProcess.accepted:
-        return 'Accepted';
-      case JobProcess.rejected:
-        return 'Rejected';
-      case JobProcess.withdrawn:
-        return 'Withdrawn';
-      case JobProcess.applicationSubmitted:
-        return 'Submitted';
-    }
-  }
-
-  Color _getStatusColor(JobProcess? status) {
-    if (status == null) return AppColors.accent;
-    switch (status) {
-      case JobProcess.pending:
-      case JobProcess.applicationSubmitted:
-        return AppColors.accent;
-      case JobProcess.reviewing:
-        return const Color(0xFF1890FF);
-      case JobProcess.interviewing:
-        return AppColors.primary;
-      case JobProcess.accepted:
-        return AppColors.success;
-      case JobProcess.rejected:
-      case JobProcess.withdrawn:
-        return AppColors.error;
-    }
-  }
-
-  IconData _getStatusIcon(JobProcess? status) {
-    if (status == null) return Icons.schedule;
-    switch (status) {
-      case JobProcess.pending:
-      case JobProcess.applicationSubmitted:
-        return Icons.schedule;
-      case JobProcess.reviewing:
-        return Icons.visibility;
-      case JobProcess.interviewing:
-        return Icons.people;
-      case JobProcess.accepted:
-        return Icons.check_circle;
-      case JobProcess.rejected:
-        return Icons.cancel;
-      case JobProcess.withdrawn:
-        return Icons.block;
     }
   }
 
@@ -375,9 +319,9 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
   }
 
   Widget _buildApplicationCard(ApplicationDto application) {
-    final status = _getStatusText(application.jobProcess);
-    final statusColor = _getStatusColor(application.jobProcess);
-    final statusIcon = _getStatusIcon(application.jobProcess);
+    final status = ApplicationStatusUtils.getStatusText(application.jobProcess);
+    final statusColor = ApplicationStatusUtils.getStatusColor(application.jobProcess);
+    final statusIcon = ApplicationStatusUtils.getStatusIcon(application.jobProcess);
 
     final candidate = application.candidateProfile;
     final candidateName = candidate != null
