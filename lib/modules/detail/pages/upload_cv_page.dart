@@ -12,7 +12,7 @@ import 'package:find_job_mobile/shared/data/models/job_dto.dart';
 
 class UploadCvPage extends StatefulWidget {
   final String jobId;
-  
+
   const UploadCvPage({super.key, required this.jobId});
 
   @override
@@ -24,7 +24,7 @@ class _UploadCvPageState extends State<UploadCvPage> {
   final TextEditingController _informationController = TextEditingController();
   final _jobRepository = getIt<JobRepository>();
   final _applicationRepository = getIt<ApplicationRepository>();
-  
+
   bool _isLoading = true;
   bool _isSubmitting = false;
   JobDto? _job;
@@ -57,6 +57,7 @@ class _UploadCvPageState extends State<UploadCvPage> {
     }
   }
 
+  @override
   void dispose() {
     _informationController.dispose();
     super.dispose();
@@ -100,10 +101,10 @@ class _UploadCvPageState extends State<UploadCvPage> {
           ),
         );
 
-        // Navigate back with success result
+        // Navigate back with success result using Navigator.of to ensure proper return value
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
-            Navigator.pop(context, true); // Return true to indicate success
+            Navigator.of(context).pop(true); // Return true to indicate success
           }
         });
       }
@@ -132,8 +133,66 @@ class _UploadCvPageState extends State<UploadCvPage> {
     if (_job == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('Apply for Job')),
-        body: const Center(child: Text('Job not found')),
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.work_off_outlined,
+                          size: 64,
+                          color: AppColors.textTertiary.withValues(alpha: 0.5),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Job Not Found',
+                          style: AppTextStyles.heading2.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'The job you are trying to apply for could not be found.\nIt may have been removed or expired.',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Text(
+                            'Go Back',
+                            style: AppTextStyles.button.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
