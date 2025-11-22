@@ -46,16 +46,18 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
   Future<void> _loadProfile() async {
     try {
       final profileResponse = await _repository.getProfile(widget.employerId);
-      
+
       if (mounted) {
         setState(() {
           _profile = profileResponse.data;
         });
-        
+
         // Try to check follow status, but don't fail if it errors
         // (e.g., employer trying to view another employer)
         try {
-          final followResponse = await _followerRepository.isFollowed(widget.employerId);
+          final followResponse = await _followerRepository.isFollowed(
+            widget.employerId,
+          );
           if (mounted) {
             setState(() {
               _isFollowing = followResponse.data ?? false;
@@ -70,13 +72,10 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
             });
           }
         }
-        
+
         // Load jobs and related companies after profile is loaded
-        await Future.wait([
-          _loadJobs(),
-          _loadRelatedCompanies(),
-        ]);
-        
+        await Future.wait([_loadJobs(), _loadRelatedCompanies()]);
+
         if (mounted) {
           setState(() {
             _isLoading = false;
@@ -146,7 +145,7 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
       } else {
         await _followerRepository.followEmployer(widget.employerId);
       }
-      
+
       if (mounted) {
         setState(() {
           _isFollowing = !_isFollowing;
@@ -158,9 +157,7 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
         setState(() {
           _isFollowLoading = false;
         });
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('You cannot follow employers as an employer'),
             backgroundColor: Colors.red,
@@ -188,8 +185,41 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
     if (_profile == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('Employer Profile')),
-        body: const Center(child: Text('Profile not found')),
+        appBar: AppBar(
+          title: const Text('Company Profile'),
+          backgroundColor: Colors.white,
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.business_outlined,
+                  size: 64,
+                  color: AppColors.textTertiary.withValues(alpha: 0.5),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Company Not Found',
+                  style: AppTextStyles.heading2.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'The company profile you are looking for could not be found.\nIt may have been removed or is no longer available.',
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     }
 
@@ -218,7 +248,8 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
                 children: [
                   AboutTabWidget(
                     aboutUs: _profile!.about ?? 'No information available.',
-                    vision: _profile!.vision ?? 'No vision statement available.',
+                    vision:
+                        _profile!.vision ?? 'No vision statement available.',
                     website: _profile!.websiteUrl ?? 'N/A',
                     location: _profile!.province != null
                         ? (_profile!.district != null
@@ -231,7 +262,7 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
                                 ? '${company.district!.name}, ${company.province!.name}'
                                 : company.province!.name)
                           : 'Not specified';
-                      
+
                       return RelativeCompanyCardData(
                         companyName: company.name,
                         industry: companyLocation,
@@ -244,18 +275,19 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EmployerDetailPage(employerId: employerId),
+                            builder: (context) =>
+                                EmployerDetailPage(employerId: employerId),
                           ),
                         );
                       }
                     },
                   ),
-                JobsTabWidget(
+                  JobsTabWidget(
                     jobs: _jobs.map((job) {
-                      final jobTimeAgo = job.createdAt != null 
+                      final jobTimeAgo = job.createdAt != null
                           ? _formatTimeAgo(DateTime.parse(job.createdAt!))
                           : 'Recently';
-                      
+
                       return JobCardData(
                         title: job.title,
                         company: job.companyName ?? _profile!.name,
@@ -288,7 +320,7 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
   String _formatTimeAgo(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 30) {
       return DateFormat('MMM dd, yyyy').format(dateTime);
     } else if (difference.inDays > 0) {
@@ -306,9 +338,9 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
     if (job.minSalary == null && job.maxSalary == null) {
       return 'Negotiable';
     }
-    
+
     final currencySymbol = _getCurrencySymbol(job.currency);
-    
+
     if (job.minSalary != null && job.maxSalary != null) {
       return '$currencySymbol${_formatNumber(job.minSalary!)} - $currencySymbol${_formatNumber(job.maxSalary!)}';
     } else if (job.minSalary != null) {
@@ -394,7 +426,7 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
               : _profile!.province!.name)
         : 'Not specified';
 
-    final timeAgo = _profile!.createdAt != null 
+    final timeAgo = _profile!.createdAt != null
         ? _formatTimeAgo(_profile!.createdAt!)
         : 'Recently';
 
@@ -434,11 +466,7 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
                   : null,
             ),
             child: _profile!.logoUrl == null || _profile!.logoUrl!.isEmpty
-                ? const Icon(
-                    Icons.business,
-                    color: AppColors.primary,
-                    size: 48,
-                  )
+                ? const Icon(Icons.business, color: AppColors.primary, size: 48)
                 : null,
           ),
           const SizedBox(height: 16),
@@ -495,11 +523,7 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 16,
-            color: AppColors.primary,
-          ),
+          Icon(icon, size: 16, color: AppColors.primary),
           const SizedBox(width: 4),
           Text(
             text,
@@ -521,9 +545,7 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
         child: ElevatedButton(
           onPressed: _isFollowLoading ? null : _handleFollowToggle,
           style: ElevatedButton.styleFrom(
-            backgroundColor: _isFollowing 
-                ? Colors.white 
-                : AppColors.primary,
+            backgroundColor: _isFollowing ? Colors.white : AppColors.primary,
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
