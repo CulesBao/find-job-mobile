@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class CandidateAdvancedFilters extends StatelessWidget {
   const CandidateAdvancedFilters({
     super.key,
+    this.lastNameController,
     this.selectedEducation,
     this.selectedGender,
     this.selectedProvince,
@@ -17,6 +18,7 @@ class CandidateAdvancedFilters extends StatelessWidget {
     this.onClearFilters,
   });
 
+  final TextEditingController? lastNameController;
   final Education? selectedEducation;
   final bool? selectedGender;
   final ProvinceDto? selectedProvince;
@@ -60,14 +62,26 @@ class CandidateAdvancedFilters extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: AppColors.textTertiary.withValues(alpha: 0.2)),
+                  bottom: BorderSide(
+                    color: AppColors.textTertiary.withValues(alpha: 0.2),
+                  ),
                 ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Select Education', style: AppTextStyles.heading3.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
-                  IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close), color: AppColors.textSecondary),
+                  Text(
+                    'Select Education',
+                    style: AppTextStyles.heading3.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                    color: AppColors.textSecondary,
+                  ),
                 ],
               ),
             ),
@@ -75,7 +89,13 @@ class CandidateAdvancedFilters extends StatelessWidget {
             if (selectedEducation != null)
               ListTile(
                 leading: const Icon(Icons.clear, color: AppColors.error),
-                title: Text('Clear selection', style: AppTextStyles.body.copyWith(color: AppColors.error, fontWeight: FontWeight.w600)),
+                title: Text(
+                  'Clear selection',
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColors.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 onTap: () {
                   onEducationChanged?.call(null);
                   Navigator.pop(context);
@@ -89,8 +109,20 @@ class CandidateAdvancedFilters extends StatelessWidget {
                   final edu = educations[index];
                   final isSelected = selectedEducation == edu;
                   return ListTile(
-                    leading: Icon(isSelected ? Icons.check_circle : Icons.school_outlined, color: isSelected ? AppColors.primary : AppColors.textSecondary),
-                    title: Text(_getEducationLabel(edu), style: AppTextStyles.body.copyWith(color: isSelected ? AppColors.primary : AppColors.textPrimary)),
+                    leading: Icon(
+                      isSelected ? Icons.check_circle : Icons.school_outlined,
+                      color: isSelected
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                    ),
+                    title: Text(
+                      _getEducationLabel(edu),
+                      style: AppTextStyles.body.copyWith(
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
+                      ),
+                    ),
                     onTap: () {
                       onEducationChanged?.call(edu);
                       Navigator.pop(context);
@@ -132,7 +164,9 @@ class CandidateAdvancedFilters extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              if (selectedEducation != null || selectedGender != null || selectedProvince != null)
+              if (selectedEducation != null ||
+                  selectedGender != null ||
+                  selectedProvince != null)
                 TextButton(
                   onPressed: onClearFilters,
                   child: Text(
@@ -146,11 +180,67 @@ class CandidateAdvancedFilters extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
+          // Last Name Search
+          Row(
+            children: [
+              const Icon(
+                Icons.person_outline,
+                size: 20,
+                color: AppColors.textSecondary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Last Name',
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: lastNameController,
+            decoration: InputDecoration(
+              hintText: 'Enter last name...',
+              hintStyle: AppTextStyles.body.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              filled: true,
+              fillColor: AppColors.background,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: AppColors.textTertiary.withValues(alpha: 0.3),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: AppColors.textTertiary.withValues(alpha: 0.3),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: AppColors.primary, width: 2),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // Education Filter (chip + bottom sheet like Find Job)
           Row(
             children: [
-              const Icon(Icons.school_outlined, size: 20, color: AppColors.textSecondary),
+              const Icon(
+                Icons.school_outlined,
+                size: 20,
+                color: AppColors.textSecondary,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Education',
@@ -180,26 +270,38 @@ class CandidateAdvancedFilters extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    selectedEducation != null ? _getEducationLabel(selectedEducation!) : 'Select education level',
+                    selectedEducation != null
+                        ? _getEducationLabel(selectedEducation!)
+                        : 'Select education level',
                     style: AppTextStyles.body.copyWith(
-                      color: selectedEducation != null ? AppColors.primary : AppColors.textSecondary,
-                      fontWeight: selectedEducation != null ? FontWeight.w600 : FontWeight.normal,
+                      color: selectedEducation != null
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                      fontWeight: selectedEducation != null
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                     ),
                   ),
                   Icon(
                     Icons.arrow_drop_down,
-                    color: selectedEducation != null ? AppColors.primary : AppColors.textSecondary,
+                    color: selectedEducation != null
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Gender Filter
           Row(
             children: [
-              const Icon(Icons.wc_outlined, size: 20, color: AppColors.textSecondary),
+              const Icon(
+                Icons.wc_outlined,
+                size: 20,
+                color: AppColors.textSecondary,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Gender',
@@ -218,7 +320,9 @@ class CandidateAdvancedFilters extends StatelessWidget {
                   label: 'Male',
                   value: false, // Backend expects false for Male
                   isSelected: selectedGender == false,
-                  onTap: () => onGenderChanged?.call(selectedGender == false ? null : false),
+                  onTap: () => onGenderChanged?.call(
+                    selectedGender == false ? null : false,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -227,17 +331,23 @@ class CandidateAdvancedFilters extends StatelessWidget {
                   label: 'Female',
                   value: true, // Backend expects true for Female
                   isSelected: selectedGender == true,
-                  onTap: () => onGenderChanged?.call(selectedGender == true ? null : true),
+                  onTap: () => onGenderChanged?.call(
+                    selectedGender == true ? null : true,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Province Filter (chip + bottom sheet like Find Job)
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 20, color: AppColors.textSecondary),
+              const Icon(
+                Icons.location_on_outlined,
+                size: 20,
+                color: AppColors.textSecondary,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Province',
@@ -274,13 +384,19 @@ class CandidateAdvancedFilters extends StatelessWidget {
                   Text(
                     selectedProvince?.name ?? 'Select province',
                     style: AppTextStyles.body.copyWith(
-                      color: selectedProvince != null ? AppColors.primary : AppColors.textSecondary,
-                      fontWeight: selectedProvince != null ? FontWeight.w600 : FontWeight.normal,
+                      color: selectedProvince != null
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                      fontWeight: selectedProvince != null
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                     ),
                   ),
                   Icon(
                     Icons.arrow_drop_down,
-                    color: selectedProvince != null ? AppColors.primary : AppColors.textSecondary,
+                    color: selectedProvince != null
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
                   ),
                 ],
               ),
@@ -303,12 +419,12 @@ class CandidateAdvancedFilters extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         decoration: BoxDecoration(
-          color: isSelected 
+          color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
               : Colors.grey.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected 
+            color: isSelected
                 ? AppColors.primary
                 : Colors.grey.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
@@ -361,14 +477,26 @@ void _showProvinceSelectorModal({
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(color: AppColors.textTertiary.withValues(alpha: 0.2)),
+                bottom: BorderSide(
+                  color: AppColors.textTertiary.withValues(alpha: 0.2),
+                ),
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Select Province', style: AppTextStyles.heading3.copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
-                IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close), color: AppColors.textSecondary),
+                Text(
+                  'Select Province',
+                  style: AppTextStyles.heading3.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                  color: AppColors.textSecondary,
+                ),
               ],
             ),
           ),
@@ -376,7 +504,13 @@ void _showProvinceSelectorModal({
           if (selectedProvince != null)
             ListTile(
               leading: const Icon(Icons.clear, color: AppColors.error),
-              title: Text('Clear selection', style: AppTextStyles.body.copyWith(color: AppColors.error, fontWeight: FontWeight.w600)),
+              title: Text(
+                'Clear selection',
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               onTap: () {
                 onProvinceChanged?.call(null);
                 Navigator.pop(context);
@@ -390,10 +524,25 @@ void _showProvinceSelectorModal({
                     itemCount: provinces.length,
                     itemBuilder: (context, index) {
                       final province = provinces[index];
-                      final isSelected = selectedProvince?.code == province.code;
+                      final isSelected =
+                          selectedProvince?.code == province.code;
                       return ListTile(
-                        leading: Icon(isSelected ? Icons.check_circle : Icons.location_on_outlined, color: isSelected ? AppColors.primary : AppColors.textSecondary),
-                        title: Text(province.name, style: AppTextStyles.body.copyWith(color: isSelected ? AppColors.primary : AppColors.textPrimary)),
+                        leading: Icon(
+                          isSelected
+                              ? Icons.check_circle
+                              : Icons.location_on_outlined,
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.textSecondary,
+                        ),
+                        title: Text(
+                          province.name,
+                          style: AppTextStyles.body.copyWith(
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.textPrimary,
+                          ),
+                        ),
                         onTap: () {
                           onProvinceChanged?.call(province);
                           Navigator.pop(context);
@@ -463,11 +612,15 @@ class EmployerAdvancedFilters extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Province Filter
           Row(
             children: [
-              const Icon(Icons.location_on_outlined, size: 20, color: AppColors.textSecondary),
+              const Icon(
+                Icons.location_on_outlined,
+                size: 20,
+                color: AppColors.textSecondary,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Province',
@@ -504,13 +657,19 @@ class EmployerAdvancedFilters extends StatelessWidget {
                   Text(
                     selectedProvince?.name ?? 'Select province',
                     style: AppTextStyles.body.copyWith(
-                      color: selectedProvince != null ? AppColors.primary : AppColors.textSecondary,
-                      fontWeight: selectedProvince != null ? FontWeight.w600 : FontWeight.normal,
+                      color: selectedProvince != null
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                      fontWeight: selectedProvince != null
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                     ),
                   ),
                   Icon(
                     Icons.arrow_drop_down,
-                    color: selectedProvince != null ? AppColors.primary : AppColors.textSecondary,
+                    color: selectedProvince != null
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
                   ),
                 ],
               ),
