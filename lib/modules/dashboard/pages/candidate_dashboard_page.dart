@@ -660,10 +660,10 @@ class _CandidateDashboardPageState extends State<CandidateDashboardPage> {
                         size: 16,
                         color: AppColors.textSecondary,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          employer.location, // Just a string like "Lai Chau"
+                          employer.location,
                           style: AppTextStyles.body.copyWith(
                             color: AppColors.textSecondary,
                           ),

@@ -38,7 +38,8 @@ abstract class EmployerProfileApiService {
   Future<BaseResponse<dynamic>> updateLogo(@Part(name: 'logo') File logo);
 
   @GET('/employer-profile/filter')
-  Future<BaseResponse<PageableResponse<EmployerProfileDto>>> filterEmployerProfile(
+  Future<BaseResponse<PageableResponse<EmployerProfileDto>>>
+  filterEmployerProfile(
     @Queries() FilterEmployerProfileRequest filter,
     @Query('page') int page,
     @Query('size') int size,

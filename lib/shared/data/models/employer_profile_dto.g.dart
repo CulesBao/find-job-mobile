@@ -31,6 +31,8 @@ _$EmployerProfileDtoImpl _$$EmployerProfileDtoImplFromJson(
   socialLinks: (json['social_links'] as List<dynamic>?)
       ?.map((e) => SocialLinkDto.fromJson(e as Map<String, dynamic>))
       .toList(),
+  location: json['location'] as String?,
+  jobCount: (json['job_count'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$$EmployerProfileDtoImplToJson(
@@ -48,4 +50,6 @@ Map<String, dynamic> _$$EmployerProfileDtoImplToJson(
   'province': instance.province,
   'district': instance.district,
   'social_links': instance.socialLinks,
+  'location': instance.location,
+  'job_count': instance.jobCount,
 };

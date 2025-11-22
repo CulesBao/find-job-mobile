@@ -66,7 +66,8 @@ class EmployerProfileRepositoryImpl implements EmployerProfileRepository {
   }
 
   @override
-  Future<BaseResponse<PageableResponse<EmployerProfileDto>>> filterEmployerProfiles({
+  Future<BaseResponse<PageableResponse<EmployerProfileDto>>>
+  filterEmployerProfiles({
     String? name,
     String? provinceCode,
     int page = 0,

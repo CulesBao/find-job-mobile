@@ -8,6 +8,8 @@ part 'employer_profile_dto.g.dart';
 
 @freezed
 class EmployerProfileDto with _$EmployerProfileDto {
+  const EmployerProfileDto._();
+
   const factory EmployerProfileDto({
     required String id,
     @JsonKey(name: 'created_at') DateTime? createdAt,
@@ -21,7 +23,23 @@ class EmployerProfileDto with _$EmployerProfileDto {
     ProvinceDto? province,
     DistrictDto? district,
     @JsonKey(name: 'social_links') List<SocialLinkDto>? socialLinks,
+    String? location,
+    @JsonKey(name: 'job_count') int? jobCount,
   }) = _EmployerProfileDto;
+
+  // Getter to handle both API formats
+  String get displayLocation {
+    if (location != null && location!.isNotEmpty) {
+      return location!;
+    }
+    if (province != null) {
+      if (district != null) {
+        return '${district!.name}, ${province!.name}';
+      }
+      return province!.name;
+    }
+    return 'Not specified';
+  }
 
   factory EmployerProfileDto.fromJson(Map<String, dynamic> json) =>
       _$EmployerProfileDtoFromJson(json);
