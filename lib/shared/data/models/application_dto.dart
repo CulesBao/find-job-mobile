@@ -50,7 +50,7 @@ class AppliedJobDto with _$AppliedJobDto {
     @JsonKey(name: 'max_salary') double? maxSalary,
     @JsonKey(name: 'currency') String? currency,
     @JsonKey(name: 'expired_at') String? expiredAt,
-    @JsonKey(name: 'job_proccess') String? jobProcess,
+    @JsonKey(name: 'job_process') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
   }) = _AppliedJobDto;
 
@@ -71,8 +71,7 @@ class ApplicationDto with _$ApplicationDto {
     @JsonKey(name: 'job_title') String? jobTitle,
     @JsonKey(name: 'company_name') String? companyName,
     @JsonKey(name: 'company_logo') String? companyLogo,
-    @JsonKey(name: 'candidate_profile')
-    CandidateProfileDto? candidateProfile,
+    @JsonKey(name: 'candidate_profile') CandidateProfileDto? candidateProfile,
   }) = _ApplicationDto;
 
   factory ApplicationDto.fromJson(Map<String, dynamic> json) =>

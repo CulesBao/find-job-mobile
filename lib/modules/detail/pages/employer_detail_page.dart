@@ -481,16 +481,6 @@ class _EmployerDetailPageState extends State<EmployerDetailPage>
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Technology',
-            style: AppTextStyles.body.copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
           const SizedBox(height: 12),
           Wrap(
             alignment: WrapAlignment.center,
