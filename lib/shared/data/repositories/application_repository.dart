@@ -83,7 +83,7 @@ class ApplicationRepository {
         jobProcess: jobProcess,
         page: page,
         limit: limit,
-        populate: 'candidate_profile',
+        populate: 'candidateProfile',
       );
     } catch (e) {
       rethrow;
@@ -98,7 +98,7 @@ class ApplicationRepository {
     try {
       return await _apiService.getApplicationById(
         applicationId,
-        populate: includeProfile ? 'candidate_profile' : null,
+        populate: includeProfile ? 'candidateProfile' : null,
       );
     } catch (e) {
       rethrow;
