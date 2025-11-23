@@ -50,7 +50,7 @@ class AppliedJobDto with _$AppliedJobDto {
     @JsonKey(name: 'max_salary') double? maxSalary,
     @JsonKey(name: 'currency') String? currency,
     @JsonKey(name: 'expired_at') String? expiredAt,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
   }) = _AppliedJobDto;
 
@@ -66,7 +66,7 @@ class ApplicationDto with _$ApplicationDto {
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
     @JsonKey(name: 'cover_letter') String? coverLetter,
     @JsonKey(name: 'cv_url') String? cvUrl,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
     @JsonKey(name: 'job_title') String? jobTitle,
     @JsonKey(name: 'company_name') String? companyName,
@@ -84,7 +84,7 @@ class ApplicationStatusDto with _$ApplicationStatusDto {
     @JsonKey(name: 'job_id') required String jobId,
     @JsonKey(name: 'has_applied') required bool hasApplied,
     @JsonKey(name: 'application_id') String? applicationId,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'applied_at') DateTime? appliedAt,
   }) = _ApplicationStatusDto;
 

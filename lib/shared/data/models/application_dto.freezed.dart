@@ -39,7 +39,7 @@ mixin _$AppliedJobDto {
   String? get currency => throw _privateConstructorUsedError;
   @JsonKey(name: 'expired_at')
   String? get expiredAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   JobProcess? get jobProcess => throw _privateConstructorUsedError;
   @JsonKey(name: 'job_id')
   String? get jobId => throw _privateConstructorUsedError;
@@ -71,7 +71,7 @@ abstract class $AppliedJobDtoCopyWith<$Res> {
     @JsonKey(name: 'max_salary') double? maxSalary,
     @JsonKey(name: 'currency') String? currency,
     @JsonKey(name: 'expired_at') String? expiredAt,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
   });
 }
@@ -174,7 +174,7 @@ abstract class _$$AppliedJobDtoImplCopyWith<$Res>
     @JsonKey(name: 'max_salary') double? maxSalary,
     @JsonKey(name: 'currency') String? currency,
     @JsonKey(name: 'expired_at') String? expiredAt,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
   });
 }
@@ -269,7 +269,7 @@ class _$AppliedJobDtoImpl implements _AppliedJobDto {
     @JsonKey(name: 'max_salary') this.maxSalary,
     @JsonKey(name: 'currency') this.currency,
     @JsonKey(name: 'expired_at') this.expiredAt,
-    @JsonKey(name: 'job_process') this.jobProcess,
+    @JsonKey(name: 'job_proccess') this.jobProcess,
     @JsonKey(name: 'job_id') this.jobId,
   });
 
@@ -304,7 +304,7 @@ class _$AppliedJobDtoImpl implements _AppliedJobDto {
   @JsonKey(name: 'expired_at')
   final String? expiredAt;
   @override
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   final JobProcess? jobProcess;
   @override
   @JsonKey(name: 'job_id')
@@ -382,7 +382,7 @@ abstract class _AppliedJobDto implements AppliedJobDto {
     @JsonKey(name: 'max_salary') final double? maxSalary,
     @JsonKey(name: 'currency') final String? currency,
     @JsonKey(name: 'expired_at') final String? expiredAt,
-    @JsonKey(name: 'job_process') final JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') final JobProcess? jobProcess,
     @JsonKey(name: 'job_id') final String? jobId,
   }) = _$AppliedJobDtoImpl;
 
@@ -417,7 +417,7 @@ abstract class _AppliedJobDto implements AppliedJobDto {
   @JsonKey(name: 'expired_at')
   String? get expiredAt;
   @override
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   JobProcess? get jobProcess;
   @override
   @JsonKey(name: 'job_id')
@@ -446,7 +446,7 @@ mixin _$ApplicationDto {
   String? get coverLetter => throw _privateConstructorUsedError;
   @JsonKey(name: 'cv_url')
   String? get cvUrl => throw _privateConstructorUsedError;
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   JobProcess? get jobProcess => throw _privateConstructorUsedError;
   @JsonKey(name: 'job_id')
   String? get jobId => throw _privateConstructorUsedError;
@@ -483,7 +483,7 @@ abstract class $ApplicationDtoCopyWith<$Res> {
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
     @JsonKey(name: 'cover_letter') String? coverLetter,
     @JsonKey(name: 'cv_url') String? cvUrl,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
     @JsonKey(name: 'job_title') String? jobTitle,
     @JsonKey(name: 'company_name') String? companyName,
@@ -604,7 +604,7 @@ abstract class _$$ApplicationDtoImplCopyWith<$Res>
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
     @JsonKey(name: 'cover_letter') String? coverLetter,
     @JsonKey(name: 'cv_url') String? cvUrl,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
     @JsonKey(name: 'job_title') String? jobTitle,
     @JsonKey(name: 'company_name') String? companyName,
@@ -702,7 +702,7 @@ class _$ApplicationDtoImpl implements _ApplicationDto {
     @JsonKey(name: 'updated_at') this.updatedAt,
     @JsonKey(name: 'cover_letter') this.coverLetter,
     @JsonKey(name: 'cv_url') this.cvUrl,
-    @JsonKey(name: 'job_process') this.jobProcess,
+    @JsonKey(name: 'job_proccess') this.jobProcess,
     @JsonKey(name: 'job_id') this.jobId,
     @JsonKey(name: 'job_title') this.jobTitle,
     @JsonKey(name: 'company_name') this.companyName,
@@ -728,7 +728,7 @@ class _$ApplicationDtoImpl implements _ApplicationDto {
   @JsonKey(name: 'cv_url')
   final String? cvUrl;
   @override
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   final JobProcess? jobProcess;
   @override
   @JsonKey(name: 'job_id')
@@ -818,7 +818,7 @@ abstract class _ApplicationDto implements ApplicationDto {
     @JsonKey(name: 'updated_at') final DateTime? updatedAt,
     @JsonKey(name: 'cover_letter') final String? coverLetter,
     @JsonKey(name: 'cv_url') final String? cvUrl,
-    @JsonKey(name: 'job_process') final JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') final JobProcess? jobProcess,
     @JsonKey(name: 'job_id') final String? jobId,
     @JsonKey(name: 'job_title') final String? jobTitle,
     @JsonKey(name: 'company_name') final String? companyName,
@@ -845,7 +845,7 @@ abstract class _ApplicationDto implements ApplicationDto {
   @JsonKey(name: 'cv_url')
   String? get cvUrl;
   @override
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   JobProcess? get jobProcess;
   @override
   @JsonKey(name: 'job_id')
@@ -883,7 +883,7 @@ mixin _$ApplicationStatusDto {
   bool get hasApplied => throw _privateConstructorUsedError;
   @JsonKey(name: 'application_id')
   String? get applicationId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   JobProcess? get jobProcess => throw _privateConstructorUsedError;
   @JsonKey(name: 'applied_at')
   DateTime? get appliedAt => throw _privateConstructorUsedError;
@@ -909,7 +909,7 @@ abstract class $ApplicationStatusDtoCopyWith<$Res> {
     @JsonKey(name: 'job_id') String jobId,
     @JsonKey(name: 'has_applied') bool hasApplied,
     @JsonKey(name: 'application_id') String? applicationId,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'applied_at') DateTime? appliedAt,
   });
 }
@@ -979,7 +979,7 @@ abstract class _$$ApplicationStatusDtoImplCopyWith<$Res>
     @JsonKey(name: 'job_id') String jobId,
     @JsonKey(name: 'has_applied') bool hasApplied,
     @JsonKey(name: 'application_id') String? applicationId,
-    @JsonKey(name: 'job_process') JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') JobProcess? jobProcess,
     @JsonKey(name: 'applied_at') DateTime? appliedAt,
   });
 }
@@ -1038,7 +1038,7 @@ class _$ApplicationStatusDtoImpl implements _ApplicationStatusDto {
     @JsonKey(name: 'job_id') required this.jobId,
     @JsonKey(name: 'has_applied') required this.hasApplied,
     @JsonKey(name: 'application_id') this.applicationId,
-    @JsonKey(name: 'job_process') this.jobProcess,
+    @JsonKey(name: 'job_proccess') this.jobProcess,
     @JsonKey(name: 'applied_at') this.appliedAt,
   });
 
@@ -1055,7 +1055,7 @@ class _$ApplicationStatusDtoImpl implements _ApplicationStatusDto {
   @JsonKey(name: 'application_id')
   final String? applicationId;
   @override
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   final JobProcess? jobProcess;
   @override
   @JsonKey(name: 'applied_at')
@@ -1116,7 +1116,7 @@ abstract class _ApplicationStatusDto implements ApplicationStatusDto {
     @JsonKey(name: 'job_id') required final String jobId,
     @JsonKey(name: 'has_applied') required final bool hasApplied,
     @JsonKey(name: 'application_id') final String? applicationId,
-    @JsonKey(name: 'job_process') final JobProcess? jobProcess,
+    @JsonKey(name: 'job_proccess') final JobProcess? jobProcess,
     @JsonKey(name: 'applied_at') final DateTime? appliedAt,
   }) = _$ApplicationStatusDtoImpl;
 
@@ -1133,7 +1133,7 @@ abstract class _ApplicationStatusDto implements ApplicationStatusDto {
   @JsonKey(name: 'application_id')
   String? get applicationId;
   @override
-  @JsonKey(name: 'job_process')
+  @JsonKey(name: 'job_proccess')
   JobProcess? get jobProcess;
   @override
   @JsonKey(name: 'applied_at')

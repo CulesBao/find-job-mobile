@@ -294,9 +294,8 @@ class _AppliedJobPageState extends State<AppliedJobPage> {
   }
 
   Widget _buildApplicationCard(AppliedJobDto application) {
-    final status = application.jobProcess ?? 'APPLICATION_SUBMITTED';
-    final statusColor = ApplicationStatusUtils.getStatusColorFromString(status);
-    final statusText = ApplicationStatusUtils.getStatusTextFromString(status);
+    final statusColor = ApplicationStatusUtils.getStatusColor(application.jobProcess);
+    final statusText = ApplicationStatusUtils.getStatusText(application.jobProcess);
 
     return InkWell(
       onTap: () async {
