@@ -5,6 +5,7 @@ import 'package:find_job_mobile/shared/data/models/application_dto.dart';
 import 'package:find_job_mobile/shared/data/repositories/application_repository.dart';
 import 'package:find_job_mobile/shared/styles/colors.dart';
 import 'package:find_job_mobile/shared/styles/text_styles.dart';
+import 'package:find_job_mobile/shared/utils/application_status_utils.dart';
 import 'package:intl/intl.dart';
 
 class AppliedJobDetailPage extends StatefulWidget {
@@ -241,44 +242,6 @@ class _AppliedJobDetailPageState extends State<AppliedJobDetailPage> {
     }
   }
 
-  String _getStatusText(JobProcess? status) {
-    if (status == null) return 'Pending';
-
-    switch (status) {
-      case JobProcess.pending:
-      case JobProcess.applicationSubmitted:
-        return 'Pending';
-      case JobProcess.reviewing:
-        return 'Reviewing';
-      case JobProcess.interviewing:
-        return 'Interviewing';
-      case JobProcess.accepted:
-        return 'Accepted';
-      case JobProcess.rejected:
-        return 'Rejected';
-      case JobProcess.withdrawn:
-        return 'Withdrawn';
-    }
-  }
-
-  Color _getStatusColor(JobProcess? status) {
-    if (status == null) return AppColors.accent;
-
-    switch (status) {
-      case JobProcess.pending:
-      case JobProcess.reviewing:
-      case JobProcess.applicationSubmitted:
-        return AppColors.accent;
-      case JobProcess.interviewing:
-        return AppColors.primary;
-      case JobProcess.accepted:
-        return AppColors.success;
-      case JobProcess.rejected:
-      case JobProcess.withdrawn:
-        return AppColors.error;
-    }
-  }
-
   String _formatDate(DateTime date) {
     return DateFormat('MMM dd, yyyy \'at\' HH:mm').format(date);
   }
@@ -388,12 +351,12 @@ class _AppliedJobDetailPageState extends State<AppliedJobDetailPage> {
     debugPrint('=== _isWithdrawn: $_isWithdrawn');
     
     // If manually marked as withdrawn, show withdrawn status
-    final status = _isWithdrawn ? 'Withdrawn' : _getStatusText(_application!.jobProcess);
-    final statusColor = _isWithdrawn ? AppColors.error : _getStatusColor(_application!.jobProcess);
+    final status = _isWithdrawn ? 'Withdrawn' : ApplicationStatusUtils.getStatusText(_application!.jobProcess);
+    final statusColor = _isWithdrawn ? AppColors.error : ApplicationStatusUtils.getStatusColor(_application!.jobProcess);
     
-    // Check if can withdraw (NOT manually withdrawn, NOT accepted, NOT rejected)
+    // Check if can withdraw (NOT manually withdrawn, NOT hired, NOT rejected, NOT withdrawn)
     final canWithdraw = !_isWithdrawn &&
-        _application!.jobProcess != JobProcess.accepted &&
+        _application!.jobProcess != JobProcess.hired &&
         _application!.jobProcess != JobProcess.rejected &&
         _application!.jobProcess != JobProcess.withdrawn;
     
@@ -428,7 +391,7 @@ class _AppliedJobDetailPageState extends State<AppliedJobDetailPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    _isWithdrawn ? Icons.block : _getStatusIcon(_application!.jobProcess),
+                    _isWithdrawn ? Icons.block : ApplicationStatusUtils.getStatusIcon(_application!.jobProcess),
                     size: 28,
                     color: statusColor,
                   ),
@@ -716,25 +679,5 @@ class _AppliedJobDetailPageState extends State<AppliedJobDetailPage> {
         ],
       ),
     );
-  }
-
-  IconData _getStatusIcon(JobProcess? status) {
-    if (status == null) return Icons.hourglass_empty;
-
-    switch (status) {
-      case JobProcess.pending:
-      case JobProcess.applicationSubmitted:
-        return Icons.hourglass_empty;
-      case JobProcess.reviewing:
-        return Icons.rate_review;
-      case JobProcess.interviewing:
-        return Icons.event;
-      case JobProcess.accepted:
-        return Icons.check_circle;
-      case JobProcess.rejected:
-        return Icons.cancel;
-      case JobProcess.withdrawn:
-        return Icons.block;
-    }
   }
 }

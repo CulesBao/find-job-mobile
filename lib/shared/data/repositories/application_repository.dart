@@ -92,10 +92,14 @@ class ApplicationRepository {
 
   /// Get application by ID
   Future<BaseResponse<ApplicationDto>> getApplicationById(
-    String applicationId,
-  ) async {
+    String applicationId, {
+    bool includeProfile = true,
+  }) async {
     try {
-      return await _apiService.getApplicationById(applicationId);
+      return await _apiService.getApplicationById(
+        applicationId,
+        populate: includeProfile ? 'candidate_profile' : null,
+      );
     } catch (e) {
       rethrow;
     }
