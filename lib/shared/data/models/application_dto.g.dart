@@ -17,7 +17,7 @@ _$AppliedJobDtoImpl _$$AppliedJobDtoImplFromJson(Map<String, dynamic> json) =>
       maxSalary: (json['max_salary'] as num?)?.toDouble(),
       currency: json['currency'] as String?,
       expiredAt: json['expired_at'] as String?,
-      jobProcess: json['job_proccess'] as String?,
+      jobProcess: $enumDecodeNullable(_$JobProcessEnumMap, json['job_process']),
       jobId: json['job_id'] as String?,
     );
 
@@ -32,9 +32,27 @@ Map<String, dynamic> _$$AppliedJobDtoImplToJson(_$AppliedJobDtoImpl instance) =>
       'max_salary': instance.maxSalary,
       'currency': instance.currency,
       'expired_at': instance.expiredAt,
-      'job_proccess': instance.jobProcess,
+      'job_process': _$JobProcessEnumMap[instance.jobProcess],
       'job_id': instance.jobId,
     };
+
+const _$JobProcessEnumMap = {
+  JobProcess.applicationSubmitted: 'APPLICATION_SUBMITTED',
+  JobProcess.applicationReview: 'APPLICATION_REVIEW',
+  JobProcess.screening: 'SCREENING',
+  JobProcess.phoneInterview: 'PHONE_INTERVIEW',
+  JobProcess.technicalTest: 'TECHNICAL_TEST',
+  JobProcess.firstInterview: 'FIRST_INTERVIEW',
+  JobProcess.secondInterview: 'SECOND_INTERVIEW',
+  JobProcess.finalInterview: 'FINAL_INTERVIEW',
+  JobProcess.offerNegotiation: 'OFFER_NEGOTIATION',
+  JobProcess.offerSent: 'OFFER_SENT',
+  JobProcess.offerAccepted: 'OFFER_ACCEPTED',
+  JobProcess.hired: 'HIRED',
+  JobProcess.onboarding: 'ONBOARDING',
+  JobProcess.rejected: 'REJECTED',
+  JobProcess.withdrawn: 'WITHDRAWN',
+};
 
 _$ApplicationDtoImpl _$$ApplicationDtoImplFromJson(Map<String, dynamic> json) =>
     _$ApplicationDtoImpl(
@@ -71,24 +89,6 @@ Map<String, dynamic> _$$ApplicationDtoImplToJson(
   'company_name': instance.companyName,
   'company_logo': instance.companyLogo,
   'candidate_profile': instance.candidateProfile,
-};
-
-const _$JobProcessEnumMap = {
-  JobProcess.applicationSubmitted: 'APPLICATION_SUBMITTED',
-  JobProcess.applicationReview: 'APPLICATION_REVIEW',
-  JobProcess.screening: 'SCREENING',
-  JobProcess.phoneInterview: 'PHONE_INTERVIEW',
-  JobProcess.technicalTest: 'TECHNICAL_TEST',
-  JobProcess.firstInterview: 'FIRST_INTERVIEW',
-  JobProcess.secondInterview: 'SECOND_INTERVIEW',
-  JobProcess.finalInterview: 'FINAL_INTERVIEW',
-  JobProcess.offerNegotiation: 'OFFER_NEGOTIATION',
-  JobProcess.offerSent: 'OFFER_SENT',
-  JobProcess.offerAccepted: 'OFFER_ACCEPTED',
-  JobProcess.hired: 'HIRED',
-  JobProcess.onboarding: 'ONBOARDING',
-  JobProcess.rejected: 'REJECTED',
-  JobProcess.withdrawn: 'WITHDRAWN',
 };
 
 _$ApplicationStatusDtoImpl _$$ApplicationStatusDtoImplFromJson(

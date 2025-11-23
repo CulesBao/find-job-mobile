@@ -39,8 +39,8 @@ mixin _$AppliedJobDto {
   String? get currency => throw _privateConstructorUsedError;
   @JsonKey(name: 'expired_at')
   String? get expiredAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'job_proccess')
-  String? get jobProcess => throw _privateConstructorUsedError;
+  @JsonKey(name: 'job_process')
+  JobProcess? get jobProcess => throw _privateConstructorUsedError;
   @JsonKey(name: 'job_id')
   String? get jobId => throw _privateConstructorUsedError;
 
@@ -71,7 +71,7 @@ abstract class $AppliedJobDtoCopyWith<$Res> {
     @JsonKey(name: 'max_salary') double? maxSalary,
     @JsonKey(name: 'currency') String? currency,
     @JsonKey(name: 'expired_at') String? expiredAt,
-    @JsonKey(name: 'job_proccess') String? jobProcess,
+    @JsonKey(name: 'job_process') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
   });
 }
@@ -144,7 +144,7 @@ class _$AppliedJobDtoCopyWithImpl<$Res, $Val extends AppliedJobDto>
             jobProcess: freezed == jobProcess
                 ? _value.jobProcess
                 : jobProcess // ignore: cast_nullable_to_non_nullable
-                      as String?,
+                      as JobProcess?,
             jobId: freezed == jobId
                 ? _value.jobId
                 : jobId // ignore: cast_nullable_to_non_nullable
@@ -174,7 +174,7 @@ abstract class _$$AppliedJobDtoImplCopyWith<$Res>
     @JsonKey(name: 'max_salary') double? maxSalary,
     @JsonKey(name: 'currency') String? currency,
     @JsonKey(name: 'expired_at') String? expiredAt,
-    @JsonKey(name: 'job_proccess') String? jobProcess,
+    @JsonKey(name: 'job_process') JobProcess? jobProcess,
     @JsonKey(name: 'job_id') String? jobId,
   });
 }
@@ -246,7 +246,7 @@ class __$$AppliedJobDtoImplCopyWithImpl<$Res>
         jobProcess: freezed == jobProcess
             ? _value.jobProcess
             : jobProcess // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                  as JobProcess?,
         jobId: freezed == jobId
             ? _value.jobId
             : jobId // ignore: cast_nullable_to_non_nullable
@@ -269,7 +269,7 @@ class _$AppliedJobDtoImpl implements _AppliedJobDto {
     @JsonKey(name: 'max_salary') this.maxSalary,
     @JsonKey(name: 'currency') this.currency,
     @JsonKey(name: 'expired_at') this.expiredAt,
-    @JsonKey(name: 'job_proccess') this.jobProcess,
+    @JsonKey(name: 'job_process') this.jobProcess,
     @JsonKey(name: 'job_id') this.jobId,
   });
 
@@ -304,8 +304,8 @@ class _$AppliedJobDtoImpl implements _AppliedJobDto {
   @JsonKey(name: 'expired_at')
   final String? expiredAt;
   @override
-  @JsonKey(name: 'job_proccess')
-  final String? jobProcess;
+  @JsonKey(name: 'job_process')
+  final JobProcess? jobProcess;
   @override
   @JsonKey(name: 'job_id')
   final String? jobId;
@@ -382,7 +382,7 @@ abstract class _AppliedJobDto implements AppliedJobDto {
     @JsonKey(name: 'max_salary') final double? maxSalary,
     @JsonKey(name: 'currency') final String? currency,
     @JsonKey(name: 'expired_at') final String? expiredAt,
-    @JsonKey(name: 'job_proccess') final String? jobProcess,
+    @JsonKey(name: 'job_process') final JobProcess? jobProcess,
     @JsonKey(name: 'job_id') final String? jobId,
   }) = _$AppliedJobDtoImpl;
 
@@ -417,8 +417,8 @@ abstract class _AppliedJobDto implements AppliedJobDto {
   @JsonKey(name: 'expired_at')
   String? get expiredAt;
   @override
-  @JsonKey(name: 'job_proccess')
-  String? get jobProcess;
+  @JsonKey(name: 'job_process')
+  JobProcess? get jobProcess;
   @override
   @JsonKey(name: 'job_id')
   String? get jobId;
