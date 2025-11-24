@@ -17,7 +17,10 @@ _$AppliedJobDtoImpl _$$AppliedJobDtoImplFromJson(Map<String, dynamic> json) =>
       maxSalary: (json['max_salary'] as num?)?.toDouble(),
       currency: json['currency'] as String?,
       expiredAt: json['expired_at'] as String?,
-      jobProcess: $enumDecodeNullable(_$JobProcessEnumMap, json['job_process']),
+      jobProcess: $enumDecodeNullable(
+        _$JobProcessEnumMap,
+        json['job_proccess'],
+      ),
       jobId: json['job_id'] as String?,
     );
 
@@ -32,7 +35,7 @@ Map<String, dynamic> _$$AppliedJobDtoImplToJson(_$AppliedJobDtoImpl instance) =>
       'max_salary': instance.maxSalary,
       'currency': instance.currency,
       'expired_at': instance.expiredAt,
-      'job_process': _$JobProcessEnumMap[instance.jobProcess],
+      'job_proccess': _$JobProcessEnumMap[instance.jobProcess],
       'job_id': instance.jobId,
     };
 
@@ -63,7 +66,10 @@ _$ApplicationDtoImpl _$$ApplicationDtoImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updated_at'] as String),
       coverLetter: json['cover_letter'] as String?,
       cvUrl: json['cv_url'] as String?,
-      jobProcess: $enumDecodeNullable(_$JobProcessEnumMap, json['job_process']),
+      jobProcess: $enumDecodeNullable(
+        _$JobProcessEnumMap,
+        json['job_proccess'],
+      ),
       jobId: json['job_id'] as String?,
       jobTitle: json['job_title'] as String?,
       companyName: json['company_name'] as String?,
@@ -83,7 +89,7 @@ Map<String, dynamic> _$$ApplicationDtoImplToJson(
   'updated_at': instance.updatedAt?.toIso8601String(),
   'cover_letter': instance.coverLetter,
   'cv_url': instance.cvUrl,
-  'job_process': _$JobProcessEnumMap[instance.jobProcess],
+  'job_proccess': _$JobProcessEnumMap[instance.jobProcess],
   'job_id': instance.jobId,
   'job_title': instance.jobTitle,
   'company_name': instance.companyName,
@@ -97,7 +103,7 @@ _$ApplicationStatusDtoImpl _$$ApplicationStatusDtoImplFromJson(
   jobId: json['job_id'] as String,
   hasApplied: json['has_applied'] as bool,
   applicationId: json['application_id'] as String?,
-  jobProcess: $enumDecodeNullable(_$JobProcessEnumMap, json['job_process']),
+  jobProcess: $enumDecodeNullable(_$JobProcessEnumMap, json['job_proccess']),
   appliedAt: json['applied_at'] == null
       ? null
       : DateTime.parse(json['applied_at'] as String),
@@ -109,6 +115,6 @@ Map<String, dynamic> _$$ApplicationStatusDtoImplToJson(
   'job_id': instance.jobId,
   'has_applied': instance.hasApplied,
   'application_id': instance.applicationId,
-  'job_process': _$JobProcessEnumMap[instance.jobProcess],
+  'job_proccess': _$JobProcessEnumMap[instance.jobProcess],
   'applied_at': instance.appliedAt?.toIso8601String(),
 };

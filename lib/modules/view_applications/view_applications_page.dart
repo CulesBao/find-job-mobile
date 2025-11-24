@@ -29,6 +29,7 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
   bool _isLoadingMore = false;
   bool _hasMore = true;
   List<ApplicationDto> _applications = [];
+  Map<String, ApplicationDto> _detailedApplications = {}; // Cache for detailed data
   String? _errorMessage;
   String? _selectedStatus;
 
@@ -75,9 +76,11 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
       );
       if (response.success || response.data != null) {
         setState(() {
-          _applications = response.data?.content ?? [];
+          _applications = List.from(response.data?.content ?? []);
           _hasMore = !(response.data?.last ?? true);
         });
+        // Load detailed info for each application
+        _loadDetailedApplications();
       } else {
         setState(() {
           _errorMessage = response.message;
@@ -111,11 +114,18 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
       );
 
       if (response.success || response.data != null) {
+        final newContent = List<ApplicationDto>.from(response.data?.content ?? []);
         setState(() {
-          _applications.addAll(response.data?.content ?? []);
+          final updatedList = List<ApplicationDto>.from(_applications);
+          for (var item in newContent) {
+            updatedList.add(item);
+          }
+          _applications = updatedList;
           _currentPage = nextPage;
           _hasMore = !(response.data?.last ?? true);
         });
+        // Load detailed info for newly added applications
+        _loadDetailedApplications();
       }
     } catch (e) {
       // Ignore error for loading more
@@ -123,6 +133,35 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
       setState(() {
         _isLoadingMore = false;
       });
+    }
+  }
+
+  Future<void> _loadDetailedApplications() async {
+    // Load candidate profile for each application sequentially to avoid overwhelming the API
+    for (var application in _applications) {
+      if (_detailedApplications.containsKey(application.id)) {
+        continue; // Already loaded
+      }
+      
+      try {
+        final response = await _applicationRepository.getApplicationById(
+          application.id,
+          includeProfile: true,
+        );
+        
+        if (response.data?.candidateProfile != null) {
+          debugPrint('Candidate profile loaded: ${response.data!.candidateProfile!.firstName} ${response.data!.candidateProfile!.lastName}');
+        }
+        
+        // Update even if success is false, as long as we have data
+        if (mounted && response.data != null) {
+          setState(() {
+            _detailedApplications[application.id] = response.data!;
+          });
+        }
+      } catch (e) {
+        debugPrint('Error loading detailed application ${application.id}: $e');
+      }
     }
   }
 
@@ -137,25 +176,33 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Applications',
-              style: AppTextStyles.heading2.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 4.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.jobTitle,
+                style: AppTextStyles.heading3.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              widget.jobTitle,
-              style: AppTextStyles.caption.copyWith(
-                color: AppColors.textSecondary,
+              const SizedBox(height: 2),
+              Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Text(
+                  '${_applications.length} Application${_applications.length != 1 ? 's' : ''}',
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           PopupMenuButton<String>(
@@ -168,11 +215,21 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
             },
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'ALL', child: Text('All')),
-              const PopupMenuItem(value: 'PENDING', child: Text('Pending')),
-              const PopupMenuItem(value: 'REVIEWING', child: Text('Reviewing')),
-              const PopupMenuItem(value: 'INTERVIEWING', child: Text('Interviewing')),
-              const PopupMenuItem(value: 'ACCEPTED', child: Text('Accepted')),
+              const PopupMenuItem(value: 'APPLICATION_SUBMITTED', child: Text('Submitted')),
+              const PopupMenuItem(value: 'APPLICATION_REVIEW', child: Text('Under Review')),
+              const PopupMenuItem(value: 'SCREENING', child: Text('Screening')),
+              const PopupMenuItem(value: 'PHONE_INTERVIEW', child: Text('Phone Interview')),
+              const PopupMenuItem(value: 'TECHNICAL_TEST', child: Text('Technical Test')),
+              const PopupMenuItem(value: 'FIRST_INTERVIEW', child: Text('First Interview')),
+              const PopupMenuItem(value: 'SECOND_INTERVIEW', child: Text('Second Interview')),
+              const PopupMenuItem(value: 'FINAL_INTERVIEW', child: Text('Final Interview')),
+              const PopupMenuItem(value: 'OFFER_NEGOTIATION', child: Text('Offer Negotiation')),
+              const PopupMenuItem(value: 'OFFER_SENT', child: Text('Offer Sent')),
+              const PopupMenuItem(value: 'OFFER_ACCEPTED', child: Text('Offer Accepted')),
+              const PopupMenuItem(value: 'HIRED', child: Text('Hired')),
+              const PopupMenuItem(value: 'ONBOARDING', child: Text('Onboarding')),
               const PopupMenuItem(value: 'REJECTED', child: Text('Rejected')),
+              const PopupMenuItem(value: 'WITHDRAWN', child: Text('Withdrawn')),
             ],
           ),
         ],
@@ -323,21 +380,26 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
     final statusColor = ApplicationStatusUtils.getStatusColor(application.jobProcess);
     final statusIcon = ApplicationStatusUtils.getStatusIcon(application.jobProcess);
 
-    final candidate = application.candidateProfile;
-    final candidateName = candidate != null
-        ? '${candidate.firstName} ${candidate.lastName}'
-        : 'Unknown Candidate';
-
-    // Debug logs
-    print('=== Application ID: ${application.id}');
-    print('=== Candidate Profile: $candidate');
-    print('=== Candidate Name: $candidateName');
+    // Try to get detailed application data from cache, fallback to original
+    final detailedApp = _detailedApplications[application.id] ?? application;
+    final candidate = detailedApp.candidateProfile;
+    
+    // Build candidate name with proper handling of empty/null values
+    String candidateName = 'Unknown Candidate';
     if (candidate != null) {
-      print('=== First Name: ${candidate.firstName}');
-      print('=== Last Name: ${candidate.lastName}');
-      print('=== Avatar URL: ${candidate.avatarUrl}');
-      print('=== Phone: ${candidate.phoneNumber}');
+      final firstName = candidate.firstName.trim();
+      final lastName = candidate.lastName.trim();
+      
+      if (firstName.isNotEmpty && lastName.isNotEmpty) {
+        candidateName = '$firstName $lastName';
+      } else if (firstName.isNotEmpty) {
+        candidateName = firstName;
+      } else if (lastName.isNotEmpty) {
+        candidateName = lastName;
+      }
     }
+    
+    debugPrint('Final candidate name: $candidateName');
 
     return InkWell(
       onTap: () async {
@@ -405,29 +467,14 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        candidateName,
-                        style: AppTextStyles.heading3.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      if (candidate?.phoneNumber != null)
-                        Text(
-                          candidate!.phoneNumber!,
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                    ],
+                  child: Text(
+                    candidateName,
+                    style: AppTextStyles.heading3.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -455,48 +502,6 @@ class _ViewApplicationsPageState extends State<ViewApplicationsPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            if (candidate != null) ...[
-              if (candidate.phoneNumber != null)
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.phone,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      candidate.phoneNumber!,
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              if (candidate.phoneNumber != null) const SizedBox(height: 8),
-              if (candidate.province != null)
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        '${candidate.district?.name ?? ''}, ${candidate.province!.name}',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-            ],
           ],
         ),
       ),
